@@ -129,6 +129,38 @@
             });
         });
     </script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search);
+
+  // Check if user requested markdown view
+  if (params.get("accept") === "text/markdown") {
+    document.body.style.background = "#0d1117";
+    document.body.style.color = "#c9d1d9";
+    document.body.style.fontFamily = "monospace";
+    document.body.style.padding = "20px";
+    document.body.innerHTML = generateMarkdown(data);
+  }
+
+  function generateMarkdown(data) {
+    let md = `# ${data.owner.login}'s Repository List\n\n`;
+    md += `| Repository | Description | Stars |\n`;
+    md += `|-------------|-------------|-------|\n`;
+
+    data.repos.forEach(repo => {
+      const name = `[${repo.name}](${repo.href})`;
+      const desc = repo.description ? repo.description.replace(/\|/g, "\\|") : "_No description_";
+      const stars = `⭐ ${repo.stargazers_count}`;
+      md += `| ${name} | ${desc} | ${stars} |\n`;
+    });
+
+    md += `\n---\n\n> Generated from [pushpenderrathore.github.io](https://pushpenderrathore.github.io)\n`;
+    return `<pre style="white-space: pre-wrap;">${md}</pre>`;
+  }
+});
+</script>
+
 </body>
 
 </html>
