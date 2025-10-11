@@ -1,90 +1,134 @@
-<!-- Beautiful animated GitHub README for Pushpender Singh -->
+<!DOCTYPE html>
+<html lang="en">
 
-<div align="center">
-  <h1 style="font-size:2.5em; font-weight:700; background:linear-gradient(90deg,#00c6ff,#0072ff); -webkit-background-clip:text; color:transparent;">
-    👋 Hi, I'm Pushpender Singh
-  </h1>
+<head>
+    <!-- 100% privacy-first analytics -->
+    <script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
 
-  <p style="font-size:1.1em; font-weight:500;">
-    💻 <strong>B.Tech CSE Student | C & Python Developer | Cybersecurity Learner</strong>
-  </p>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>uithub - Repository List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <script>
+        const data = {"owner":{"login":"Pushpenderrathore"},"repos":[{"name":"server","href":"https://uithub.com/Pushpenderrathore/server/tree/main","stargazers_count":0,"description":"MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.","archived":false,"private":false},{"name":"tor-browser","href":"https://uithub.com/Pushpenderrathore/tor-browser/tree/main","stargazers_count":2,"description":"Tor-browser automation for downloading installing and processing no manual check. For biggeners  ","archived":false,"private":false},{"name":"M4r","href":"https://uithub.com/Pushpenderrathore/M4r/tree/main","stargazers_count":3,"description":null,"archived":false,"private":false},{"name":"InstagramOSINT","href":"https://uithub.com/Pushpenderrathore/InstagramOSINT/tree/master","stargazers_count":0,"description":"An Instagram Open Source Intelligence Tool - Archive","archived":false,"private":false},{"name":"Pushpenderrathore","href":"https://uithub.com/Pushpenderrathore/Pushpenderrathore/tree/main","stargazers_count":1,"description":"Template","archived":false,"private":false},{"name":"CamPhish","href":"https://uithub.com/Pushpenderrathore/CamPhish/tree/master","stargazers_count":0,"description":"Grab cam shots & GPS location from target's phone front camera or PC webcam just sending a link.","archived":false,"private":false},{"name":"Antares","href":"https://uithub.com/Pushpenderrathore/Antares/tree/main","stargazers_count":3,"description":"AI based OS in Development phase..","archived":false,"private":false},{"name":"VoIP","href":"https://uithub.com/Pushpenderrathore/VoIP/tree/main","stargazers_count":0,"description":"Phone location finder with Accuracy","archived":false,"private":false},{"name":"Metrolist","href":"https://uithub.com/Pushpenderrathore/Metrolist/tree/main","stargazers_count":0,"description":"Modified as per Demand","archived":false,"private":false},{"name":"blackarch","href":"https://uithub.com/Pushpenderrathore/blackarch/tree/master","stargazers_count":1,"description":"An ArchLinux based distribution for penetration testers and security researchers.","archived":false,"private":false},{"name":"YouTube","href":"https://uithub.com/Pushpenderrathore/YouTube/tree/master","stargazers_count":0,"description":"premium feature Free accees YouTube","archived":false,"private":false},{"name":"PPCine","href":"https://uithub.com/Pushpenderrathore/PPCine/tree/master","stargazers_count":0,"description":"I included premium feature of netflix for free as per Demand of my classmates","archived":false,"private":false},{"name":"Sn1per","href":"https://uithub.com/Pushpenderrathore/Sn1per/tree/master","stargazers_count":1,"description":"Attack Surface Management Platform","archived":false,"private":false},{"name":"basedsmiles","href":"https://uithub.com/Pushpenderrathore/basedsmiles/tree/master","stargazers_count":0,"description":null,"archived":false,"private":false},{"name":"Auto_Tor_IP_changer","href":"https://uithub.com/Pushpenderrathore/Auto_Tor_IP_changer/tree/master","stargazers_count":0,"description":"change your Ip address automatically  This tool based on tor project","archived":false,"private":false},{"name":"SocialMediaHackingToolkit","href":"https://uithub.com/Pushpenderrathore/SocialMediaHackingToolkit/tree/main","stargazers_count":0,"description":"🔒 Social Media Hacking Suite","archived":false,"private":false},{"name":"zphisher","href":"https://uithub.com/Pushpenderrathore/zphisher/tree/master","stargazers_count":0,"description":"An automated phishing tool with 30+ templates. This Tool is made for educational purpose only ! Author will not be responsible for any misuse of this toolkit !","archived":false,"private":false},{"name":"Mirai-Source-Code","href":"https://uithub.com/Pushpenderrathore/Mirai-Source-Code/tree/master","stargazers_count":0,"description":"Leaked Mirai Source Code for Research/IoC Development Purposes","archived":false,"private":false},{"name":"AI","href":"https://uithub.com/Pushpenderrathore/AI/tree/main","stargazers_count":0,"description":"Uncensored AI in Development Phase 👾","archived":false,"private":false},{"name":"swap","href":"https://uithub.com/Pushpenderrathore/swap/tree/main","stargazers_count":0,"description":"It increases ram capacity as swap partition for AI Developmenet and Usage of it in Linux Systems","archived":false,"private":false},{"name":"Zombie","href":"https://uithub.com/Pushpenderrathore/Zombie/tree/main","stargazers_count":2,"description":"System killer */*","archived":false,"private":false},{"name":"WUKS2","href":"https://uithub.com/Pushpenderrathore/WUKS2/tree/main","stargazers_count":1,"description":"WUKS2 For windows Inherited from LUKS2 (Linux Unified Key Setup) In Development Phase Comming soon...","archived":false,"private":false},{"name":"macchanger-daemon","href":"https://uithub.com/Pushpenderrathore/macchanger-daemon/tree/master","stargazers_count":2,"description":"A systemd-based service that automatically randomizes the MAC addresses every 5 minutes of all network interfaces at boot using macchanger. Designed for Linux based Arch , debian , fedora systems with dynamic interface detection for enhanced compatibility and privacy also included kill-switch","archived":false,"private":false},{"name":"LUKS2-nuke","href":"https://uithub.com/Pushpenderrathore/LUKS2-nuke/tree/main","stargazers_count":2,"description":"Auto-Wipe LUKS2-Protected Linux System After 5 Failed Decryption Attempts","archived":false,"private":false},{"name":"shikigami-daemon","href":"https://uithub.com/Pushpenderrathore/shikigami-daemon/tree/main","stargazers_count":2,"description":"AI which works online and offline on servers and handle systems to prevent from cyberattacks can be optimised according to usage","archived":false,"private":false},{"name":"restaurant","href":"https://uithub.com/Pushpenderrathore/restaurant/tree/main","stargazers_count":0,"description":"Pizza hut","archived":false,"private":false},{"name":"parrot","href":"https://uithub.com/Pushpenderrathore/parrot/tree/main","stargazers_count":0,"description":"terminal based AI for linux users and begginer friendly also able to remodify the code as per there preferences.","archived":false,"private":false},{"name":"shell_gpt","href":"https://uithub.com/Pushpenderrathore/shell_gpt/tree/main","stargazers_count":0,"description":"A command-line productivity tool powered by AI large language models like GPT-4, will help you accomplish your tasks faster and more efficiently.","archived":false,"private":false},{"name":"theZoo","href":"https://uithub.com/Pushpenderrathore/theZoo/tree/master","stargazers_count":0,"description":"A repository of LIVE malwares for your own joy and pleasure. theZoo is a project created to make the possibility of malware analysis open and available to the public.","archived":false,"private":false},{"name":"blackarch-dukex","href":"https://uithub.com/Pushpenderrathore/blackarch-dukex/tree/master","stargazers_count":1,"description":"blackarch key-ring and conflict error solved using automation effective and efficient for biggeners.","archived":false,"private":false},{"name":"nmapd","href":"https://uithub.com/Pushpenderrathore/nmapd/tree/main","stargazers_count":1,"description":"Nmap errors && bugs fixes","archived":false,"private":false},{"name":"Ccourse","href":"https://uithub.com/Pushpenderrathore/Ccourse/tree/main","stargazers_count":1,"description":"practice_set","archived":false,"private":false},{"name":"pythoncourse","href":"https://uithub.com/Pushpenderrathore/pythoncourse/tree/main","stargazers_count":1,"description":null,"archived":false,"private":false},{"name":"Infection-","href":"https://uithub.com/Pushpenderrathore/Infection-/tree/main","stargazers_count":1,"description":"Backdoor tracking A.I","archived":false,"private":false}]}; // This will be replaced with the actual data
+    </script>
+</head>
 
-  <p>
-    <img src="https://komarev.com/ghpvc/?username=Pushpenderrathore&style=flat-square&color=blue" alt="profile views"/>
-  </p>
-</div>
+<body class="bg-black min-h-screen">
+    <nav id="navbar" class="fixed top-0 w-full bg-black/80 backdrop-blur-sm z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/"
+                    class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+                    uithub
+                </a>
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="text-white hover:text-purple-400 transition-colors">Home</a>
+                    <a href="/openapi.html" class="text-white hover:text-purple-400 transition-colors">Docs</a>
+                    <a href="/pricing.html" class="text-white transition-colors">Pricing</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<br>
+    <main class="container mx-auto px-4 pt-24 pb-12">
+        <div id="profile-header" class="mb-12 text-center">
+            <h1
+                class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-4">
+                <span id="owner-name"></span>'s Repositories
 
-<div align="center" style="border-radius:15px; padding:25px; background:linear-gradient(135deg,#0a0f1f,#1e2a47); color:white; box-shadow:0 0 25px rgba(0,0,0,0.3); position:relative; overflow:hidden;">
-  <h2 style="margin-bottom:10px;">🚀 About Me</h2>
-  <p style="max-width:600px; margin:auto;">
-    Passionate about building secure systems, exploring reverse engineering, and creating automation tools.  
-    I love Linux, networking, and innovative coding challenges that push my limits.
-  </p>
+            </h1>
 
-  <div style="margin-top:20px;">
-    <img src="https://skillicons.dev/icons?i=c,cpp,python,linux,git,html,css,javascript,mysql&theme=dark" alt="tech stack"/>
-  </div>
+            <h2
+                class="text-2xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 hover:font-bold mb-4">
+                <a href="?accept=text/markdown">(Show in markdown)</a>
 
-  <br>
+            </h2>
 
-  <div>
-    <a href="https://pushpenderrathore.github.io/" target="_blank">
-      <img src="https://img.shields.io/badge/🌐%20Portfolio-blue?style=for-the-badge" />
-    </a>
-    <a href="mailto:pushpenderrathore010@gmail.com">
-      <img src="https://img.shields.io/badge/✉️%20Email-me-orange?style=for-the-badge" />
-    </a>
-    <a href="https://www.linkedin.com/in/pushpenderrathore" target="_blank">
-      <img src="https://img.shields.io/badge/LinkedIn-0077B5?logo=linkedin&logoColor=white&style=for-the-badge" />
-    </a>
-  </div>
+            <p class="text-gray-400 text-lg">
+                Click on a repository to view its contents with uithub
+            </p>
+        </div>
 
-  <!-- Animated floating particles -->
-  <canvas id="particles" width="500" height="200" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:0; opacity:0.3;"></canvas>
-</div>
+        <div id="repos-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Repositories will be dynamically inserted here -->
+        </div>
+    </main>
 
-<br>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!data) return;
 
-<div align="center">
-  <h2>📊 GitHub Stats</h2>
-  <img src="https://github-readme-stats.vercel.app/api?username=Pushpenderrathore&show_icons=true&theme=tokyonight" alt="GitHub stats" />
-  <br>
-  <img src="https://github-readme-streak-stats.herokuapp.com?user=Pushpenderrathore&theme=tokyonight" alt="streak stats" />
-</div>
+            // Set owner name
+            document.getElementById('owner-name').textContent = data.owner.login;
 
-<!-- Small JS animation for particles -->
-<script>
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-let particles = Array.from({length:50}, () => ({
-  x: Math.random()*canvas.width,
-  y: Math.random()*canvas.height,
-  r: Math.random()*2+1,
-  dx: Math.random()*0.5-0.25,
-  dy: Math.random()*0.5-0.25
-}));
+            // Populate repositories
+            const reposGrid = document.getElementById('repos-grid');
+            data.repos.forEach(repo => {
+                const card = document.createElement('div');
+                card.className = 'bg-gray-800 rounded-lg p-6 hover:bg-gray-700 transition-colors duration-300 cursor-pointer';
 
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle = "white";
-  particles.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
-    p.x+=p.dx; p.y+=p.dy;
-    if(p.x<0||p.x>canvas.width) p.dx*=-1;
-    if(p.y<0||p.y>canvas.height) p.dy*=-1;
-  });
-  requestAnimationFrame(draw);
-}
-draw();
-</script>
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'flex items-center justify-between mb-3';
 
----
+                const nameLink = document.createElement('a');
+                nameLink.href = repo.href;
+                nameLink.className = 'text-xl font-semibold text-purple-400 hover:text-purple-300 truncate';
+                nameLink.textContent = repo.name;
 
-<div align="center">
-  <em>“The end is truth — and I code towards it.”</em><br>
-  🌌 Made with ❤️ by <strong>Pushpender Singh</strong>
-</div>
+                const badgesDiv = document.createElement('div');
+                badgesDiv.className = 'flex items-center space-x-2';
+
+                // Stars badge
+                const starsBadge = document.createElement('span');
+                starsBadge.className = 'flex items-center text-yellow-400 text-sm';
+                starsBadge.innerHTML = `
+                    <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                    ${repo.stargazers_count}
+                `;
+
+                // Private/Public badge
+                const visibilityBadge = document.createElement('span');
+                visibilityBadge.className = `text-xs px-2 py-1 rounded ${repo.private ? 'bg-red-900 text-red-200' : 'bg-green-900 text-green-200'}`;
+                visibilityBadge.textContent = repo.private ? 'Private' : 'Public';
+
+                // Archived badge (if applicable)
+                if (repo.archived) {
+                    const archivedBadge = document.createElement('span');
+                    archivedBadge.className = 'text-xs px-2 py-1 rounded bg-gray-600 text-gray-200';
+                    archivedBadge.textContent = 'Archived';
+                    badgesDiv.appendChild(archivedBadge);
+                }
+
+                // Description
+                const description = document.createElement('p');
+                description.className = 'text-gray-300 text-sm mt-2 line-clamp-2';
+                description.textContent = repo.description || 'No description available';
+
+                // Assemble the card
+                badgesDiv.prepend(starsBadge, visibilityBadge);
+                headerDiv.appendChild(nameLink);
+                headerDiv.appendChild(badgesDiv);
+                card.appendChild(headerDiv);
+                card.appendChild(description);
+
+                // Make the entire card clickable
+                card.addEventListener('click', (e) => {
+                    if (!e.target.closest('a')) {
+                        window.location.href = repo.href;
+                    }
+                });
+
+                reposGrid.appendChild(card);
+            });
+        });
+    </script>
+</body>
+
+</html>
