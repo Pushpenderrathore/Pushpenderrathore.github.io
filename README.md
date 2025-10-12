@@ -20,11 +20,6 @@
 
 ---
 
-<h2 align="center">🧠 Tech Stack</h2>
-<p align="center">
-  <img src="https://skillicons.dev/icons?i=python,cpp,linux,bash,html,css,js,git,mysql,vscode" />
-</p>
-
 ![My Skills](https://skillicons.dev/icons?i=c,cpp,python,css,js,html,java,mysql,bash,powershell,vim,postman,docker,github,git,vscode,arch,linux,kali,windows,ubuntu,apple&theme=dark&perline=9)
 
 ---
