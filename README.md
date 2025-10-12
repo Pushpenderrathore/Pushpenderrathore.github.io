@@ -15,7 +15,7 @@
 <h2 align="center">🚀 About Me</h2>
 <p align="center">
   Passionate about building secure systems, exploring reverse engineering, and creating automation tools.<br>
-  I love Linux, networking, and innovative coding challenges that push my limits.
+  I Love Linux, Networking, Blockchain And Neural Networks because These Gives me Freedom.
 </p>
 
 ---
