@@ -1435,11 +1435,11 @@ header.scrolled {
     width: 100%;
     background: var(--accent-gradient);
     color: var(--bg-primary);
-    border: none;
     padding: 1rem 2rem;
     border-radius: var(--border-radius-pill);
     font-size: 1rem;
     font-weight: 600;
+    border: none;
     cursor: pointer;
     transition: var(--transition-smooth);
     display: flex;
@@ -1509,25 +1509,25 @@ header.scrolled {
         font-size: 1.2rem;
     }
 
-    .site-footer {
-      margin-top: 80px;
-      padding: 40px 0 30px;
-      background: linear-gradient(to top, #000000, #0a0a0a);
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    
-    .footer-counter {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
-    
-    .footer-counter img {
-      max-width: 100%;
-      image-rendering: pixelated;
-      opacity: 0.9;
-    }
-    
+}
+
+.site-footer {
+  margin-top: 80px;
+  padding: 40px 0 30px;
+  background: linear-gradient(to top, #000000, #0a0a0a);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-counter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.footer-counter img {
+  max-width: 100%;
+  image-rendering: pixelated;
+  opacity: 0.9;
 }
 
