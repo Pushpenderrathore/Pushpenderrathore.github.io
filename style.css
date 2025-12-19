@@ -1508,10 +1508,26 @@ header.scrolled {
         height: 50px;
         font-size: 1.2rem;
     }
+
+    .site-footer {
+      margin-top: 80px;
+      padding: 40px 0 30px;
+      background: linear-gradient(to top, #000000, #0a0a0a);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
     
     .footer-counter {
-        text-align: center;
-        margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
     }
+    
+    .footer-counter img {
+      max-width: 100%;
+      image-rendering: pixelated;
+      opacity: 0.9;
+    }
+    
 }
 
