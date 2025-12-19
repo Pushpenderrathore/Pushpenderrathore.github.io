@@ -1531,3 +1531,7 @@ header.scrolled {
   opacity: 0.9;
 }
 
+.footer-counter img {
+  filter: drop-shadow(0 0 10px rgba(255, 100, 200, 0.35));
+}
+
