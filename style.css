@@ -1508,4 +1508,10 @@ header.scrolled {
         height: 50px;
         font-size: 1.2rem;
     }
+    
+    .footer-counter {
+        text-align: center;
+        margin: 20px 0;
+    }
 }
+
