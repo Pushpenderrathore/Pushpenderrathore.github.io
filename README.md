@@ -44,14 +44,11 @@ You can easily customize the project by:
  ┣ 📜 index.html          # Main HTML file
  ┣ 📜 style.css           # Website styling
  ┣ 📜 script.js           # Main JavaScript file
- ┣ 📂 assets              # Folder containing all assets
- ┃ ┣ 📂 images            # Images and logos
- ┃ ┣ 📂 icons             # SVGs or icons
- ┃ ┗ 📂 fonts             # Custom fonts (optional)
- ┗ 📜 README.md           # Project documentation
+ ┣ 📂 images            # Images and logos
+ ┣ 📂 fonts             # Custom fonts (optional)
+ ┗📜 README.md           # Project documentation
 ```
 ---
-
 
 ## 🚀 How to Run Locally
 
@@ -74,8 +71,8 @@ You’ll see your personal portfolio running locally
 - Email: bluedevil5177@gmail.com
 - Location: Bahal, Haryana
 - LinkedIn: [LinkedIn](#)  
-- GitHub: [GitHub](#)  
-- Instagram: [Instagram](https://www.instagram.com/enp7s0d)
+- GitHub: [GitHub](https://github.com/Pushpenderrathore/)  
+- Instagram: [Instagram](https://www.instagram.com/enp7s0d/)
 
 ---
 
