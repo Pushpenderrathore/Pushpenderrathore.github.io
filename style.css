@@ -330,11 +330,11 @@ header.scrolled {
 }
 
 .hero-desc {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     font-weight: 300;
     color: var(--text-secondary);
     max-width: 600px;
-    line-height: 1.8;
+    line-height: 1.6;
     opacity: 0;
     animation: fadeInUp 0.8s ease forwards 0.8s;
 }
@@ -381,6 +381,7 @@ header.scrolled {
 .hero-actions {
     display: flex;
     gap: 1.5rem;
+    flex-wrap: wrap;
     margin: 2rem 0;
     opacity: 0;
     animation: fadeInUp 0.8s ease forwards 1.2s;
@@ -485,14 +486,11 @@ header.scrolled {
     animation: fadeInScale 1s ease forwards 0.5s;
 }
 
-.profile-image {
-    width: 400px;
-    height: 500px;
-    object-fit: cover;
-    border-radius: 20px;
-    box-shadow: var(--shadow-card);
-    transition: var(--transition-smooth);
-    border: 3px solid var(--glass-border);
+.profile-image,
+.about-img {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
 }
 
 .profile-image:hover {
@@ -580,7 +578,7 @@ header.scrolled {
 .about-img {
     width: 100%;
     max-width: 500px;
-    height: 600px;
+    height: auto;
     object-fit: cover;
     border-radius: 20px;
     box-shadow: var(--shadow-card);
@@ -651,7 +649,7 @@ header.scrolled {
     border: 1px solid var(--glass-border);
     border-radius: var(--border-radius);
     backdrop-filter: blur(10px);
-    transition: 0s;
+    transition: var(--transition-fast);
 }
 
 .highlight:hover {
@@ -1188,8 +1186,8 @@ header.scrolled {
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
 }
 
 .project-card {
@@ -1340,7 +1338,7 @@ header.scrolled {
 }
 
 .contact-item:hover {
-    transform: translateX(10px);
+    transform: translateY(-5px);
     border-color: var(--accent-primary);
 }
 
@@ -1542,10 +1540,8 @@ header.scrolled {
 
 .certifications-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
 }
 
 .cert-card {
@@ -1596,5 +1592,51 @@ header.scrolled {
 .cert-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+}
+
+@media (max-width: 1024px) {
+    .projects-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+    .certifications-grid {
+    grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .section {
+        padding: 5rem 0 3rem;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat {
+        padding: 0.8rem;
+    }
+
+    .skill-category,
+    .project-card,
+    .cert-card {
+        padding: 1.2rem;
+    }
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+body {
+    overflow-x: hidden;
 }
 
