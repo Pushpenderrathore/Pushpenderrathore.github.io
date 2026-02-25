@@ -1456,9 +1456,8 @@ header.scrolled {
 /* Responsive Updates */
 @media (max-width: 768px) {
     .skills-grid {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
+    grid-template-columns: 1fr;
+}
 
     .services-grid {
         grid-template-columns: 1fr;
