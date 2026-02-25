@@ -257,16 +257,16 @@ header.scrolled {
 }
 
 .home::before {
+    display: none;
     content: '';
     position: absolute;
     top: 20%;
-    right: -10%;
-    width: 500px;
+    right: -5%;
+    max-width: 90vw;
     height: 500px;
     background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
     border-radius: 50%;
     filter: blur(100px);
-    animation: float 6s ease-in-out infinite;
 }
 
 .home-content {
@@ -355,7 +355,7 @@ header.scrolled {
     border: 1px solid var(--glass-border);
     border-radius: var(--border-radius);
     backdrop-filter: blur(10px);
-    transition: 0s;
+    transition: var(--transition-fast);
 }
 
 .stat:hover {
@@ -439,7 +439,7 @@ header.scrolled {
     justify-content: center;
     color: var(--text-secondary);
     text-decoration: none;
-    transition: 0s;
+    transition: var(--transition-fast);
     font-size: 1.3rem;
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
@@ -653,7 +653,7 @@ header.scrolled {
 }
 
 .highlight:hover {
-    transform: translateX(10px);
+    transform: translateX(6px);
     border-color: var(--accent-primary);
 }
 
@@ -691,7 +691,7 @@ header.scrolled {
     border-radius: var(--border-radius-pill);
     font-weight: 600;
     cursor: pointer;
-    transition: 0s;
+    transition: var(--transition-fast);
 }
 
 .about-btn:hover {
@@ -702,6 +702,17 @@ header.scrolled {
 }
 
 /* Animations */
+
+/* Performance Optimization */
+.hero-title,
+.hero-subtitle,
+.hero-desc,
+.stat,
+.project-card,
+.service-card {
+    will-change: transform, opacity;
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -858,10 +869,11 @@ header.scrolled {
     
     .profile-image,
     .about-img {
-        width: 300px;
-        height: 400px;
+        width: 100%;
+        max-width: 300px;
+        height: auto;
     }
-    
+        
     .floating-card {
         display: none;
     }
@@ -920,8 +932,9 @@ header.scrolled {
     
     .profile-image,
     .about-img {
-        width: 250px;
-        height: 350px;
+        width: 100%;
+        max-width: 300px;
+        height: auto;
     }
     
     .social-icon {
@@ -959,8 +972,9 @@ header.scrolled {
     
     .profile-image,
     .about-img {
-        width: 220px;
-        height: 300px;
+        width: 100%;
+        max-width: 220px;
+        height: auto;
     }
 }
 
