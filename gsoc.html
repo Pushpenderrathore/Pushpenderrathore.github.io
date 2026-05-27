@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSoC 2026 — Kerberos &amp; Certificate Trace Presenters · Metasploit Framework</title>
+    <title>GSoC 2026 - Kerberos &amp; Certificate Trace Presenters · Metasploit Framework</title>
     <meta name="description" content="Pushpender Singh Rathore's GSoC 2026 project building KerberosTicketTracePresenter and CertificateTracePresenter inline-tracing capabilities for the Metasploit Framework. Mentored by @jheysel-r7 and @zeroSteiner. 175 hrs, medium difficulty.">
     <meta name="keywords" content="GSoC 2026, Google Summer of Code, Metasploit, KerberosTicketTracePresenter, CertificateTracePresenter, Pushpender Singh Rathore, Kerberos, ADCS, Rapid7, open source, penetration testing">
     <meta name="author" content="Pushpender Singh Rathore">
     <link rel="canonical" href="https://pushpenderrathore.github.io/gsoc.html">
 
     <meta property="og:type" content="article">
-    <meta property="og:title" content="GSoC 2026 — Kerberos &amp; Certificate Trace Presenters · Metasploit">
-    <meta property="og:description" content="Pushpender Singh Rathore's GSoC 2026 work on KerberosTicketTracePresenter and CertificateTracePresenter for the Metasploit Framework — mentored by @jheysel-r7 and @zeroSteiner.">
+    <meta property="og:title" content="GSoC 2026 - Kerberos &amp; Certificate Trace Presenters · Metasploit">
+    <meta property="og:description" content="Pushpender Singh Rathore's GSoC 2026 work on KerberosTicketTracePresenter and CertificateTracePresenter for the Metasploit Framework - mentored by @jheysel-r7 and @zeroSteiner.">
     <meta property="og:image" content="images/img.jpg">
     <meta property="og:url" content="https://pushpenderrathore.github.io/gsoc.html">
     <meta name="twitter:card" content="summary_large_image">
@@ -237,7 +237,7 @@
                 <h1 class="title">Kerberos &amp; Certificate <span class="accent">Trace Presenters</span> for Metasploit</h1>
                 <p class="subtitle">GSoC 2026 · mentored by @jheysel-r7 &amp; @zeroSteiner</p>
                 <p class="hero-desc">
-                    Welcome to my Google Summer of Code 2026 build log. This page tracks my work on two new inline tracing capabilities for the Metasploit Framework — <strong>KerberosTicketTracePresenter</strong> and <strong>CertificateTracePresenter</strong> — that bring <code>HttpTrace</code>-style transparency to Kerberos tickets and X.509 certificates inside <code>msfconsole</code>, so operators no longer need to export <code>.ccache</code> or <code>.pfx</code> artefacts to disk to inspect them.
+                    Welcome to my Google Summer of Code 2026 build log. This page tracks my work on two new inline tracing capabilities for the Metasploit Framework - <strong>KerberosTicketTracePresenter</strong> and <strong>CertificateTracePresenter</strong> - that bring <code>HttpTrace</code>-style transparency to Kerberos tickets and X.509 certificates inside <code>msfconsole</code>, so operators no longer need to export <code>.ccache</code> or <code>.pfx</code> artefacts to disk to inspect them.
                 </p>
 
                 <div class="gsoc-meta">
@@ -305,13 +305,13 @@
                 <div class="proposal-box">
                     <h4>Proposal Abstract</h4>
                     <p>
-                        This project introduces two new inline tracing capabilities to the Metasploit Framework: <strong>CertificateTracePresenter</strong> and <strong>KerberosTicketTracePresenter</strong>. These features let penetration-testing operators inspect every Kerberos ticket and X.509 certificate artefact produced during module execution — principal names, encryption types, validity windows, serial numbers, SHA-256 fingerprints, ticket flags, and session keys — all without leaving the <code>msfconsole</code> session.
+                        This project introduces two new inline tracing capabilities to the Metasploit Framework: <strong>CertificateTracePresenter</strong> and <strong>KerberosTicketTracePresenter</strong>. These features let penetration-testing operators inspect every Kerberos ticket and X.509 certificate artefact produced during module execution - principal names, encryption types, validity windows, serial numbers, SHA-256 fingerprints, ticket flags, and session keys - all without leaving the <code>msfconsole</code> session.
                     </p>
                     <p>
-                        The work is modelled directly on Metasploit's existing <code>HttpTrace</code> capability in <code>Exploit::Remote::HttpClient</code>. Just as <code>HttpTrace</code> brought transparent HTTP request/response debugging inline, these two presenters extend the same design philosophy to the authentication layer. The implementation follows the established presenter pattern exemplified by <code>krb5_ccache_presenter.rb</code> — instantiating a presenter, calling <code>to_s_*</code> instance methods that return formatted strings, and letting the module call <code>print_line()</code>.
+                        The work is modelled directly on Metasploit's existing <code>HttpTrace</code> capability in <code>Exploit::Remote::HttpClient</code>. Just as <code>HttpTrace</code> brought transparent HTTP request/response debugging inline, these two presenters extend the same design philosophy to the authentication layer. The implementation follows the established presenter pattern exemplified by <code>krb5_ccache_presenter.rb</code> - instantiating a presenter, calling <code>to_s_*</code> instance methods that return formatted strings, and letting the module call <code>print_line()</code>.
                     </p>
                     <p>
-                        Modern red-team engagements are increasingly centred on Active Directory abuse and certificate-based authentication (ADCS ESC1–ESC16). This project eliminates the need to export artefacts to disk or switch to auxiliary modules mid-exploitation — a workflow break that degrades both operator efficiency and OPSEC. The implementation is fully backward-compatible: when options are set to <code>off</code> (the default), no behaviour changes occur in any existing module.
+                        Modern red-team engagements are increasingly centred on Active Directory abuse and certificate-based authentication (ADCS ESC1–ESC16). This project eliminates the need to export artefacts to disk or switch to auxiliary modules mid-exploitation - a workflow break that degrades both operator efficiency and OPSEC. The implementation is fully backward-compatible: when options are set to <code>off</code> (the default), no behaviour changes occur in any existing module.
                     </p>
                 </div>
 
@@ -361,7 +361,7 @@
 
                 <h3 class="tech-stack-heading">Current Status</h3>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8;">
-                    Both presenter classes are <strong>prototyped</strong> and validated against AS-REQ and TGS-REQ flows in a local Windows Server 2022 + ADCS lab on the <code>TEST.LOCAL</code> domain. RSpec suites are written — <strong>13 examples</strong> for the Kerberos presenter and <strong>14</strong> for the certificate presenter (full execution requires PostgreSQL DB config). S4U2Self / S4U2Proxy ticket variants require a constrained-delegation lab config and are explicitly planned for Weeks&nbsp;3–4 of GSoC. Documentation and PR polish are the Phase&nbsp;4 work.
+                    Both presenter classes are <strong>prototyped</strong> and validated against AS-REQ and TGS-REQ flows in a local Windows Server 2022 + ADCS lab on the <code>TEST.LOCAL</code> domain. RSpec suites are written - <strong>13 examples</strong> for the Kerberos presenter and <strong>14</strong> for the certificate presenter (full execution requires PostgreSQL DB config). S4U2Self / S4U2Proxy ticket variants require a constrained-delegation lab config and are explicitly planned for Weeks&nbsp;3–4 of GSoC. Documentation and PR polish are the Phase&nbsp;4 work.
                 </p>
             </div>
         </section>
@@ -369,7 +369,7 @@
         <section id="timeline" class="section">
             <div class="container">
                 <h2 class="section-title">Timeline</h2>
-                <p class="section-intro">The 12-week / 175-hour build plan, mapped onto the four project phases from the accepted proposal. GSoC milestones — Community Bonding, midterm, and final submission — are anchored inside the relevant phases.</p>
+                <p class="section-intro">The 12-week / 175-hour build plan, mapped onto the four project phases from the accepted proposal. GSoC milestones - Community Bonding, midterm, and final submission - are anchored inside the relevant phases.</p>
 
                 <div class="timeline">
                     <div class="timeline-item current">
@@ -378,7 +378,7 @@
                         <p>Deep-dive into <code>HttpTrace</code> in <code>Exploit::Remote::HttpClient</code>, map the Kerberos client mixin, stand up the Windows Server 2022 + ADCS lab on the <code>TEST.LOCAL</code> domain, and verify ticket capture in Wireshark.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 2 — KerberosTicketTracePresenter</h4>
+                        <h4>Phase 2 - KerberosTicketTracePresenter</h4>
                         <span class="timeline-period">Weeks 3–6 · 50 hrs</span>
                         <p>Implement the core presenter class, wire the dispatcher into <code>kerberos/client.rb</code>, add AP-REQ and TGS-REQ hooks via the OpenStruct adapter, validate S4U2Self / S4U2Proxy in the lab, integrate into <code>kerberos_enumusers</code>, and ship the 13-example RSpec suite.</p>
                     </div>
@@ -388,12 +388,12 @@
                         <p>Mentor review of progress against proposal milestones. PR 1 (KerberosTicketTracePresenter) is expected to be open and under upstream review by this point.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 3 — CertificateTracePresenter</h4>
+                        <h4>Phase 3 - CertificateTracePresenter</h4>
                         <span class="timeline-period">Weeks 7–10 · 50 hrs</span>
                         <p>Implement the certificate presenter with the <code>coerce()</code> adapter, add <code>to_s_csr</code>, wire the PKINIT certificate hook in <code>send_request_tgt_pkinit</code>, integrate into <code>kerberos_login</code>, validate against ADCS ESC1 in the lab, and ship the 14-example RSpec suite.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 4 — Test &amp; Docs</h4>
+                        <h4>Phase 4 - Test &amp; Docs</h4>
                         <span class="timeline-period">Weeks 11–12 · 50 hrs</span>
                         <p>Full AD lab integration testing across both presenters, documentation and worked <code>msfconsole</code> usage examples, PR polish across PR&nbsp;1 and PR&nbsp;2, plus a feedback-driven changes buffer for mentor review cycles.</p>
                     </div>
@@ -414,7 +414,7 @@
         <section id="updates" class="section">
             <div class="container">
                 <h2 class="section-title">Weekly Updates <span class="tbd-tag">Live blog</span></h2>
-                <p class="section-intro">Weekly notes from the coding period — what I shipped, what blocked me, and what I learned. Updates will be published here every Sunday during GSoC.</p>
+                <p class="section-intro">Weekly notes from the coding period - what I shipped, what blocked me, and what I learned. Updates will be published here every Sunday during GSoC.</p>
 
                 <div class="updates-grid">
                     <div class="update-card">
@@ -431,7 +431,7 @@
                     <div class="update-card pending"><span class="update-week">Week 07</span><h4>CertificateTracePresenter</h4><p>Class + <code>coerce()</code> + <code>to_s_csr</code>.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 08</span><h4>PKINIT hook + ESC1 lab</h4><p>Wiring the certificate hook; ADCS ESC1 validation.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 09</span><h4>kerberos_login integration</h4><p>Second module integration.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 10</span><h4>CertificateTracePresenter RSpec</h4><p>14 examples — OpenSSL · DER · SHA-256 · CSR.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 10</span><h4>CertificateTracePresenter RSpec</h4><p>14 examples - OpenSSL · DER · SHA-256 · CSR.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 11</span><h4>Full lab integration tests</h4><p>End-to-end runs across both presenters.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 12</span><h4>Final wrap-up</h4><p>Docs, PR polish, deliverables write-up.</p></div>
                 </div>

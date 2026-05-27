@@ -436,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const recipient = 'bluedevil5177@gmail.com';
             const subject = encodeURIComponent(`[Portfolio] ${data.subject}`);
             const body = encodeURIComponent(
-                `${data.message}\n\n— ${data.name} (${data.email})`
+                `${data.message}\n\n- ${data.name} (${data.email})`
             );
             window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
 

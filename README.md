@@ -61,7 +61,7 @@ git clone https://github.com/Pushpenderrathore/pushpenderrathore.github.io/
 cd pushpenderrathore.github.io
 ```
 3️⃣ Run the Website
-Open the file index.html directly in your browser — that’s it 🎉
+Open the file index.html directly in your browser - that’s it 🎉
 You’ll see your personal portfolio running locally
 
 ---
