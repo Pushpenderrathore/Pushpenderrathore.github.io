@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pushpender Singh Rathore - CV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+<style>
+:root {
+    --ink: #111;
+    --ink-soft: #2a2a2a;
+    --muted: #5a5a5a;
+    --rule: #cfcfcf;
+    --accent: #0b6e7a;
+    --bg: #fff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+    background: #ececec;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+}
+.page {
+    max-width: 800px;
+    margin: 24px auto;
+    background: var(--bg);
+    padding: 38px 46px 42px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    font-size: 10.5pt;
+    line-height: 1.45;
+    color: var(--ink-soft);
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 16px;
+}
+.identity h1 {
+    font-size: 26pt;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+.identity .role {
+    font-size: 11.5pt;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 2px;
+}
+.identity .location {
+    font-size: 9.5pt;
+    color: var(--muted);
+}
+.contact {
+    font-size: 9pt;
+    color: var(--ink-soft);
+    text-align: right;
+    line-height: 1.7;
+}
+.contact a { color: var(--ink-soft); text-decoration: none; }
+.contact a:hover { color: var(--accent); }
+.contact .label {
+    color: var(--muted);
+    font-weight: 500;
+    margin-right: 6px;
+}
+.summary {
+    font-size: 10pt;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    line-height: 1.55;
+}
+.summary strong { color: var(--ink); font-weight: 600; }
+section { margin-bottom: 14px; }
+h2 {
+    font-size: 11pt;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 3px;
+    margin-bottom: 8px;
+}
+.entry {
+    margin-bottom: 8px;
+    page-break-inside: avoid;
+}
+.entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 1px;
+}
+.entry-title {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 10.5pt;
+}
+.entry-meta {
+    font-size: 9pt;
+    color: var(--muted);
+    white-space: nowrap;
+    font-weight: 500;
+}
+.entry-sub {
+    font-size: 9.5pt;
+    color: var(--muted);
+    margin-bottom: 3px;
+    font-style: italic;
+}
+.entry-body, .entry-body li {
+    font-size: 9.8pt;
+    color: var(--ink-soft);
+    line-height: 1.5;
+}
+.entry-body ul { padding-left: 16px; }
+.entry-body li { margin-bottom: 2px; }
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+.skills-block {
+    margin-bottom: 6px;
+}
+.skills-label {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 9.8pt;
+    display: inline;
+}
+.skills-list {
+    color: var(--ink-soft);
+    font-size: 9.8pt;
+    display: inline;
+}
+.cert-list, .profile-list {
+    list-style: none;
+    padding: 0;
+    font-size: 9.8pt;
+}
+.cert-list li { margin-bottom: 2px; }
+.profile-list li { margin-bottom: 1.5px; }
+.profile-list .label {
+    display: inline-block;
+    width: 78px;
+    color: var(--muted);
+    font-weight: 500;
+}
+.profile-list a {
+    color: var(--ink-soft);
+    text-decoration: none;
+}
+.profile-list a:hover { color: var(--accent); }
+
+.print-banner {
+    max-width: 800px;
+    margin: 18px auto 0;
+    padding: 10px 14px;
+    background: #fff8e1;
+    border: 1px solid #f0d97a;
+    border-radius: 6px;
+    font-size: 9.5pt;
+    color: #5b4a13;
+    line-height: 1.5;
+}
+.print-banner code {
+    background: rgba(0,0,0,0.06);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 9pt;
+}
+
+@media print {
+    html, body { background: #fff; }
+    .page {
+        margin: 0; box-shadow: none; max-width: none;
+        padding: 14mm 16mm;
+    }
+    .print-banner { display: none; }
+    a { color: inherit; text-decoration: none; }
+    @page { size: A4; margin: 0; }
+}
+</style>
+</head>
+<body>
+
+<div class="print-banner">
+    To save as PDF: hit <strong>&#8984;P</strong>, set Destination to <strong>Save as PDF</strong>, and save the file at <code>assets/CV.pdf</code>. This banner is hidden in print output.
+</div>
+
+<div class="page">
+
+<header>
+    <div class="identity">
+        <h1>Pushpender Singh Rathore</h1>
+        <div class="role">Cybersecurity Analyst &middot; Malware Researcher &middot; GSoC 2026 @ Metasploit</div>
+        <div class="location">Bahal, Haryana, India &middot; IST (GMT +5:30)</div>
+    </div>
+    <div class="contact">
+        <div><span class="label">Email</span><a href="mailto:bluedevil5177@gmail.com">bluedevil5177@gmail.com</a></div>
+        <div><span class="label">Phone</span>+91 7300301634</div>
+        <div><span class="label">GitHub</span><a href="https://github.com/Pushpenderrathore">github.com/Pushpenderrathore</a></div>
+        <div><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/pushpender-singh-rathore-72466a260/">in/pushpender-singh-rathore</a></div>
+        <div><span class="label">Portfolio</span><a href="https://pushpenderrathore.github.io/">pushpenderrathore.github.io</a></div>
+    </div>
+</header>
+
+<p class="summary">
+    Second-year B.Tech Computer Science student at BRCM CET focused on <strong>offensive security research</strong>, <strong>malware and botnet analysis</strong>, and <strong>low-level / systems programming</strong> in C, C++, Assembly, and Python. <strong>GSoC 2026 contributor</strong> at the Metasploit Framework (Rapid7) building inline tracing presenters for Kerberos tickets and X.509 certificates. Hands-on experience across Active Directory abuse, ADCS ESC1-ESC16 exploitation, and reverse-engineering tooling.
+</p>
+
+<section>
+    <h2>Education</h2>
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">B.Tech, Computer Science &amp; Engineering</span>
+            <span class="entry-meta">Current &middot; 2nd year</span>
+        </div>
+        <div class="entry-sub">BRCM College of Engineering &amp; Technology, Bahal, Haryana</div>
+        <div class="entry-body">Coursework and self-directed study in systems programming, networks, operating systems, and applied cryptography.</div>
+    </div>
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">RSCIT Computer Diploma</span>
+            <span class="entry-meta">Completed</span>
+        </div>
+        <div class="entry-sub">Rajasthan State Certificate in IT &middot; Government of Rajasthan</div>
+    </div>
+</section>
+
+<section>
+    <h2>Experience &amp; Open Source</h2>
+
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">GSoC 2026 Contributor &mdash; Metasploit Framework (Rapid7)</span>
+            <span class="entry-meta">Jun &ndash; Aug 2026 (175 hrs)</span>
+        </div>
+        <div class="entry-sub">Mentors: @jheysel-r7 (primary), @zeroSteiner (co-mentor)</div>
+        <div class="entry-body">
+            <ul>
+                <li>Designing and implementing <strong>KerberosTicketTracePresenter</strong> and <strong>CertificateTracePresenter</strong>: two new inline tracing presenters that bring HttpTrace-style transparency to Kerberos tickets and X.509 certificates inside msfconsole.</li>
+                <li>Both presenter classes prototyped against AS-REQ / TGS-REQ flows in a Windows Server 2022 + ADCS lab on TEST.LOCAL; 13 + 14 RSpec examples written.</li>
+                <li>Modelled on the existing <code>HttpTrace</code> architecture and the <code>krb5_ccache_presenter.rb</code> precedent for upstream-merge consistency.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">Cybersecurity Internship &mdash; Unified Mentor &amp; ICAT</span>
+            <span class="entry-meta">Ongoing</span>
+        </div>
+        <div class="entry-body">Applied training in network security, vulnerability analysis, and ethical-hacking fundamentals; blockchain / distributed systems coursework at ICAT.</div>
+    </div>
+
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">Open-Source Contributor &mdash; BlackArch Linux</span>
+            <span class="entry-meta">Active</span>
+        </div>
+        <div class="entry-body">Working with the BlackArch penetration-testing distribution: package work, tool packaging, and offensive-security tooling research in a controlled environment.</div>
+    </div>
+</section>
+
+<section>
+    <h2>Featured Projects</h2>
+
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">PyScanner &mdash; Network Security Scanner</span>
+            <span class="entry-meta">Python / C++</span>
+        </div>
+        <div class="entry-body">v10 with ~47 features. Includes a full C++ port with <strong>zero-copy kernel TX</strong> and a <strong>stateless HMAC ISN</strong> architecture. Roughly 37% Nmap feature parity with genuine advantages in batch transmission, offline CVE lookup, and the stateless ISN design.</div>
+    </div>
+
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">Contactsd &mdash; Encrypted Contacts Daemon</span>
+            <span class="entry-meta">C / Python</span>
+        </div>
+        <div class="entry-body">Secure CLI-based contacts manager. <strong>AES-256-GCM</strong> for confidentiality / integrity / authentication; keys derived from a master password via <strong>PBKDF2-HMAC-SHA256</strong> (150k iterations, per-record salt). All crypto via OpenSSL.</div>
+    </div>
+
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">Venice Firewall &mdash; AI-Assisted Network Filter</span>
+            <span class="entry-meta">Python / C / Shell</span>
+        </div>
+        <div class="entry-body">Integrates offline AI models and online AI services to analyse traffic patterns, detect anomalies, and resolve filtering decisions automatically. Real-time adaptive filtering with admin mail messaging.</div>
+    </div>
+
+    <div class="entry">
+        <div class="entry-head">
+            <span class="entry-title">MAC Address Randomizer Daemon</span>
+            <span class="entry-meta">Python / Shell</span>
+        </div>
+        <div class="entry-body">Privacy-focused systemd service that periodically randomises MAC addresses for all active interfaces via <code>macchanger</code>. Arch / Debian / Fedora support, dynamic interface detection, and a kill-switch that blocks the network if spoofing fails.</div>
+    </div>
+</section>
+
+<section>
+    <h2>Technical Skills</h2>
+    <div class="two-col">
+        <div>
+            <div class="skills-block"><span class="skills-label">Languages: </span><span class="skills-list">Ruby, Python, C / C++, Bash, x86 / x86-64 Assembly</span></div>
+            <div class="skills-block"><span class="skills-label">Reverse Engineering: </span><span class="skills-list">Ghidra, gdb, Binary Ninja, objdump, xxd, YARA</span></div>
+            <div class="skills-block"><span class="skills-label">Pentesting: </span><span class="skills-list">Metasploit, Nmap, Wireshark, Burp Suite, Impacket, Rubeus</span></div>
+            <div class="skills-block"><span class="skills-label">CTF Platforms: </span><span class="skills-list">HackTheBox, TryHackMe, OverTheWire, WeChall</span></div>
+        </div>
+        <div>
+            <div class="skills-block"><span class="skills-label">AD &amp; Auth: </span><span class="skills-list">Kerberos, ADCS ESC1-ESC16, Kerberoasting, Pass-the-Hash, Golden / Silver Ticket</span></div>
+            <div class="skills-block"><span class="skills-label">Cryptography: </span><span class="skills-list">OpenSSL, ASN.1, DER / PEM, X.509, AES-GCM, PBKDF2</span></div>
+            <div class="skills-block"><span class="skills-label">ML / Data: </span><span class="skills-list">PyTorch, TensorFlow, Keras, scikit-learn, NumPy, Pandas, Transformers, Ollama</span></div>
+            <div class="skills-block"><span class="skills-label">Tooling: </span><span class="skills-list">Git, RSpec, pytest, systemd, Kali Linux, BlackArch</span></div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>Certifications</h2>
+    <ul class="cert-list">
+        <li>&middot; Cybersecurity Training &mdash; Unified Mentor</li>
+        <li>&middot; Machine Learning &mdash; Cisco Networking Academy</li>
+        <li>&middot; Blockchain &mdash; ICAT</li>
+        <li>&middot; RSCIT Computer Diploma &mdash; Government of Rajasthan</li>
+    </ul>
+</section>
+
+<section>
+    <h2>Profiles &amp; Languages</h2>
+    <div class="two-col">
+        <ul class="profile-list">
+            <li><span class="label">GitHub</span><a href="https://github.com/Pushpenderrathore">Pushpenderrathore</a></li>
+            <li><span class="label">Metasploit fork</span><a href="https://github.com/Pushpenderrathore/metasploit-framework">Pushpenderrathore/metasploit-framework</a></li>
+            <li><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/pushpender-singh-rathore-72466a260/">pushpender-singh-rathore</a></li>
+            <li><span class="label">Portfolio</span><a href="https://pushpenderrathore.github.io/">pushpenderrathore.github.io</a></li>
+        </ul>
+        <ul class="profile-list">
+            <li><span class="label">WeChall</span>rootanonymous</li>
+            <li><span class="label">X (Twitter)</span>@pushpender5177</li>
+            <li><span class="label">Slack</span>@Pushpender (Metasploit)</li>
+            <li><span class="label">Languages</span>English, Hindi</li>
+        </ul>
+    </div>
+</section>
+
+</div>
+
+</body>
+</html>
