@@ -1608,6 +1608,28 @@ header.scrolled {
     box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
 }
 
+.cert-btn-pending {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px dashed var(--text-muted);
+    cursor: not-allowed;
+    font-weight: 500;
+}
+
+.cert-btn-pending:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.status-badge {
+    cursor: default;
+}
+
+.status-badge:hover {
+    transform: none;
+    box-shadow: var(--shadow-card);
+}
+
 @media (max-width: 1024px) {
     .projects-grid {
         grid-template-columns: repeat(2, 1fr);

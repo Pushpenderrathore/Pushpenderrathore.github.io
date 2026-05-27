@@ -14,12 +14,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Professions for typewriter effect
     const professions = [
-        'Full-Stack Developer',
-        'Frontend Engineer', 
-        'Backend Developer',
-        'UI/UX Enthusiast',
-        'Problem Solver',
-        'Tech Innovator'
+        'Cybersecurity Analyst',
+        'Malware Researcher',
+        'Reverse Engineer',
+        'CTF Player',
+        'Offensive Security Enthusiast',
+        'Low-level Programmer'
     ];
 
     // Typewriter Effect
@@ -34,11 +34,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentProfession = professions[professionIndex];
         
         if (isDeleting) {
-            heroSubtitle.innerHTML = "I'm a " + currentProfession.substring(0, charIndex - 1) + '<span class="cursor">|</span>';
+            heroSubtitle.innerHTML = currentProfession.substring(0, charIndex - 1) + '<span class="cursor">|</span>';
             charIndex--;
             typingSpeed = 75;
         } else {
-            heroSubtitle.innerHTML = "I'm a " + currentProfession.substring(0, charIndex + 1) + '<span class="cursor">|</span>';
+            heroSubtitle.innerHTML = currentProfession.substring(0, charIndex + 1) + '<span class="cursor">|</span>';
             charIndex++;
             typingSpeed = 150;
         }
@@ -129,9 +129,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const id = '#' + activeSection.getAttribute('id');
             updateActiveNavLink(id);
             
-            // Update URL hash
-            if (history.pushState) {
-                history.pushState(null, null, id);
+            // Update URL hash without polluting browser history
+            if (history.replaceState) {
+                history.replaceState(null, '', id);
             }
         } else if (scrollPosition < 100) {
             updateActiveNavLink('#home');
@@ -225,17 +225,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = `notification notification-${type}`;
+        const iconByType = {
+            info: 'info-circle',
+            success: 'check-circle',
+            error: 'exclamation-circle'
+        };
+        const colorByType = {
+            info: 'var(--accent-primary)',
+            success: '#10b981',
+            error: '#ef4444'
+        };
         notification.innerHTML = `
-            <i class="fas fa-${type === 'info' ? 'info-circle' : 'check-circle'}"></i>
+            <i class="fas fa-${iconByType[type] || iconByType.info}"></i>
             <span>${message}</span>
         `;
-        
+
         // Add notification styles
         Object.assign(notification.style, {
             position: 'fixed',
             top: '20px',
             right: '20px',
-            background: type === 'info' ? 'var(--accent-primary)' : '#10b981',
+            background: colorByType[type] || colorByType.info,
             color: 'white',
             padding: '1rem 1.5rem',
             borderRadius: '12px',
@@ -418,13 +428,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            // Simulate form submission (replace with actual API call)
-            console.log('Form submitted:', data);
+            // Open the user's mail client pre-filled. Replace with a real backend
+            // (Formspree, EmailJS, etc.) when you have one configured.
+            const recipient = 'bluedevil5177@gmail.com';
+            const subject = encodeURIComponent(`[Portfolio] ${data.subject}`);
+            const body = encodeURIComponent(
+                `${data.message}\n\n— ${data.name} (${data.email})`
+            );
+            window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
 
-            // Show success message
-            showNotification('Thank you for your message! I will get back to you soon.', 'success');
-
-            // Reset form
+            showNotification('Opening your email client…', 'success');
             this.reset();
         });
     }
@@ -477,32 +490,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(style);
 });
 
-// Utility Functions
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    }
-}
-
 // Performance monitoring
 if ('performance' in window) {
     window.addEventListener('load', () => {
@@ -522,13 +509,3 @@ window.addEventListener('error', (event) => {
 window.addEventListener('unhandledrejection', (event) => {
     console.error('Unhandled Promise Rejection:', event.reason);
 });
-
-// Service Worker Registration (optional)
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        // Uncomment if you have a service worker
-        // navigator.serviceWorker.register('/sw.js')
-        //     .then(registration => console.log('SW registered'))
-        //     .catch(error => console.log('SW registration failed'));
-    });
-}

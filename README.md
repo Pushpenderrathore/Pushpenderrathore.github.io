@@ -1,4 +1,4 @@
-![Logo](protfile/images/pf.png)
+![Logo](images/pf.png)
 
 # 🌐 Modern Portfolio Website
 
@@ -30,7 +30,7 @@ Or access the online demo here: [Live Demo](https://dazzling-daffodil-0180fd.net
 You can easily customize the project by:
 - Editing your name, bio, and project details in `index.html`
 - Changing theme colors and fonts in `style.css`
-- Replacing the logo in `profile/images/logo.png`
+- Replacing the logo image in `images/`
 - Adjusting typing speed, animation timing, and scroll effects in `script.js`
 
 > 💡 Tip: Update the meta description and keywords in the `<head>` tag of `index.html` for better SEO.
