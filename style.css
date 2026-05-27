@@ -1621,15 +1621,6 @@ header.scrolled {
     box-shadow: none;
 }
 
-.status-badge {
-    cursor: default;
-}
-
-.status-badge:hover {
-    transform: none;
-    box-shadow: var(--shadow-card);
-}
-
 @media (max-width: 1024px) {
     .projects-grid {
         grid-template-columns: repeat(2, 1fr);

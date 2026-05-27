@@ -64,29 +64,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Smooth Scroll Navigation
     function smoothScroll(event) {
-        event.preventDefault();
         const targetId = this.getAttribute('href');
-        
-        if (targetId && targetId.startsWith('#')) {
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                const headerHeight = header?.offsetHeight || 80;
-                const offsetTop = targetElement.offsetTop - headerHeight;
-                
-                window.scrollTo({
-                    top: offsetTop,
-                    behavior: 'smooth'
-                });
 
-                // Close mobile menu
-                if (navMenu?.classList.contains('active')) {
-                    toggleMobileMenu();
-                }
+        // Only intercept same-page anchor links; let cross-page links navigate normally.
+        if (!targetId || !targetId.startsWith('#')) {
+            return;
+        }
 
-                // Update active state
-                updateActiveNavLink(targetId);
+        event.preventDefault();
+        const targetElement = document.querySelector(targetId);
+
+        if (targetElement) {
+            const headerHeight = header?.offsetHeight || 80;
+            const offsetTop = targetElement.offsetTop - headerHeight;
+
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+
+            // Close mobile menu
+            if (navMenu?.classList.contains('active')) {
+                toggleMobileMenu();
             }
+
+            // Update active state
+            updateActiveNavLink(targetId);
         }
     }
 

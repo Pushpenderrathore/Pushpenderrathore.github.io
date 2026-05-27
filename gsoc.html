@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSoC 2026 — Pushpender Singh Rathore · Metasploit Framework</title>
+    <meta name="description" content="Pushpender Singh Rathore's Google Summer of Code 2026 journey contributing to the Metasploit Framework. Proposal, weekly updates, and project deliverables.">
+    <meta name="keywords" content="GSoC 2026, Google Summer of Code, Metasploit, Pushpender Singh Rathore, cybersecurity, open source, Rapid7, penetration testing">
+    <meta name="author" content="Pushpender Singh Rathore">
+    <link rel="canonical" href="https://pushpenderrathore.github.io/gsoc.html">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="GSoC 2026 — Pushpender Singh Rathore · Metasploit">
+    <meta property="og:description" content="My Google Summer of Code 2026 journey contributing to the Metasploit Framework.">
+    <meta property="og:image" content="images/img.jpg">
+    <meta property="og:url" content="https://pushpenderrathore.github.io/gsoc.html">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .gsoc-hero { padding-top: 9rem; padding-bottom: 4rem; }
+        .gsoc-eyebrow {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.18em;
+            color: var(--accent-primary);
+            background: var(--border-accent);
+            padding: 0.55rem 1.1rem;
+            border-radius: var(--border-radius-pill);
+            border: 1px solid var(--border-accent);
+            margin-bottom: 1.5rem;
+        }
+        .gsoc-hero h1 {
+            font-size: clamp(2.4rem, 6vw, 4.5rem);
+            font-weight: 800; line-height: 1.1; margin-bottom: 1.25rem;
+        }
+        .gsoc-hero .subtitle {
+            font-size: 1.4rem; color: var(--text-secondary);
+            font-weight: 500; margin-bottom: 1.75rem;
+        }
+        .gsoc-hero .hero-desc { max-width: 760px; margin-bottom: 2.5rem; }
+
+        .gsoc-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1rem; max-width: 960px; margin-bottom: 2.5rem;
+        }
+        .gsoc-meta-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.2rem 1.3rem;
+            backdrop-filter: blur(20px);
+        }
+        .gsoc-meta-item .meta-label {
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em;
+            color: var(--text-muted); display: block; margin-bottom: 0.45rem;
+        }
+        .gsoc-meta-item .meta-value {
+            font-size: 1.05rem; font-weight: 600; color: var(--text-primary);
+        }
+        .gsoc-meta-item.tbd .meta-value {
+            color: var(--text-muted); font-style: italic; font-weight: 500;
+        }
+
+        .timeline { position: relative; margin-top: 3rem; padding-left: 2rem; }
+        .timeline::before {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 0.5rem;
+            width: 2px; background: var(--accent-gradient); opacity: 0.4;
+        }
+        .timeline-item { position: relative; padding-bottom: 2rem; }
+        .timeline-item::before {
+            content: ''; position: absolute;
+            left: -1.85rem; top: 0.4rem;
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--bg-primary);
+            border: 2px solid var(--accent-primary);
+        }
+        .timeline-item.current::before {
+            background: var(--accent-primary);
+            box-shadow: 0 0 0 6px rgba(0, 212, 255, 0.2);
+        }
+        .timeline-item h4 {
+            color: var(--accent-primary); font-size: 1.1rem; margin-bottom: 0.3rem;
+        }
+        .timeline-item .timeline-period {
+            font-size: 0.85rem; color: var(--text-muted);
+            margin-bottom: 0.5rem; display: block;
+        }
+        .timeline-item p { color: var(--text-secondary); font-size: 0.95rem; }
+
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem; margin-top: 2rem;
+        }
+        .update-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.6rem 1.75rem;
+            backdrop-filter: blur(20px);
+            transition: var(--transition-smooth);
+        }
+        .update-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-accent);
+            box-shadow: var(--shadow-card);
+        }
+        .update-card .update-week {
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.18em;
+            color: var(--accent-primary); font-weight: 700;
+            display: block; margin-bottom: 0.55rem;
+        }
+        .update-card h4 {
+            font-size: 1.08rem; margin-bottom: 0.55rem; color: var(--text-primary);
+        }
+        .update-card p { font-size: 0.92rem; color: var(--text-secondary); }
+        .update-card.pending { opacity: 0.55; }
+        .update-card.pending h4 { color: var(--text-muted); }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem; margin-top: 2rem;
+        }
+        .resource-card {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 1.2rem 1.4rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            color: var(--text-primary); text-decoration: none;
+            transition: var(--transition-smooth);
+        }
+        .resource-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-accent);
+            background: rgba(0, 212, 255, 0.05);
+        }
+        .resource-card i {
+            font-size: 1.55rem; color: var(--accent-primary); flex-shrink: 0;
+        }
+        .resource-card .resource-label {
+            font-weight: 600; display: block; margin-bottom: 0.15rem;
+        }
+        .resource-card .resource-url {
+            font-size: 0.83rem; color: var(--text-muted);
+        }
+
+        .tbd-tag {
+            display: inline-block;
+            font-size: 0.65rem; font-weight: 700;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed var(--text-muted);
+            padding: 0.18rem 0.55rem;
+            border-radius: 4px;
+            margin-left: 0.55rem; vertical-align: middle;
+        }
+
+        .proposal-box {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-left: 3px solid var(--accent-primary);
+            border-radius: var(--border-radius);
+            padding: 1.6rem 1.9rem;
+            margin-top: 1.5rem;
+            backdrop-filter: blur(20px);
+        }
+        .proposal-box h4 {
+            color: var(--accent-primary); margin-bottom: 0.7rem; font-size: 1.05rem;
+        }
+        .proposal-box p {
+            color: var(--text-secondary); font-size: 1rem; line-height: 1.8;
+        }
+
+        .tech-pill-list {
+            display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.25rem;
+        }
+        .tech-pill {
+            background: var(--border-accent);
+            border: 1px solid var(--border-accent);
+            color: var(--accent-primary);
+            padding: 0.4rem 0.95rem;
+            border-radius: var(--border-radius-pill);
+            font-size: 0.85rem; font-weight: 500;
+        }
+
+        .section-intro {
+            color: var(--text-secondary); max-width: 760px;
+            margin-top: -0.5rem; margin-bottom: 0.5rem;
+        }
+
+        .tech-stack-heading {
+            margin-top: 2.5rem; color: var(--text-primary);
+            font-size: 1.15rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">solitude_coder<span class="brand-dot">.</span></div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Portfolio</a></li>
+                <li><a href="#program" class="nav-link">Program</a></li>
+                <li><a href="#project" class="nav-link">Project</a></li>
+                <li><a href="#timeline" class="nav-link">Timeline</a></li>
+                <li><a href="#updates" class="nav-link">Updates</a></li>
+                <li><a href="#resources" class="nav-link">Resources</a></li>
+                <!-- TODO: replace placeholder URL with your real security blog URL -->
+                <li><a href="https://example.com/your-security-blog" target="_blank" rel="noopener" class="nav-link">Blog</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="index.html" class="cta-btn">Back to Portfolio</a>
+            </div>
+            <div class="hamburger"><span></span><span></span><span></span></div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="section gsoc-hero">
+            <div class="container">
+                <span class="gsoc-eyebrow">
+                    <i class="fas fa-code-branch"></i> Google Summer of Code 2026
+                </span>
+                <h1 class="title">Contributing to the <span class="accent">Metasploit Framework</span></h1>
+                <p class="subtitle">A 2026 GSoC journey by Pushpender Singh Rathore</p>
+                <p class="hero-desc">
+                    Welcome to my Google Summer of Code 2026 blog. This page documents my work, weekly progress, and learning notes as I contribute to the Metasploit Framework — the world's most widely-used open-source penetration testing platform, maintained by Rapid7 and the global security community.
+                </p>
+
+                <div class="gsoc-meta">
+                    <div class="gsoc-meta-item">
+                        <span class="meta-label">Organization</span>
+                        <span class="meta-value">Metasploit (Rapid7)</span>
+                    </div>
+                    <div class="gsoc-meta-item">
+                        <span class="meta-label">Program</span>
+                        <span class="meta-value">GSoC 2026</span>
+                    </div>
+                    <div class="gsoc-meta-item tbd">
+                        <span class="meta-label">Project</span>
+                        <span class="meta-value">To be announced</span>
+                    </div>
+                    <div class="gsoc-meta-item tbd">
+                        <span class="meta-label">Mentor</span>
+                        <span class="meta-value">To be announced</span>
+                    </div>
+                </div>
+
+                <div class="hero-actions">
+                    <a class="hire-btn primary" href="#project">
+                        <span>Read the Proposal</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a class="hire-btn secondary" href="#updates">
+                        <i class="fas fa-rss"></i>
+                        <span>Weekly Updates</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="program" class="section about">
+            <div class="container">
+                <h2 class="section-title">About the Program</h2>
+                <div class="services-content">
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <div class="service-icon"><i class="fab fa-google"></i></div>
+                            <h3>Google Summer of Code</h3>
+                            <p>GSoC is a global, online program focused on bringing new contributors into open-source software development. Contributors work with a mentor organisation on a 12+ week programming project, gain real-world experience, and ship production-grade code that lands in tools used by millions.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-icon"><i class="fas fa-bug"></i></div>
+                            <h3>Metasploit Framework</h3>
+                            <p>Metasploit is the leading open-source penetration testing platform, written primarily in Ruby and maintained by Rapid7 alongside hundreds of community contributors. It powers exploit development, post-exploitation, payload generation, and red-team operations worldwide.</p>
+                        </div>
+                        <div class="service-card">
+                            <div class="service-icon"><i class="fas fa-user-graduate"></i></div>
+                            <h3>My Goal</h3>
+                            <p>To contribute meaningful, well-tested code to a framework I use daily, deepen my Ruby and offensive-security skills, and build long-term relationships with the Rapid7 maintainers and the wider open-source security community.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="project" class="section">
+            <div class="container">
+                <h2 class="section-title">The Project <span class="tbd-tag">Details pending</span></h2>
+                <p class="section-intro">This section will be expanded with the official project title, abstract, deliverables, and a link to the accepted proposal once everything is finalised with my mentors. The content below is placeholder copy.</p>
+
+                <div class="proposal-box">
+                    <h4>Proposal Abstract <span class="tbd-tag">Placeholder</span></h4>
+                    <p>
+                        My GSoC 2026 work with Metasploit will focus on extending the framework's capabilities in a focused area of offensive security tooling. The exact scope — whether new modules, payload improvements, post-exploitation tooling, the RPC / automation surface, or developer-experience improvements — will be confirmed with my mentors during the Community Bonding period and documented here in full.
+                    </p>
+                </div>
+
+                <div class="about-highlights" style="margin-top: 2rem;">
+                    <div class="highlight">
+                        <i class="fas fa-bullseye"></i>
+                        <div>
+                            <h4>Project Title</h4>
+                            <p><em>To be announced after Community Bonding.</em></p>
+                        </div>
+                    </div>
+                    <div class="highlight">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <h4>Mentor(s)</h4>
+                            <p><em>To be announced.</em></p>
+                        </div>
+                    </div>
+                    <div class="highlight">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Project Size</h4>
+                            <p><em>Medium or Large — to be confirmed.</em></p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="tech-stack-heading">Likely Tech Stack</h3>
+                <div class="tech-pill-list">
+                    <span class="tech-pill">Ruby</span>
+                    <span class="tech-pill">Metasploit Framework</span>
+                    <span class="tech-pill">Git / GitHub</span>
+                    <span class="tech-pill">RSpec</span>
+                    <span class="tech-pill">YAML</span>
+                    <span class="tech-pill">Linux</span>
+                    <span class="tech-pill">Networking / Protocols</span>
+                    <span class="tech-pill">Assembly / Shellcode</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="timeline" class="section">
+            <div class="container">
+                <h2 class="section-title">Timeline</h2>
+                <p class="section-intro">The standard GSoC 2026 schedule. Exact dates may shift slightly for individual projects since GSoC supports flexible 12–22 week timelines.</p>
+
+                <div class="timeline">
+                    <div class="timeline-item current">
+                        <h4>Community Bonding</h4>
+                        <span class="timeline-period">May – June 2026</span>
+                        <p>Getting familiar with the Metasploit codebase, contributor workflow, and code-review conventions. Meeting mentors, refining the project plan, and setting up the development environment.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Coding Phase 1</h4>
+                        <span class="timeline-period">June – mid-July 2026</span>
+                        <p>Initial implementation — designing module changes, writing the core code, and getting the first set of patches up for upstream review.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Midterm Evaluation</h4>
+                        <span class="timeline-period">Mid-July 2026</span>
+                        <p>Reviewing progress with mentors against the proposal milestones — demo, written report, and course-correction where needed.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Coding Phase 2</h4>
+                        <span class="timeline-period">Mid-July – August 2026</span>
+                        <p>Polish, hardening, documentation, RSpec coverage, and integration testing. Iterating on mentor feedback and getting patches merged upstream.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Final Submission</h4>
+                        <span class="timeline-period">Late August / early September 2026</span>
+                        <p>Final code submission, deliverables write-up, blog series wrap-up, and final mentor evaluation.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>Results Announcement</h4>
+                        <span class="timeline-period">November 2026</span>
+                        <p>GSoC 2026 final results are made public by Google. Project archived and contribution continues outside the program.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="updates" class="section">
+            <div class="container">
+                <h2 class="section-title">Weekly Updates <span class="tbd-tag">Live blog</span></h2>
+                <p class="section-intro">Weekly notes from the coding period — what I shipped, what blocked me, and what I learned. Updates will be published here every Sunday during GSoC.</p>
+
+                <div class="updates-grid">
+                    <div class="update-card">
+                        <span class="update-week">Community Bonding</span>
+                        <h4>Onboarding &amp; environment setup</h4>
+                        <p>Notes from setting up the Metasploit development environment, reading the contributor guidelines, and first conversations with mentors. <em>(Full post coming soon.)</em></p>
+                    </div>
+                    <div class="update-card pending"><span class="update-week">Week 01</span><h4>Coming soon</h4><p>Project kickoff and first patch.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 02</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 03</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 04</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 05</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 06</span><h4>Midterm reflection</h4><p>Where things stand at the midterm evaluation.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 07</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 08</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 09</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 10</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 11</span><h4>Coming soon</h4><p>Coding update.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 12</span><h4>Final wrap-up</h4><p>Deliverables, retrospective, and what comes next.</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="resources" class="section">
+            <div class="container">
+                <h2 class="section-title">Resources &amp; Links</h2>
+                <div class="resource-grid">
+                    <a class="resource-card" href="https://summerofcode.withgoogle.com/" target="_blank" rel="noopener">
+                        <i class="fab fa-google"></i>
+                        <div>
+                            <span class="resource-label">Google Summer of Code</span>
+                            <span class="resource-url">summerofcode.withgoogle.com</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://www.metasploit.com/" target="_blank" rel="noopener">
+                        <i class="fas fa-bug"></i>
+                        <div>
+                            <span class="resource-label">Metasploit Framework</span>
+                            <span class="resource-url">metasploit.com</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework" target="_blank" rel="noopener">
+                        <i class="fab fa-github"></i>
+                        <div>
+                            <span class="resource-label">Metasploit on GitHub</span>
+                            <span class="resource-url">rapid7/metasploit-framework</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://docs.metasploit.com/" target="_blank" rel="noopener">
+                        <i class="fas fa-book"></i>
+                        <div>
+                            <span class="resource-label">Metasploit Docs</span>
+                            <span class="resource-url">docs.metasploit.com</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/Pushpenderrathore" target="_blank" rel="noopener">
+                        <i class="fab fa-github"></i>
+                        <div>
+                            <span class="resource-label">My GitHub</span>
+                            <span class="resource-url">github.com/Pushpenderrathore</span>
+                        </div>
+                    </a>
+                    <!-- TODO: replace placeholder URL with your real security blog URL -->
+                    <a class="resource-card" href="https://example.com/your-security-blog" target="_blank" rel="noopener">
+                        <i class="fas fa-rss"></i>
+                        <div>
+                            <span class="resource-label">My Security Blog</span>
+                            <span class="resource-url">URL to be added</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section contact">
+            <div class="container">
+                <h2 class="section-title">Get In Touch</h2>
+                <div class="contact-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="contact-details">
+                                <h3>Email</h3>
+                                <p>bluedevil5177@gmail.com</p>
+                                <a href="mailto:bluedevil5177@gmail.com">Send Email</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-github"></i></div>
+                            <div class="contact-details">
+                                <h3>GitHub</h3>
+                                <p>Pushpenderrathore</p>
+                                <a href="https://github.com/Pushpenderrathore" target="_blank" rel="noopener">View profile</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-linkedin-in"></i></div>
+                            <div class="contact-details">
+                                <h3>LinkedIn</h3>
+                                <p>Pushpender Singh Rathore</p>
+                                <a href="https://www.linkedin.com/in/pushpender-singh-rathore-72466a260/" target="_blank" rel="noopener">Connect</a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fab fa-whatsapp"></i></div>
+                            <div class="contact-details">
+                                <h3>WhatsApp</h3>
+                                <p>+91 7300301634</p>
+                                <a href="https://wa.me/917300301634" target="_blank" rel="noopener">Message me</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+
+    <footer class="site-footer">
+        <div class="footer-counter">
+            <img src="https://count.getloli.com/@enp7s0d?name=enp7s0d&theme=love-and-deepspace&padding=7&offset=0&align=top&scale=1&pixelated=1&darkmode=auto" alt="enp7s0d visitor counter" />
+        </div>
+    </footer>
+</body>
+</html>
