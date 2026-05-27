@@ -41,11 +41,14 @@ body {
 
 /* Prevent long technical terms (KerberosTicketTracePresenter, file paths, URLs)
    from causing horizontal overflow on mobile */
-p, h1, h2, h3, h4, h5, h6, span, li, td, th, a {
+p, h1, h2, h3, h4, h5, h6, span, li, td, th,
+strong, em, b, i, div {
     overflow-wrap: break-word;
     word-wrap: break-word;
 }
-code {
+/* URLs and code blocks have no whitespace - need to break at any character */
+a, code {
+    overflow-wrap: anywhere;
     word-break: break-word;
 }
 img {
@@ -57,6 +60,12 @@ img {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 2rem;
+    min-width: 0;        /* allow shrink below content inside flex .section */
+    width: 100%;
+}
+
+.section {
+    min-width: 0;        /* same: flex container that won't refuse to shrink */
 }
 
 /* Scrollbar Styling */
@@ -796,11 +805,30 @@ header.scrolled {
     .container {
         padding: 0 1rem;
     }
-    
+
+    header {
+        max-width: 100vw;
+        overflow: hidden;
+    }
+
     .navbar {
         padding: 0 1rem;
-        grid-template-columns: auto auto;
-        gap: 1rem;
+        grid-template-columns: 1fr auto;
+        gap: 0.75rem;
+        width: 100%;
+        max-width: 100vw;
+    }
+
+    .nav-brand {
+        font-size: 1.3rem;
+        min-width: 0;
+    }
+
+    .hamburger {
+        justify-self: end;
+        align-self: center;
+        width: auto;
+        padding: 0.5rem 0.6rem;
     }
     
     .nav-menu {
