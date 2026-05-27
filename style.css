@@ -307,6 +307,7 @@ header.scrolled {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    min-width: 0;       /* grid item must shrink below intrinsic min-content */
 }
 
 .greeting {
@@ -318,7 +319,7 @@ header.scrolled {
     animation: fadeInUp 0.8s ease forwards 0.2s;
 }
 
-.hero-title {
+.title {
     font-size: clamp(3rem, 7vw, 5.5rem);
     font-weight: 900;
     line-height: 1.1;
@@ -336,7 +337,7 @@ header.scrolled {
     position: relative;
 }
 
-.hero-subtitle {
+.subtitle {
     font-size: clamp(1.5rem, 3vw, 2.2rem);
     font-weight: 400;
     color: var(--accent-primary);
@@ -642,6 +643,7 @@ header.scrolled {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    min-width: 0;
 }
 
 .about-description {
@@ -727,8 +729,8 @@ header.scrolled {
 /* Animations */
 
 /* Performance Optimization */
-.hero-title,
-.hero-subtitle,
+.title,
+.subtitle,
 .hero-desc,
 .stat,
 .project-card,
@@ -939,11 +941,11 @@ header.scrolled {
         margin-bottom: 2rem;
     }
     
-    .hero-title {
+    .title {
         font-size: 2.8rem;
     }
     
-    .hero-subtitle {
+    .subtitle {
         font-size: 1.5rem;
     }
     
@@ -974,11 +976,11 @@ header.scrolled {
         padding: 0 0.75rem;
     }
     
-    .hero-title {
+    .title {
         font-size: 2.5rem;
     }
     
-    .hero-subtitle {
+    .subtitle {
         font-size: 1.3rem;
     }
     
@@ -1013,24 +1015,32 @@ header.scrolled {
     }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 360px) {
     .nav-brand {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
-    
-    .hero-title {
-        font-size: 2.2rem;
+
+    .title {
+        font-size: 1.6rem;
     }
-    
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
     .section-title {
-        font-size: 1.8rem;
+        font-size: 1.6rem;
     }
-    
+
     .profile-image,
     .about-img {
         width: 100%;
         max-width: 220px;
         height: auto;
+    }
+
+    .container {
+        padding: 0 0.75rem;
     }
 }
 
