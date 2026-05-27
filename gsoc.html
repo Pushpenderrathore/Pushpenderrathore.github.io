@@ -205,6 +205,68 @@
             margin-top: 2.5rem; color: var(--text-primary);
             font-size: 1.15rem;
         }
+
+        @media (max-width: 768px) {
+            .gsoc-hero { padding-top: 7rem; padding-bottom: 2.5rem; }
+            .gsoc-hero .subtitle { font-size: 1.1rem; }
+            .gsoc-hero .hero-desc { font-size: 0.95rem; }
+            .gsoc-eyebrow {
+                font-size: 0.72rem; letter-spacing: 0.14em;
+                padding: 0.45rem 0.85rem;
+            }
+            .gsoc-meta { gap: 0.7rem; margin-bottom: 1.75rem; }
+            .gsoc-meta-item { padding: 0.95rem 1rem; }
+            .gsoc-meta-item .meta-value { font-size: 0.95rem; }
+
+            .timeline { padding-left: 1.5rem; margin-top: 2rem; }
+            .timeline-item { padding-bottom: 1.5rem; }
+            .timeline-item::before { left: -1.5rem; width: 10px; height: 10px; }
+            .timeline-item.current::before { box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.2); }
+            .timeline-item h4 { font-size: 1rem; }
+            .timeline-item p { font-size: 0.9rem; }
+
+            .updates-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem; margin-top: 1.5rem;
+            }
+            .update-card { padding: 1.25rem 1.4rem; }
+
+            .resource-grid {
+                grid-template-columns: 1fr;
+                gap: 0.9rem; margin-top: 1.5rem;
+            }
+            .resource-card { padding: 1rem 1.2rem; }
+
+            .proposal-box { padding: 1.25rem 1.3rem; }
+            .proposal-box p { font-size: 0.92rem; line-height: 1.7; }
+
+            .tech-pill { font-size: 0.78rem; padding: 0.35rem 0.75rem; }
+            .tech-stack-heading { margin-top: 1.75rem; font-size: 1rem; }
+            .section-intro { font-size: 0.92rem; }
+            .tbd-tag { font-size: 0.6rem; padding: 0.15rem 0.45rem; }
+        }
+
+        @media (max-width: 480px) {
+            .gsoc-hero { padding-top: 6rem; padding-bottom: 2rem; }
+            .gsoc-hero .subtitle { font-size: 1rem; }
+            .gsoc-meta-item { padding: 0.8rem 0.9rem; }
+            .gsoc-meta-item .meta-label { font-size: 0.65rem; }
+            .gsoc-meta-item .meta-value { font-size: 0.88rem; }
+
+            .timeline { padding-left: 1.25rem; }
+            .timeline-item::before { left: -1.25rem; }
+
+            .update-card { padding: 1.1rem 1.2rem; }
+            .update-card h4 { font-size: 1rem; }
+            .update-card p { font-size: 0.88rem; }
+
+            .resource-card { gap: 0.75rem; padding: 0.9rem 1rem; }
+            .resource-card i { font-size: 1.35rem; }
+            .resource-card .resource-label { font-size: 0.92rem; }
+            .resource-card .resource-url { font-size: 0.78rem; }
+
+            .proposal-box { padding: 1.1rem 1.15rem; }
+        }
     </style>
 </head>
 <body>

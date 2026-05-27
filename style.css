@@ -39,6 +39,20 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Prevent long technical terms (KerberosTicketTracePresenter, file paths, URLs)
+   from causing horizontal overflow on mobile */
+p, h1, h2, h3, h4, h5, h6, span, li, td, th, a {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+code {
+    word-break: break-word;
+}
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -813,10 +827,16 @@ header.scrolled {
     }
     
     .nav-link {
-        font-size: 1.5rem;
-        padding: 1rem 2rem;
+        font-size: 1.25rem;
+        padding: 0.75rem 1.5rem;
         text-align: center;
         width: 100%;
+    }
+    .nav-menu {
+        gap: 0.5rem;
+        overflow-y: auto;
+        padding: 5rem 1rem 2rem;
+        justify-content: flex-start;
     }
     
     .nav-cta {
@@ -863,8 +883,16 @@ header.scrolled {
     
     .hire-btn {
         width: 100%;
-        max-width: 250px;
+        max-width: 320px;
         justify-content: center;
+        text-align: center;
+        white-space: normal;
+        line-height: 1.3;
+        padding: 0.9rem 1.2rem;
+        font-size: 0.95rem;
+    }
+    .hire-btn span {
+        white-space: normal;
     }
     
     .profile-image,

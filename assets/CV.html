@@ -194,6 +194,42 @@ h2 {
     a { color: inherit; text-decoration: none; }
     @page { size: A4; margin: 0; }
 }
+
+@media screen and (max-width: 700px) {
+    .page {
+        margin: 0 auto;
+        padding: 22px 18px 26px;
+        font-size: 10pt;
+        box-shadow: none;
+    }
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .identity h1 { font-size: 20pt; }
+    .identity .role { font-size: 10.5pt; }
+    .contact {
+        text-align: left;
+        font-size: 8.8pt;
+        line-height: 1.6;
+    }
+    .contact .label { width: 60px; display: inline-block; }
+    .two-col {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+    .entry-head {
+        flex-direction: column;
+        gap: 1px;
+    }
+    .entry-meta { white-space: normal; }
+    .print-banner {
+        margin: 10px auto 0;
+        padding: 8px 12px;
+        font-size: 9pt;
+    }
+}
 </style>
 </head>
 <body>
