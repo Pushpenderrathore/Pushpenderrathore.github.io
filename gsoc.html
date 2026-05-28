@@ -799,39 +799,69 @@
             var consoleEl = document.getElementById('opConsole');
             var submitBtn = form.querySelector('.op-submit');
 
-            var blob = 'NTI/KlYBQldZEAgFUA8DCAcBXFIaEF4ICAsQTBARHgtLSk4FGR9EVBQMFgdcUQMYBhkRHAVdAQFWHAgXVl9PGUwMBRUBEk1LAlYLTQMVTBAfBQEaVkxdXwBaFz8+CjdBQUBeWUm2xUEjHQ1HHQMBVC0WFAsKG0hdBRkfWgscBBNUAh8RHxxUVgEVGRkBWRxAFxsWUU5QHBkVHEETBQVEC1BHBAkSAwlNV0BHRFCr0xc5CxERE1M9BQsdEQAMUCwSVhQYBAAIHB5QQBoEEw9OVRdHGQNFFw0SAx9SSxUfDgUHEBVGSVFYU0FJTDo6ME5OAxkFWUZRShAIBU5QCwACUgIcCBdERU8WAAgDFQILRAYdFlJXWEQIDAtUAh8RHxxUVgIJERoBFUZYUFFBscdMLg8AFxNQLw1ZGQFFMRcSHBkOHR0dD0xGF0cZA1tIEgMRAk8KGBMSA1RGVhUCEBoVUU5IWkVFRFhQPDdzREIWBAAdTlBADR0EX0wNDUFYDgkVEgBNThwdHQIEHg1JRRcaRQAOBxEATVdIARERB0RUFAwWB1xRAAQOGhFQXyQGEFYUTafDQUJHWU8BBgFBPQwAXg0AWVsSAxECUVUHAgAeSQdbGR4WSUMSHQMaBwBQX1RQSARBVUUhMjdMQxwZFRxfTEYAXg5TWQRBEBwNHBpJUBIEABRSFglIGg4HFU5RLR0BAwUbF1IcTQwaQQcHA08AGgEVEQUIWh0DEQdBEQlMKAYbFQ0VSQVRDAgXVBUbFUwCABAGBAIERFYWCUUSCB0RAE8EERwVHxtEUg4MCQEABxkDARpaUicZDhFFHR5FBgQVHAkMHVQGCRVJF0MZAwEVExdQAQoNHQcMXR0NUgpNTUVWRlAEHRpdUiYjBicXCAwcGxQHXlBAGUpOThQAEgk=';
-            var marker = 'GSOC26::';
+            var BLOB = 'DUmSi4nLEj5hmYZCbC0o/FLztjSBycKVNqSJwYIF6lPYNESwOur5EUOBG8k33hjGY0blQrm/UxRegxIOgFiijjNhaqGml4aH7whgr5KiGyhgFdfn4xJ/9PqidBql9ZzSuqySUMOa1IFV+2RvYAnz382VEqSKXDA41sPYK6ei3+kIMMq8pzMBr4ikdWaFZYeMlcpxXIBUp1F+YH5ox7EwgXYAyMwue0MZ8nOZzCL8Xi2Dq7q+TT+xtXk5i8WmgBKb0qnhYAE7Z89370jMb08sjDlu+upzFuFxSbOJl+yf0MfB/umLuaqUu2Y2CvULzT5Yaf9cQS6dCzRU+WIulq5AQ3h9G2e37xHB2xfnUj2m12mDLkPwPfi60Nic4p/FuBXDNod31Zc1Qj73n00N5onEc9jxoD1gVRMr2DNYzmU1BJvVfkBJUTK1WQ0Cd/nzNwchgCBgjZjU2CDeq0x7bPVSY2b6WfLEcLC5UdI7qfOX/ykQdgVa23BAyupZW8eUiT6ERCLDqo+ncpNJwlBfZiBalYS7HRCMw/GpQBb9JQV4MdiYUU/2S1FocUD4CWqKbdv9dg69FIXo/YlX26dVCoMf16yZLOOOUS4hMVTjW4NL7IGloGCMWXOSX3WBJ4N1C/mwnnEAxxUPjzPkO8cqEkMsG3xbl+8UovJIMz9m87HRsUpKRomJicmdcJGSHr2W5fFsjClU3Qu92jnBBg8MlMQ9tlKcr9U+zC7IrgW7qiJDOz/1DGEjx1PzOdoPlC3xZIf73YzallYznWjXsj05N9rZwVCz2Gz5BdAFyVSonI0IGT+va3V3/v5e0k/yy+eW1Jtw1FkNBq/IAg51gVeK81apMy3zt2TynkFeENtRzL8XvsVR85sBOAmnolGgZsX7GLwAN5sEFRY3QWaMgp7297rGzsGepjYCPjj2/OJaAlA72VXPqpl/6nii1sAdVut9+LbI35s=';
+            var ITER = 250000;
 
-            function xorDecrypt(encB64, key){
-                try {
-                    var enc = atob(encB64);
-                    var bytes = new Uint8Array(enc.length);
-                    for(var i=0; i<enc.length; i++){
-                        bytes[i] = enc.charCodeAt(i) ^ key.charCodeAt(i % key.length);
-                    }
-                    return new TextDecoder('utf-8').decode(bytes);
-                } catch(e){ return ''; }
+            function b64ToBytes(b64){
+                var bin = atob(b64);
+                var out = new Uint8Array(bin.length);
+                for(var i=0; i<bin.length; i++) out[i] = bin.charCodeAt(i);
+                return out;
             }
 
-            form.addEventListener('submit', function(e){
+            async function deriveKey(passphrase, salt){
+                var pkRaw = new TextEncoder().encode(passphrase);
+                var pk = await crypto.subtle.importKey('raw', pkRaw, { name: 'PBKDF2' }, false, ['deriveKey']);
+                return crypto.subtle.deriveKey(
+                    { name: 'PBKDF2', salt: salt, iterations: ITER, hash: 'SHA-256' },
+                    pk,
+                    { name: 'AES-GCM', length: 256 },
+                    false,
+                    ['decrypt']
+                );
+            }
+
+            async function tryDecrypt(passphrase){
+                var buf = b64ToBytes(BLOB);
+                var salt = buf.slice(0, 16);
+                var iv = buf.slice(16, 28);
+                var ct = buf.slice(28);
+                var aesKey = await deriveKey(passphrase, salt);
+                var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, aesKey, ct);
+                return new TextDecoder('utf-8').decode(plain);
+            }
+
+            function showOk(html){
+                payload.innerHTML = html;
+                payload.hidden = false;
+                feedback.textContent = '> signature valid · payload deciphered';
+                feedback.className = 'op-line op-feedback op-ok';
+                input.value = '';
+                input.disabled = true;
+                submitBtn.disabled = true;
+            }
+
+            function showErr(){
+                feedback.textContent = '> access denied · invalid signature';
+                feedback.className = 'op-line op-feedback op-err';
+                input.value = '';
+                submitBtn.disabled = false;
+                consoleEl.classList.add('shake');
+                setTimeout(function(){ consoleEl.classList.remove('shake'); }, 400);
+            }
+
+            form.addEventListener('submit', async function(e){
                 e.preventDefault();
                 var key = input.value.trim().toLowerCase();
                 if(!key) return;
-                var decrypted = xorDecrypt(blob, key);
-                if(decrypted.indexOf(marker) === 0){
-                    payload.innerHTML = decrypted.slice(marker.length);
-                    payload.hidden = false;
-                    feedback.textContent = '> signature valid · payload deciphered';
-                    feedback.className = 'op-line op-feedback op-ok';
-                    input.value = '';
-                    input.disabled = true;
-                    submitBtn.disabled = true;
-                } else {
-                    feedback.textContent = '> access denied · invalid signature';
-                    feedback.className = 'op-line op-feedback op-err';
-                    input.value = '';
-                    consoleEl.classList.add('shake');
-                    setTimeout(function(){ consoleEl.classList.remove('shake'); }, 400);
+                submitBtn.disabled = true;
+                feedback.textContent = '> deriving key · pbkdf2-sha256 x ' + ITER.toLocaleString() + ' ...';
+                feedback.className = 'op-line op-feedback';
+                try {
+                    var html = await tryDecrypt(key);
+                    showOk(html);
+                } catch(err){
+                    showErr();
                 }
             });
         })();
