@@ -206,6 +206,131 @@
             font-size: 1.15rem;
         }
 
+        .op-console {
+            background: rgba(5, 10, 20, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.6rem 1.8rem;
+            margin-top: 1.5rem;
+            font-family: 'Courier New', Monaco, monospace;
+            backdrop-filter: blur(20px);
+            box-shadow: inset 0 0 0 1px rgba(0, 212, 255, 0.08);
+        }
+        .op-console.shake { animation: opShake 0.4s ease; }
+        @keyframes opShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+        .op-line {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin: 0;
+        }
+        .op-user { color: var(--accent-primary); font-weight: 700; }
+        .op-at, .op-path { color: var(--text-muted); }
+        .op-host { color: #ffd866; font-weight: 600; }
+        .op-muted { color: var(--text-muted); margin: 0.4rem 0 0.8rem; }
+        .op-muted em { color: var(--accent-primary); font-style: italic; }
+        .op-form { margin: 0; }
+        .op-input-row {
+            display: flex; align-items: center; gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+        .op-prefix { color: var(--accent-primary); font-weight: 700; white-space: nowrap; }
+        #opKey {
+            flex: 1; min-width: 180px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed rgba(0, 212, 255, 0.4);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            padding: 0.3rem 0.2rem;
+            letter-spacing: 0.08em;
+            outline: none;
+        }
+        #opKey:focus { border-bottom-color: var(--accent-primary); }
+        #opKey:disabled { opacity: 0.5; }
+        .op-submit {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--border-accent);
+            border: 1px solid var(--border-accent);
+            color: var(--accent-primary);
+            font-family: inherit;
+            font-size: 0.82rem; font-weight: 700;
+            padding: 0.45rem 1rem;
+            border-radius: var(--border-radius-pill);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .op-submit:hover {
+            background: rgba(0, 212, 255, 0.15);
+            transform: translateY(-1px);
+        }
+        .op-submit:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+        .op-feedback { min-height: 1.3rem; margin-top: 0.8rem; font-size: 0.88rem; }
+        .op-feedback.op-ok { color: #6ee7b7; }
+        .op-feedback.op-err { color: #ff6b81; }
+
+        .op-locked-badge {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            font-size: 0.65rem; font-weight: 700;
+            letter-spacing: 0.14em; text-transform: uppercase;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.03);
+            border: 1px dashed var(--text-muted);
+            padding: 0.25rem 0.65rem;
+            border-radius: var(--border-radius-pill);
+            margin-left: 0.6rem; vertical-align: middle;
+        }
+        .op-payload .stipend-card { animation: opFadeIn 0.45s ease both; }
+        @keyframes opFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stipend-card {
+            margin-top: 1.5rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-left: 3px solid var(--accent-primary);
+            border-radius: var(--border-radius);
+            padding: 1.6rem 1.9rem;
+            backdrop-filter: blur(20px);
+            font-family: 'Inter', sans-serif;
+        }
+        .stipend-header {
+            display: flex; align-items: center; gap: 0.6rem;
+            color: var(--accent-primary);
+            font-size: 1.05rem; font-weight: 700;
+            margin-bottom: 1.1rem;
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        .stipend-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.06);
+            color: var(--text-secondary);
+        }
+        .stipend-row .phase { font-size: 0.95rem; }
+        .stipend-row .amount {
+            color: var(--text-primary); font-weight: 600;
+            font-family: 'Courier New', Monaco, monospace;
+        }
+        .stipend-row.total {
+            border-bottom: none; border-top: 1px solid var(--border-accent);
+            margin-top: 0.4rem; padding-top: 0.95rem;
+        }
+        .stipend-row.total .phase { color: var(--text-primary); font-weight: 600; }
+        .stipend-row.total .amount { color: var(--accent-primary); font-size: 1.1rem; }
+        .stipend-note {
+            margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);
+            line-height: 1.6;
+        }
+
         @media (max-width: 768px) {
             .gsoc-hero { padding-top: 7rem; padding-bottom: 2.5rem; }
             .gsoc-hero .subtitle { font-size: 1.1rem; }
@@ -271,6 +396,17 @@
             .resource-card .resource-url { font-size: 0.78rem; }
 
             .proposal-box { padding: 1.1rem 1.15rem; }
+        }
+
+        @media (max-width: 768px) {
+            .op-console { padding: 1.2rem 1.3rem; }
+            .op-input-row { gap: 0.5rem; }
+            .op-prefix { font-size: 0.85rem; }
+            #opKey { font-size: 0.9rem; min-width: 100%; }
+            .op-submit { width: 100%; justify-content: center; }
+            .stipend-card { padding: 1.2rem 1.3rem; }
+            .stipend-row { flex-direction: column; align-items: flex-start; gap: 0.3rem; padding: 0.6rem 0; }
+            .stipend-row .amount { align-self: flex-end; }
         }
     </style>
 </head>
@@ -560,6 +696,27 @@
             </div>
         </section>
 
+        <section id="operator" class="section">
+            <div class="container">
+                <h2 class="section-title">Operator Console <span class="op-locked-badge"><i class="fas fa-lock"></i> Restricted</span></h2>
+                <p class="section-intro">Authenticated channel &middot; operator-only ledger. Access key required &mdash; <em>only legends know the key.</em></p>
+
+                <div class="op-console" id="opConsole">
+                    <div class="op-line"><span class="op-user">solitude_coder</span><span class="op-at">@</span><span class="op-host">rapid7</span>:<span class="op-path">~/gsoc26</span>$ auth --request stipend-ledger</div>
+                    <div class="op-line op-muted">awaiting access key &middot; <em>"only legends know the key"</em></div>
+                    <form class="op-form" id="opForm" autocomplete="off">
+                        <span class="op-line op-input-row">
+                            <span class="op-prefix">access@gsoc26 $</span>
+                            <input type="password" id="opKey" placeholder="enter access key" spellcheck="false" autocapitalize="off" autocomplete="off">
+                            <button type="submit" class="op-submit"><i class="fas fa-key"></i> Unlock</button>
+                        </span>
+                    </form>
+                    <div class="op-line op-feedback" id="opFeedback"></div>
+                    <div class="op-payload" id="opPayload" hidden></div>
+                </div>
+            </div>
+        </section>
+
         <section id="contact" class="section contact">
             <div class="container">
                 <h2 class="section-title">Get In Touch</h2>
@@ -632,6 +789,53 @@
         </section>
     </main>
 
+    <script>
+        (function(){
+            var form = document.getElementById('opForm');
+            if(!form) return;
+            var input = document.getElementById('opKey');
+            var feedback = document.getElementById('opFeedback');
+            var payload = document.getElementById('opPayload');
+            var consoleEl = document.getElementById('opConsole');
+            var submitBtn = form.querySelector('.op-submit');
+
+            var blob = 'NTI/KlYBQldZEAgFUA8DCAcBXFIaEF4ICAsQTBARHgtLSk4FGR9EVBQMFgdcUQMYBhkRHAVdAQFWHAgXVl9PGUwMBRUBEk1LAlYLTQMVTBAfBQEaVkxdXwBaFz8+CjdBQUBeWUm2xUEjHQ1HHQMBVC0WFAsKG0hdBRkfWgscBBNUAh8RHxxUVgEVGRkBWRxAFxsWUU5QHBkVHEETBQVEC1BHBAkSAwlNVyQaAAMMRAZYr9JULBoUGAobGVIxERALQgxRSgcREh5SUxoEEw9QCghWCx5YVgAeHxkBHVZMRUdcVBctPiFITgAADQFXSF0FGR9aCxwEE1QCHxEfHFRWARUZGQFZHEAXGxZRTlAcGRUcQRMFBUQLUEcECRIDCU1XJBoAAwxEBViv0lQnGh4NA0kkExgfHBALVx4VFQ9NTB8fCBpSAhwIF0RFTwQZDgYeGE1XUEVUQEkxZDxRSgcREh5SU0YQGxdOVQBeDk0GGAAAA1FNGgAbERUHABoKAhJUFRwEDQNLSk4SAAgKFxsBBAcSTlIcBwgHF0NOPQtDGQFFttZTQVtaSRwAElAkAVMRGAhITgAADQFXSAEREQdEVBQMFgdcUREBABwaBkNOTVUbTV1VVDQgNFBAGgQTD05VS1MRG1tIEVMTAA4aB09DAx0NRx0DAVkPHAQJTVcwGxISHBZEHQlFHQ9TBBsASR0cEgQICFsVCAsAElMSFU8uGx0GHAxEVh4ZAAZBBxgJTwQdFhUVGwkXGQMBVAcaHg0DSRkXDwQGFhcdGwQYFBIEBQAHB1xBNgADQgoIFlQTFhYACgoAUhUYDEREDAwLEAABFEwCDBAbFB1EEF4dH0VcUERFTAcbB1tBNzoLdFgdBA0OBgRCU0YETF1fDQ1BRg==';
+            var marker = 'GSOC26::';
+
+            function xorDecrypt(encB64, key){
+                try {
+                    var enc = atob(encB64);
+                    var bytes = new Uint8Array(enc.length);
+                    for(var i=0; i<enc.length; i++){
+                        bytes[i] = enc.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+                    }
+                    return new TextDecoder('utf-8').decode(bytes);
+                } catch(e){ return ''; }
+            }
+
+            form.addEventListener('submit', function(e){
+                e.preventDefault();
+                var key = input.value.trim().toLowerCase();
+                if(!key) return;
+                var decrypted = xorDecrypt(blob, key);
+                if(decrypted.indexOf(marker) === 0){
+                    payload.innerHTML = decrypted.slice(marker.length);
+                    payload.hidden = false;
+                    feedback.textContent = '> signature valid · payload deciphered';
+                    feedback.className = 'op-line op-feedback op-ok';
+                    input.value = '';
+                    input.disabled = true;
+                    submitBtn.disabled = true;
+                } else {
+                    feedback.textContent = '> access denied · invalid signature';
+                    feedback.className = 'op-line op-feedback op-err';
+                    input.value = '';
+                    consoleEl.classList.add('shake');
+                    setTimeout(function(){ consoleEl.classList.remove('shake'); }, 400);
+                }
+            });
+        })();
+    </script>
     <script src="script.js"></script>
 
     <footer class="site-footer">
