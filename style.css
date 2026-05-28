@@ -1138,6 +1138,7 @@ header.scrolled {
 .services {
     background: var(--bg-secondary);
     position: relative;
+    overflow: hidden;
 }
 
 .services::before {
@@ -1244,6 +1245,7 @@ header.scrolled {
 .projects {
     background: var(--bg-primary);
     position: relative;
+    overflow: hidden;
 }
 
 .projects::before {
