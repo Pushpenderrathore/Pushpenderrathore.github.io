@@ -515,6 +515,7 @@ header.scrolled {
     width: 100%;
     max-width: 350px;
     height: auto;
+    border-radius: 20px;
 }
 
 .profile-image:hover {
