@@ -319,8 +319,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleResize() {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-            // Close mobile menu on resize to larger screen
-            if (window.innerWidth >= 769 && navMenu?.classList.contains('active')) {
+            // Close mobile menu on resize past the breakpoint where the
+            // horizontal nav takes over (keep in sync with the 1200px CSS breakpoint).
+            if (window.innerWidth > 1200 && navMenu?.classList.contains('active')) {
                 toggleMobileMenu();
             }
         }, 250);
