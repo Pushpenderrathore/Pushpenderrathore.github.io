@@ -45,6 +45,7 @@
       .nav-menu a { color: var(--text-dim); font-size: .95rem; transition: color .2s; }
       .nav-menu a:hover, .nav-menu a.active { color: var(--accent); }
       .nav-toggle { display: none; }
+      .nav-overlay { display: none; }
       .hamburger {
         display: none; flex-direction: column; gap: 5px; cursor: pointer;
         padding: 9px 8px; border-radius: 8px;
@@ -69,6 +70,12 @@
         }
         .nav-menu a { display: block; font-size: 1.05rem; padding: .65rem .5rem; border-radius: 8px; }
         .nav-menu a:hover, .nav-menu a.active { color: var(--accent); background: rgba(45,212,191,0.1); }
+        /* height/right via viewport units, not bottom:0 — .navbar's backdrop-filter
+           makes it the containing block, so inset:0 would size to the navbar. */
+        .nav-toggle:checked ~ .nav-overlay {
+          display: block; position: fixed; top: 0; left: 0; right: 0; height: 100vh;
+          background: rgba(0,0,0,0.5); z-index: 55; cursor: pointer;
+        }
         .nav-toggle:checked ~ .nav-menu { transform: translateX(0); }
         .nav-toggle:checked ~ .hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .nav-toggle:checked ~ .hamburger span:nth-child(2) { opacity: 0; }
@@ -118,6 +125,7 @@
         <div class="nav-brand">solitude_coder<span class="brand-dot">.</span></div>
         <input type="checkbox" id="nav-toggle" class="nav-toggle" hidden>
         <label for="nav-toggle" class="hamburger" aria-label="Toggle navigation menu"><span></span><span></span><span></span></label>
+        <label for="nav-toggle" class="nav-overlay" aria-hidden="true"></label>
         <ul class="nav-menu">
             <li><a href="index.html">Home</a></li>
             <li><a href="index.html#about">About</a></li>
