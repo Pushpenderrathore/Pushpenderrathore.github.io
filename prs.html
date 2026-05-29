@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pull Requests &middot; Pushpender Singh Rathore</title>
+    <meta name="description" content="Open-source pull requests and contributions by Pushpender Singh Rathore across GitHub repositories.">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+      :root {
+        --bg: #0a0e14;
+        --bg-soft: #11161f;
+        --card: #141b26;
+        --border: #1e2733;
+        --text: #e6edf3;
+        --text-dim: #8b98a9;
+        --accent: #2dd4bf;
+        --accent-2: #22d3ee;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: radial-gradient(1200px 600px at 80% -10%, rgba(45,212,191,0.08), transparent 60%), var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+      a { color: inherit; text-decoration: none; }
+      .navbar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 1.1rem 6vw; position: sticky; top: 0; z-index: 50;
+        backdrop-filter: blur(10px);
+        background: rgba(10,14,20,0.7);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-brand { font-weight: 700; letter-spacing: .3px; }
+      .nav-brand .brand-dot { color: var(--accent); }
+      .nav-menu { display: flex; gap: 1.4rem; list-style: none; flex-wrap: wrap; }
+      .nav-menu a { color: var(--text-dim); font-size: .95rem; transition: color .2s; }
+      .nav-menu a:hover, .nav-menu a.active { color: var(--accent); }
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 4rem 6vw 5rem; }
+      .eyebrow { color: var(--accent); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; font-size: .78rem; }
+      h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; margin: .6rem 0 .8rem; }
+      .lede { color: var(--text-dim); max-width: 620px; }
+      .stats { display: flex; gap: 2rem; margin: 1.6rem 0 .5rem; flex-wrap: wrap; }
+      .stats b { color: var(--accent); font-size: 1.5rem; }
+      .stats span { display: block; color: var(--text-dim); font-size: .85rem; }
+      .status { color: var(--text-dim); font-size: .85rem; margin: 1.5rem 0 1rem; }
+      .pr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.1rem; }
+      .pr-card {
+        background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+        padding: 1.2rem 1.3rem; display: flex; flex-direction: column; gap: .7rem;
+        transition: transform .18s ease, border-color .18s ease;
+      }
+      .pr-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+      .pr-card__top { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
+      .pr-repo { color: var(--text-dim); font-size: .82rem; font-weight: 500; word-break: break-all; }
+      .pr-repo i { color: var(--accent); margin-right: .35rem; }
+      .pr-title { font-size: 1.05rem; font-weight: 600; }
+      .pr-card__bottom { display: flex; align-items: center; justify-content: space-between; margin-top: auto; gap: .6rem; }
+      .pr-meta { color: var(--text-dim); font-size: .8rem; }
+      .pr-link { color: var(--accent); font-size: .85rem; font-weight: 600; white-space: nowrap; }
+      .pr-link:hover { text-decoration: underline; }
+      .pr-badge { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; padding: .2rem .55rem; border-radius: 999px; border: 1px solid; white-space: nowrap; }
+      .pr-badge--merged { color: #c4a7ff; border-color: rgba(163,113,247,.5); background: rgba(163,113,247,.12); }
+      .pr-badge--open   { color: #4ade80; border-color: rgba(63,185,80,.5);  background: rgba(63,185,80,.12); }
+      .pr-badge--closed { color: #ff7b72; border-color: rgba(248,81,73,.5);  background: rgba(248,81,73,.12); }
+      .footer { text-align: center; color: var(--text-dim); font-size: .85rem; padding: 2.5rem 6vw; border-top: 1px solid var(--border); }
+      .footer a { color: var(--accent); }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">solitude_coder<span class="brand-dot">.</span></div>
+        <ul class="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#project">Projects</a></li>
+            <li><a href="prs.html" class="active">Pull Requests</a></li>
+            <li><a href="gsoc.html">GSoC</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main class="wrap">
+        <p class="eyebrow">Open Source</p>
+        <h1>Pull Requests</h1>
+        <p class="lede">Contributions I've opened across GitHub repositories. This list refreshes automatically from the GitHub API, so my latest PRs always show up here.</p>
+
+        <div class="stats">
+            <div><b id="stat-total">26</b><span>Total PRs</span></div>
+            <div><b id="stat-merged">16</b><span>Merged</span></div>
+        </div>
+
+        <p class="status" id="status">Showing snapshot from 2026-05-29. Refreshing from GitHub&hellip;</p>
+
+        <section class="pr-grid" id="pr-grid">
+        <article class="pr-card" data-state="open">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/claude-code</span>
+            <span class="pr-badge pr-badge--open">open</span>
+          </div>
+          <h3 class="pr-title">Update project title in README.md</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#8 &middot; 2026-05-24</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/claude-code/pull/8" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/claude-code</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Update project title in README.md</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#6 &middot; 2026-05-20</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/claude-code/pull/6" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/claude-code</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Update README title to reflect new branding</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#5 &middot; 2026-05-20</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/claude-code/pull/5" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="open">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> rapid7/metasploit-framework</span>
+            <span class="pr-badge pr-badge--open">open</span>
+          </div>
+          <h3 class="pr-title">Add CertificateTrace support to LDAP Schannel authentication</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#21469 &middot; 2026-05-16</span>
+            <a class="pr-link" href="https://github.com/rapid7/metasploit-framework/pull/21469" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="open">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> nakul1305/AI_DECISION_SIMULATOR</span>
+            <span class="pr-badge pr-badge--open">open</span>
+          </div>
+          <h3 class="pr-title">Added requirements</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#2 &middot; 2026-05-03</span>
+            <a class="pr-link" href="https://github.com/nakul1305/AI_DECISION_SIMULATOR/pull/2" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> nakul1305/AI_DECISION_SIMULATOR</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Main</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#1 &middot; 2026-05-02</span>
+            <a class="pr-link" href="https://github.com/nakul1305/AI_DECISION_SIMULATOR/pull/1" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="open">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> rapid7/metasploit-framework</span>
+            <span class="pr-badge pr-badge--open">open</span>
+          </div>
+          <h3 class="pr-title">Add CertificateTracePresenter and certificate/CSR tracing support</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#21198 &middot; 2026-03-29</span>
+            <a class="pr-link" href="https://github.com/rapid7/metasploit-framework/pull/21198" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="closed">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> rapid7/metasploit-framework</span>
+            <span class="pr-badge pr-badge--closed">closed</span>
+          </div>
+          <h3 class="pr-title">Kerberos-trace</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#21190 &middot; 2026-03-27</span>
+            <a class="pr-link" href="https://github.com/rapid7/metasploit-framework/pull/21190" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="closed">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> rapid7/metasploit-framework</span>
+            <span class="pr-badge pr-badge--closed">closed</span>
+          </div>
+          <h3 class="pr-title">KerberosTicketTrace: Add centralized Kerberos tracing with metadata/full modes + module integration</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#21152 &middot; 2026-03-20</span>
+            <a class="pr-link" href="https://github.com/rapid7/metasploit-framework/pull/21152" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/Unified-Security-Operations-Framework</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Merge pull request #2 from Pushpenderrathore/main</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#3 &middot; 2026-02-02</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/Unified-Security-Operations-Framework/pull/3" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/Unified-Security-Operations-Framework</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Merge pull request #1 from Pushpenderrathore/master</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#2 &middot; 2026-02-02</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/Unified-Security-Operations-Framework/pull/2" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/Unified-Security-Operations-Framework</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Master</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#1 &middot; 2026-02-02</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/Unified-Security-Operations-Framework/pull/1" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> saeenikam19/College_Voting_System-</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Railway deploy</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#5 &middot; 2026-01-20</span>
+            <a class="pr-link" href="https://github.com/saeenikam19/College_Voting_System-/pull/5" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> saeenikam19/College_Voting_System-</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Railway deploy</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#4 &middot; 2026-01-19</span>
+            <a class="pr-link" href="https://github.com/saeenikam19/College_Voting_System-/pull/4" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="open">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> saeenikam19/College_Voting_System-</span>
+            <span class="pr-badge pr-badge--open">open</span>
+          </div>
+          <h3 class="pr-title">modified</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#3 &middot; 2026-01-18</span>
+            <a class="pr-link" href="https://github.com/saeenikam19/College_Voting_System-/pull/3" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> saeenikam19/College_Voting_System-</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Modified</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#2 &middot; 2026-01-17</span>
+            <a class="pr-link" href="https://github.com/saeenikam19/College_Voting_System-/pull/2" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> saeenikam19/College_Voting_System-</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Modifed</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#1 &middot; 2026-01-15</span>
+            <a class="pr-link" href="https://github.com/saeenikam19/College_Voting_System-/pull/1" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/theZoo</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Release version 0.7.1 with new Tkinter GUI</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#1 &middot; 2025-12-19</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/theZoo/pull/1" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="open">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> peter-hackertarget/llm-tools-nmap</span>
+            <span class="pr-badge pr-badge--open">open</span>
+          </div>
+          <h3 class="pr-title">Offline ollama ai integration with nmap</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#2 &middot; 2025-12-05</span>
+            <a class="pr-link" href="https://github.com/peter-hackertarget/llm-tools-nmap/pull/2" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="closed">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> jgamblin/Mirai-Source-Code</span>
+            <span class="pr-badge pr-badge--closed">closed</span>
+          </div>
+          <h3 class="pr-title">Modified With More Professional Approach And Some Modification, Review It.</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#47 &middot; 2025-10-16</span>
+            <a class="pr-link" href="https://github.com/jgamblin/Mirai-Source-Code/pull/47" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> BlackArch/blackarch</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Polished README structure and style as per feedback</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#4645 &middot; 2025-10-05</span>
+            <a class="pr-link" href="https://github.com/BlackArch/blackarch/pull/4645" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Blue-Devil5177/mindreader</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Update mind_reader.py</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#1 &middot; 2025-10-03</span>
+            <a class="pr-link" href="https://github.com/Blue-Devil5177/mindreader/pull/1" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> BlackArch/blackarch</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Respected Senior Developers and blackarch community, ✍️ I Enhance README.md with Professional and Comprehensive Overview research. And usage guidelines</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#4577 &middot; 2025-07-25</span>
+            <a class="pr-link" href="https://github.com/BlackArch/blackarch/pull/4577" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> jgamblin/Mirai-Source-Code</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Respected Author jgamblin of Mirai-Source-Code, ✍️ I Improved README.md with research and usage guidelines</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#46 &middot; 2025-07-24</span>
+            <a class="pr-link" href="https://github.com/jgamblin/Mirai-Source-Code/pull/46" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="closed">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/macchanger_daeion</span>
+            <span class="pr-badge pr-badge--closed">closed</span>
+          </div>
+          <h3 class="pr-title">modified</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#1 &middot; 2025-05-10</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/macchanger_daeion/pull/1" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        <article class="pr-card" data-state="merged">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> Pushpenderrathore/shikigami-daemon</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
+          </div>
+          <h3 class="pr-title">Added install script</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#1 &middot; 2025-04-06</span>
+            <a class="pr-link" href="https://github.com/Pushpenderrathore/shikigami-daemon/pull/1" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; <span id="year"></span> Pushpender Singh Rathore &middot; <a href="https://github.com/Pushpenderrathore" target="_blank" rel="noopener">github.com/Pushpenderrathore</a></p>
+    </footer>
+
+    <script>
+      const GH_USER = 'Pushpenderrathore';
+      const FALLBACK = [
+  {
+    "repo": "Pushpenderrathore/claude-code",
+    "number": 8,
+    "title": "Update project title in README.md",
+    "state": "open",
+    "date": "2026-05-24",
+    "url": "https://github.com/Pushpenderrathore/claude-code/pull/8"
+  },
+  {
+    "repo": "Pushpenderrathore/claude-code",
+    "number": 6,
+    "title": "Update project title in README.md",
+    "state": "merged",
+    "date": "2026-05-20",
+    "url": "https://github.com/Pushpenderrathore/claude-code/pull/6"
+  },
+  {
+    "repo": "Pushpenderrathore/claude-code",
+    "number": 5,
+    "title": "Update README title to reflect new branding",
+    "state": "merged",
+    "date": "2026-05-20",
+    "url": "https://github.com/Pushpenderrathore/claude-code/pull/5"
+  },
+  {
+    "repo": "rapid7/metasploit-framework",
+    "number": 21469,
+    "title": "Add CertificateTrace support to LDAP Schannel authentication",
+    "state": "open",
+    "date": "2026-05-16",
+    "url": "https://github.com/rapid7/metasploit-framework/pull/21469"
+  },
+  {
+    "repo": "nakul1305/AI_DECISION_SIMULATOR",
+    "number": 2,
+    "title": "Added requirements",
+    "state": "open",
+    "date": "2026-05-03",
+    "url": "https://github.com/nakul1305/AI_DECISION_SIMULATOR/pull/2"
+  },
+  {
+    "repo": "nakul1305/AI_DECISION_SIMULATOR",
+    "number": 1,
+    "title": "Main",
+    "state": "merged",
+    "date": "2026-05-02",
+    "url": "https://github.com/nakul1305/AI_DECISION_SIMULATOR/pull/1"
+  },
+  {
+    "repo": "rapid7/metasploit-framework",
+    "number": 21198,
+    "title": "Add CertificateTracePresenter and certificate/CSR tracing support",
+    "state": "open",
+    "date": "2026-03-29",
+    "url": "https://github.com/rapid7/metasploit-framework/pull/21198"
+  },
+  {
+    "repo": "rapid7/metasploit-framework",
+    "number": 21190,
+    "title": "Kerberos-trace",
+    "state": "closed",
+    "date": "2026-03-27",
+    "url": "https://github.com/rapid7/metasploit-framework/pull/21190"
+  },
+  {
+    "repo": "rapid7/metasploit-framework",
+    "number": 21152,
+    "title": "KerberosTicketTrace: Add centralized Kerberos tracing with metadata/full modes + module integration",
+    "state": "closed",
+    "date": "2026-03-20",
+    "url": "https://github.com/rapid7/metasploit-framework/pull/21152"
+  },
+  {
+    "repo": "Pushpenderrathore/Unified-Security-Operations-Framework",
+    "number": 3,
+    "title": "Merge pull request #2 from Pushpenderrathore/main",
+    "state": "merged",
+    "date": "2026-02-02",
+    "url": "https://github.com/Pushpenderrathore/Unified-Security-Operations-Framework/pull/3"
+  },
+  {
+    "repo": "Pushpenderrathore/Unified-Security-Operations-Framework",
+    "number": 2,
+    "title": "Merge pull request #1 from Pushpenderrathore/master",
+    "state": "merged",
+    "date": "2026-02-02",
+    "url": "https://github.com/Pushpenderrathore/Unified-Security-Operations-Framework/pull/2"
+  },
+  {
+    "repo": "Pushpenderrathore/Unified-Security-Operations-Framework",
+    "number": 1,
+    "title": "Master",
+    "state": "merged",
+    "date": "2026-02-02",
+    "url": "https://github.com/Pushpenderrathore/Unified-Security-Operations-Framework/pull/1"
+  },
+  {
+    "repo": "saeenikam19/College_Voting_System-",
+    "number": 5,
+    "title": "Railway deploy",
+    "state": "merged",
+    "date": "2026-01-20",
+    "url": "https://github.com/saeenikam19/College_Voting_System-/pull/5"
+  },
+  {
+    "repo": "saeenikam19/College_Voting_System-",
+    "number": 4,
+    "title": "Railway deploy",
+    "state": "merged",
+    "date": "2026-01-19",
+    "url": "https://github.com/saeenikam19/College_Voting_System-/pull/4"
+  },
+  {
+    "repo": "saeenikam19/College_Voting_System-",
+    "number": 3,
+    "title": "modified",
+    "state": "open",
+    "date": "2026-01-18",
+    "url": "https://github.com/saeenikam19/College_Voting_System-/pull/3"
+  },
+  {
+    "repo": "saeenikam19/College_Voting_System-",
+    "number": 2,
+    "title": "Modified",
+    "state": "merged",
+    "date": "2026-01-17",
+    "url": "https://github.com/saeenikam19/College_Voting_System-/pull/2"
+  },
+  {
+    "repo": "saeenikam19/College_Voting_System-",
+    "number": 1,
+    "title": "Modifed",
+    "state": "merged",
+    "date": "2026-01-15",
+    "url": "https://github.com/saeenikam19/College_Voting_System-/pull/1"
+  },
+  {
+    "repo": "Pushpenderrathore/theZoo",
+    "number": 1,
+    "title": "Release version 0.7.1 with new Tkinter GUI",
+    "state": "merged",
+    "date": "2025-12-19",
+    "url": "https://github.com/Pushpenderrathore/theZoo/pull/1"
+  },
+  {
+    "repo": "peter-hackertarget/llm-tools-nmap",
+    "number": 2,
+    "title": "Offline ollama ai integration with nmap",
+    "state": "open",
+    "date": "2025-12-05",
+    "url": "https://github.com/peter-hackertarget/llm-tools-nmap/pull/2"
+  },
+  {
+    "repo": "jgamblin/Mirai-Source-Code",
+    "number": 47,
+    "title": "Modified With More Professional Approach And Some Modification, Review It.",
+    "state": "closed",
+    "date": "2025-10-16",
+    "url": "https://github.com/jgamblin/Mirai-Source-Code/pull/47"
+  },
+  {
+    "repo": "BlackArch/blackarch",
+    "number": 4645,
+    "title": "Polished README structure and style as per feedback",
+    "state": "merged",
+    "date": "2025-10-05",
+    "url": "https://github.com/BlackArch/blackarch/pull/4645"
+  },
+  {
+    "repo": "Blue-Devil5177/mindreader",
+    "number": 1,
+    "title": "Update mind_reader.py",
+    "state": "merged",
+    "date": "2025-10-03",
+    "url": "https://github.com/Blue-Devil5177/mindreader/pull/1"
+  },
+  {
+    "repo": "BlackArch/blackarch",
+    "number": 4577,
+    "title": "Respected Senior Developers and blackarch community, \u270d\ufe0f I Enhance README.md with Professional and Comprehensive Overview research. And usage guidelines",
+    "state": "merged",
+    "date": "2025-07-25",
+    "url": "https://github.com/BlackArch/blackarch/pull/4577"
+  },
+  {
+    "repo": "jgamblin/Mirai-Source-Code",
+    "number": 46,
+    "title": "Respected Author jgamblin of Mirai-Source-Code, \u270d\ufe0f I Improved README.md with research and usage guidelines",
+    "state": "merged",
+    "date": "2025-07-24",
+    "url": "https://github.com/jgamblin/Mirai-Source-Code/pull/46"
+  },
+  {
+    "repo": "Pushpenderrathore/macchanger_daeion",
+    "number": 1,
+    "title": "modified",
+    "state": "closed",
+    "date": "2025-05-10",
+    "url": "https://github.com/Pushpenderrathore/macchanger_daeion/pull/1"
+  },
+  {
+    "repo": "Pushpenderrathore/shikigami-daemon",
+    "number": 1,
+    "title": "Added install script",
+    "state": "merged",
+    "date": "2025-04-06",
+    "url": "https://github.com/Pushpenderrathore/shikigami-daemon/pull/1"
+  }
+];
+
+      const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+      function render(prs, note) {
+        const grid = document.getElementById('pr-grid');
+        const status = document.getElementById('status');
+        const merged = prs.filter(p => p.state === 'merged').length;
+        document.getElementById('stat-total').textContent = prs.length;
+        document.getElementById('stat-merged').textContent = merged;
+        status.textContent = note;
+        grid.innerHTML = prs.map(p => `
+        <article class="pr-card" data-state="${esc(p.state)}">
+          <div class="pr-card__top">
+            <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> ${esc(p.repo)}</span>
+            <span class="pr-badge pr-badge--${esc(p.state)}">${esc(p.state)}</span>
+          </div>
+          <h3 class="pr-title">${esc(p.title)}</h3>
+          <div class="pr-card__bottom">
+            <span class="pr-meta">#${esc(p.number)} &middot; ${esc(p.date)}</span>
+            <a class="pr-link" href="${esc(p.url)}" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </article>`).join('');
+      }
+
+      async function load() {
+        try {
+          const res = await fetch(`https://api.github.com/search/issues?q=${encodeURIComponent('type:pr author:' + GH_USER)}&sort=created&order=desc&per_page=100`, { headers: { Accept: 'application/vnd.github+json' } });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const data = await res.json();
+          const prs = (data.items || []).map(it => {
+            const repo = it.repository_url.split('/repos/')[1];
+            const merged = !!(it.pull_request && it.pull_request.merged_at);
+            return { repo, number: it.number, title: it.title, state: merged ? 'merged' : it.state, date: (it.created_at || '').slice(0,10), url: it.html_url };
+          });
+          if (prs.length) render(prs, `${prs.length} pull requests \u00b7 live from GitHub`);
+        } catch (e) {
+          // keep the server-rendered snapshot; just note it
+          document.getElementById('status').textContent = `${FALLBACK.length} pull requests \u00b7 cached snapshot (2026-05-29)`;
+        }
+      }
+
+      document.getElementById('year').textContent = new Date().getFullYear();
+      load();
+    </script>
+</body>
+</html>
