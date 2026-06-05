@@ -561,9 +561,18 @@
                     <span class="tech-pill">Impacket · Rubeus</span>
                 </div>
 
-                <h3 class="tech-stack-heading">Current Status — Week 1</h3>
+                <h3 class="tech-stack-heading">Current Status — Week 1 (ahead of schedule)</h3>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8;">
-                    <strong>Ahead of schedule.</strong> <code>CertificateTracePresenter</code> is fully implemented (343 lines) with a shared <code>CertificateTrace</code> mixin (88 lines) wired into <code>kerberos/client.rb</code>, <code>icpr_cert</code>, and the PKINIT hook. RSpec coverage stands at <strong>403 lines</strong> for the presenter and <strong>184 lines</strong> for the mixin. A <strong>PR is open</strong> on the <code>certificate-trace</code> branch; multiple review cycles have already been addressed, including today's MS Application Policies OID decoding fix. <code>KerberosTicketTracePresenter</code> is underway on the <code>kerberos-trace</code> branch — refactored to the Presenter pattern with <code>metadata</code> / <code>full</code> output modes. Both presenters were originally scoped for Phases 2–3 (Weeks 3–10); shipping them in Week 1 opens up buffer for deeper S4U2Self / S4U2Proxy and ADCS ESC lab validation.
+                    <strong>Both presenter cores shipped in Week 1 — originally scoped for Weeks 3–10.</strong>
+                </p>
+                <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
+                    <strong>CertificateTracePresenter</strong> (Phase 3 work, done early): fully implemented — 343-line presenter + 88-line shared <code>CertificateTrace</code> mixin. Integrated into <strong>10+ Metasploit modules</strong>: <code>icpr_cert</code>, <code>web_enrollment_cert</code>, <code>certifried</code>, <code>esc_update_ldap_object</code>, <code>bad_successor</code>, <code>rbcd</code>, <code>shadow_credentials</code>, <code>ldap_esc_vulnerable_cert_finder</code>, relay modules, and more. RSpec: 403-line presenter suite + 184-line mixin suite. <strong>PR open</strong> on <code>certificate-trace</code> branch — multiple review cycles addressed including MS Application Policies OID decoding, X.509 version display, SAN parsing, and non-ASCII sanitisation.
+                </p>
+                <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
+                    <strong>KerberosTicketTracePresenter</strong> (Phase 2 work, in progress): core presenter class done — 110 lines, Presenter pattern with <code>to_s_metadata</code> / <code>to_s_full</code> modes, 174-line RSpec suite. Dispatcher wiring into <code>kerberos/client.rb</code> and S4U2Self / S4U2Proxy lab validation are next.
+                </p>
+                <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
+                    <strong>Total: ~1,300+ lines</strong> of new production code + specs across both branches before the first evaluation.
                 </p>
             </div>
         </section>
@@ -581,18 +590,18 @@
                     </div>
                     <div class="timeline-item current">
                         <h4>Phase 2 - KerberosTicketTracePresenter</h4>
-                        <span class="timeline-period">Weeks 3–6 · 50 hrs</span>
-                        <p>Implement the core presenter class, wire the dispatcher into <code>kerberos/client.rb</code>, add AP-REQ and TGS-REQ hooks via the OpenStruct adapter, validate S4U2Self / S4U2Proxy in the lab, integrate into <code>kerberos_enumusers</code>, and ship the 13-example RSpec suite.</p>
+                        <span class="timeline-period">Weeks 3–6 · 50 hrs · Core done in Week 1</span>
+                        <p>Core presenter class (110 lines) and 174-line RSpec suite already shipped on <code>kerberos-trace</code> branch. Remaining: wire dispatcher into <code>kerberos/client.rb</code>, AP-REQ / TGS-REQ hooks via OpenStruct adapter, S4U2Self / S4U2Proxy lab validation, and <code>kerberos_enumusers</code> integration.</p>
                     </div>
                     <div class="timeline-item">
                         <h4>Midterm Evaluation</h4>
                         <span class="timeline-period">End of Week 6 · mid-July 2026</span>
-                        <p>Mentor review of progress against proposal milestones. PR 1 (KerberosTicketTracePresenter) is expected to be open and under upstream review by this point.</p>
+                        <p>Mentor review of progress against proposal milestones. With CertificateTracePresenter already shipped and under review, the midterm bar is already exceeded — Phase 2 wiring and S4U2 validation will be the focus before the checkpoint.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 3 - CertificateTracePresenter</h4>
-                        <span class="timeline-period">Weeks 7–10 · 50 hrs</span>
-                        <p>Implement the certificate presenter with the <code>coerce()</code> adapter, add <code>to_s_csr</code>, wire the PKINIT certificate hook in <code>send_request_tgt_pkinit</code>, integrate into <code>kerberos_login</code>, validate against ADCS ESC1 in the lab, and ship the 14-example RSpec suite.</p>
+                        <h4>Phase 3 - CertificateTracePresenter ✓</h4>
+                        <span class="timeline-period">Originally Weeks 7–10 · Shipped in Week 1</span>
+                        <p>Fully complete ahead of schedule. <code>CertificateTracePresenter</code> (343 lines) + shared <code>CertificateTrace</code> mixin (88 lines) implemented, PKINIT hook wired, integrated into 10+ modules, 403-line + 184-line RSpec suites written, and PR open with multiple review cycles already addressed.</p>
                     </div>
                     <div class="timeline-item">
                         <h4>Phase 4 - Test &amp; Docs</h4>
@@ -626,18 +635,19 @@
                     </div>
                     <div class="update-card">
                         <span class="update-week">Week 01</span>
-                        <h4>CertificateTracePresenter shipped — PR open</h4>
-                        <p>Implemented <code>CertificateTracePresenter</code> (343 lines) + shared <code>CertificateTrace</code> mixin (88 lines). Wired PKINIT hook in <code>kerberos/client.rb</code> and <code>ms_icpr</code> tracing in <code>icpr_cert</code>. Full RSpec coverage: 403-line presenter suite + 184-line mixin suite. PR opened on <code>certificate-trace</code> branch; review feedback addressed over multiple cycles including MS Application Policies OID decoding. <code>KerberosTicketTracePresenter</code> refactored to Presenter pattern on <code>kerberos-trace</code> — ahead of schedule.</p>
+                        <h4>Both presenter cores shipped — ~1,300+ lines — PR open</h4>
+                        <p><strong>CertificateTracePresenter</strong> (Phase 3 work, done 6–9 weeks early): 343-line presenter + 88-line shared <code>CertificateTrace</code> mixin. Wired into <strong>10+ modules</strong> — <code>icpr_cert</code>, <code>web_enrollment_cert</code>, <code>certifried</code>, <code>esc_update_ldap_object</code>, <code>bad_successor</code>, <code>rbcd</code>, <code>shadow_credentials</code>, <code>ldap_esc_vulnerable_cert_finder</code>, relay modules, and more. RSpec: 403-line presenter suite + 184-line mixin suite. PR open on <code>certificate-trace</code> — multiple review cycles addressed: X.509 version display, SAN parsing, non-ASCII sanitisation, MS Application Policies OID decoding.</p>
+                        <p style="margin-top:0.6rem;"><strong>KerberosTicketTracePresenter</strong> (Phase 2 work): core class done — 110 lines, Presenter pattern with <code>to_s_metadata</code> / <code>to_s_full</code>, 174-line RSpec suite. Dispatcher wiring + S4U2 lab validation next.</p>
                     </div>
                     <div class="update-card pending"><span class="update-week">Week 02</span><h4>Wireshark ticket capture</h4><p>Verifying AS-REQ / TGS-REQ flows on the wire.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 03</span><h4>KerberosTicketTracePresenter</h4><p>Implementing the presenter class &amp; <code>to_s_*</code> methods.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 04</span><h4>S4U2Self / S4U2Proxy</h4><p>Constrained-delegation lab validation.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 05</span><h4>Dispatcher + RSpec</h4><p>Wiring into <code>kerberos/client.rb</code>; 13 RSpec examples.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 06</span><h4>kerberos_enumusers · Midterm</h4><p>First module integration; midterm evaluation.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 07</span><h4>CertificateTracePresenter</h4><p>Class + <code>coerce()</code> + <code>to_s_csr</code>.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 08</span><h4>PKINIT hook + ESC1 lab</h4><p>Wiring the certificate hook; ADCS ESC1 validation.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 09</span><h4>kerberos_login integration</h4><p>Second module integration.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 10</span><h4>CertificateTracePresenter RSpec</h4><p>14 examples - OpenSSL · DER · SHA-256 · CSR.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 07</span><h4>Buffer — review cycles &amp; S4U2 lab</h4><p>CertificateTracePresenter already shipped. Week 7 is now free for deep S4U2Self / S4U2Proxy constrained-delegation lab validation and upstream PR review response.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 08</span><h4>ADCS ESC lab validation</h4><p>End-to-end ADCS ESC1 lab run against the certificate presenter; verify all 10+ integrated modules produce correct trace output.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 09</span><h4>Integration hardening</h4><p>Wider module integration coverage; edge-case testing across both presenters.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 10</span><h4>PR polish &amp; upstream feedback</h4><p>Address any remaining upstream review comments across both PRs; documentation pass.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 11</span><h4>Full lab integration tests</h4><p>End-to-end runs across both presenters.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 12</span><h4>Final wrap-up</h4><p>Docs, PR polish, deliverables write-up.</p></div>
                 </div>
