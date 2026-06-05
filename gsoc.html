@@ -561,9 +561,9 @@
                     <span class="tech-pill">Impacket · Rubeus</span>
                 </div>
 
-                <h3 class="tech-stack-heading">Current Status</h3>
+                <h3 class="tech-stack-heading">Current Status — Week 1</h3>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8;">
-                    Both presenter classes are <strong>prototyped</strong> and validated against AS-REQ and TGS-REQ flows in a local Windows Server 2022 + ADCS lab on the <code>TEST.LOCAL</code> domain. RSpec suites are written - <strong>13 examples</strong> for the Kerberos presenter and <strong>14</strong> for the certificate presenter (full execution requires PostgreSQL DB config). S4U2Self / S4U2Proxy ticket variants require a constrained-delegation lab config and are explicitly planned for Weeks&nbsp;3–4 of GSoC. Documentation and PR polish are the Phase&nbsp;4 work.
+                    <strong>Ahead of schedule.</strong> <code>CertificateTracePresenter</code> is fully implemented (343 lines) with a shared <code>CertificateTrace</code> mixin (88 lines) wired into <code>kerberos/client.rb</code>, <code>icpr_cert</code>, and the PKINIT hook. RSpec coverage stands at <strong>403 lines</strong> for the presenter and <strong>184 lines</strong> for the mixin. A <strong>PR is open</strong> on the <code>certificate-trace</code> branch; multiple review cycles have already been addressed, including today's MS Application Policies OID decoding fix. <code>KerberosTicketTracePresenter</code> is underway on the <code>kerberos-trace</code> branch — refactored to the Presenter pattern with <code>metadata</code> / <code>full</code> output modes. Both presenters were originally scoped for Phases 2–3 (Weeks 3–10); shipping them in Week 1 opens up buffer for deeper S4U2Self / S4U2Proxy and ADCS ESC lab validation.
                 </p>
             </div>
         </section>
@@ -574,12 +574,12 @@
                 <p class="section-intro">The 12-week / 175-hour build plan, mapped onto the four project phases from the accepted proposal. GSoC milestones - Community Bonding, midterm, and final submission - are anchored inside the relevant phases.</p>
 
                 <div class="timeline">
-                    <div class="timeline-item current">
-                        <h4>Community Bonding · Phase 1 (Study)</h4>
-                        <span class="timeline-period">Weeks 1–2 · 25 hrs</span>
-                        <p>Deep-dive into <code>HttpTrace</code> in <code>Exploit::Remote::HttpClient</code>, map the Kerberos client mixin, stand up the Windows Server 2022 + ADCS lab on the <code>TEST.LOCAL</code> domain, and verify ticket capture in Wireshark.</p>
-                    </div>
                     <div class="timeline-item">
+                        <h4>Community Bonding · Phase 1 (Study) ✓</h4>
+                        <span class="timeline-period">Weeks 1–2 · 25 hrs — Complete</span>
+                        <p>Deep-dived into <code>HttpTrace</code> in <code>Exploit::Remote::HttpClient</code>, mapped the Kerberos client mixin, stood up the Windows Server 2022 + ADCS lab on <code>TEST.LOCAL</code>, and verified AS-REQ / TGS-REQ ticket capture in Wireshark.</p>
+                    </div>
+                    <div class="timeline-item current">
                         <h4>Phase 2 - KerberosTicketTracePresenter</h4>
                         <span class="timeline-period">Weeks 3–6 · 50 hrs</span>
                         <p>Implement the core presenter class, wire the dispatcher into <code>kerberos/client.rb</code>, add AP-REQ and TGS-REQ hooks via the OpenStruct adapter, validate S4U2Self / S4U2Proxy in the lab, integrate into <code>kerberos_enumusers</code>, and ship the 13-example RSpec suite.</p>
@@ -621,10 +621,14 @@
                 <div class="updates-grid">
                     <div class="update-card">
                         <span class="update-week">Community Bonding</span>
-                        <h4>Onboarding &amp; env setup</h4>
-                        <p>HttpTrace deep-dive, Kerberos client mixin map, Windows Server 2022 + ADCS lab on <code>TEST.LOCAL</code>, Wireshark ticket capture. <em>Full post coming soon.</em></p>
+                        <h4>Onboarding &amp; env setup ✓</h4>
+                        <p>Completed <code>HttpTrace</code> deep-dive, mapped Kerberos client mixin, stood up Windows Server 2022 + ADCS lab on <code>TEST.LOCAL</code>, and validated AS-REQ / TGS-REQ flows in Wireshark. Groundwork for both presenters laid.</p>
                     </div>
-                    <div class="update-card pending"><span class="update-week">Week 01</span><h4>HttpTrace study + AD lab</h4><p>Codebase walkthrough and lab bring-up.</p></div>
+                    <div class="update-card">
+                        <span class="update-week">Week 01</span>
+                        <h4>CertificateTracePresenter shipped — PR open</h4>
+                        <p>Implemented <code>CertificateTracePresenter</code> (343 lines) + shared <code>CertificateTrace</code> mixin (88 lines). Wired PKINIT hook in <code>kerberos/client.rb</code> and <code>ms_icpr</code> tracing in <code>icpr_cert</code>. Full RSpec coverage: 403-line presenter suite + 184-line mixin suite. PR opened on <code>certificate-trace</code> branch; review feedback addressed over multiple cycles including MS Application Policies OID decoding. <code>KerberosTicketTracePresenter</code> refactored to Presenter pattern on <code>kerberos-trace</code> — ahead of schedule.</p>
+                    </div>
                     <div class="update-card pending"><span class="update-week">Week 02</span><h4>Wireshark ticket capture</h4><p>Verifying AS-REQ / TGS-REQ flows on the wire.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 03</span><h4>KerberosTicketTracePresenter</h4><p>Implementing the presenter class &amp; <code>to_s_*</code> methods.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 04</span><h4>S4U2Self / S4U2Proxy</h4><p>Constrained-delegation lab validation.</p></div>
