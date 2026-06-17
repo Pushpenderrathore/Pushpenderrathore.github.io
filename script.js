@@ -494,6 +494,76 @@ document.addEventListener('DOMContentLoaded', function() {
     document.head.appendChild(style);
 });
 
+// =====================================================================
+// REDESIGN ENHANCEMENTS — count-up stats + scroll reveal
+// =====================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const supportsObserver = 'IntersectionObserver' in window;
+
+    // ---- Animated count-up for hero stats ----
+    function runCounter(el) {
+        const target = parseInt(el.getAttribute('data-count'), 10) || 0;
+        const suffix = el.getAttribute('data-suffix') || '';
+        if (prefersReducedMotion) {
+            el.textContent = target + suffix;
+            return;
+        }
+        const duration = 1400;
+        const start = performance.now();
+        function tick(now) {
+            const progress = Math.min((now - start) / duration, 1);
+            // easeOutCubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(target * eased) + suffix;
+            if (progress < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+
+    const counters = document.querySelectorAll('.stat-number[data-count]');
+    if (counters.length) {
+        if (supportsObserver) {
+            const counterObserver = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        runCounter(entry.target);
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.6 });
+            counters.forEach(c => counterObserver.observe(c));
+        } else {
+            counters.forEach(runCounter);
+        }
+    }
+
+    // ---- Scroll reveal for content blocks ----
+    const revealTargets = document.querySelectorAll(
+        '.skill-category, .service-card, .project-card, .cert-card, .contact-item, .about-highlights .highlight, .contact-form'
+    );
+
+    if (!supportsObserver || prefersReducedMotion) {
+        // No JS-driven motion: leave everything visible.
+        return;
+    }
+
+    const revealObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                obs.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    revealTargets.forEach((el, i) => {
+        el.classList.add('reveal');
+        el.style.transitionDelay = `${(i % 3) * 0.08}s`;
+        revealObserver.observe(el);
+    });
+});
+
 // Performance monitoring
 if ('performance' in window) {
     window.addEventListener('load', () => {

@@ -21,7 +21,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 
@@ -411,9 +411,17 @@
     </style>
 </head>
 <body>
+    <!-- Animated backdrop: scrolling grid + neon glow orbs -->
+    <div class="bg-fx" aria-hidden="true">
+        <div class="bg-grid"></div>
+        <div class="bg-orb bg-orb--green"></div>
+        <div class="bg-orb bg-orb--cyan"></div>
+        <div class="bg-noise"></div>
+    </div>
+
     <header>
         <nav class="navbar">
-            <div class="nav-brand">solitude_coder<span class="brand-dot">.</span></div>
+            <div class="nav-brand"><span class="brand-prompt">~/</span>solitude_coder<span class="brand-cursor">_</span></div>
             <ul class="nav-menu">
                 <li><a href="index.html" class="nav-link">Portfolio</a></li>
                 <li><a href="prs.html" class="nav-link">Pull Requests</a></li>

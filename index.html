@@ -22,14 +22,22 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Animated backdrop: scrolling grid + neon glow orbs -->
+    <div class="bg-fx" aria-hidden="true">
+        <div class="bg-grid"></div>
+        <div class="bg-orb bg-orb--green"></div>
+        <div class="bg-orb bg-orb--cyan"></div>
+        <div class="bg-noise"></div>
+    </div>
+
     <header>
         <nav class="navbar">
-            <div class="nav-brand">solitude_coder<span class="brand-dot">.</span></div>
+            <div class="nav-brand"><span class="brand-prompt">~/</span>solitude_coder<span class="brand-cursor">_</span></div>
             <ul class="nav-menu">
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
@@ -57,11 +65,15 @@
             <div class="container">
                 <div class="home-content">
                     <div class="home-text">
-                        <div class="greeting">👋 Hello there!</div>
-                        
+                        <div class="greeting">
+                            <span class="term-dot"></span>
+                            <span class="term-prompt">visitor@rathore:~$</span>
+                            <span class="term-cmd">whoami</span>
+                        </div>
+
                         <!-- Updated title & subtitle -->
                         <h1 class="title">I'm <span class="accent">Pushpender Singh Rathore</span></h1>
-                        <h2 class="subtitle" id="rotating-profession">Cybersecurity Analyst</h2>                       
+                        <h2 class="subtitle"><span class="subtitle-prefix">&gt;</span> <span id="rotating-profession">Cybersecurity Analyst</span></h2>
 
                         <p class="hero-desc">I'm Pushpender, a second-year B.Tech CSE student at BRCM CET.
               I build advanced tools, explore cybersecurity, and write code in C/C++, Assembly, and Python. I enjoy problem-solving by breaking systems in isolated lab environments (legally).
@@ -70,15 +82,15 @@
                         
                         <div class="hero-stats">
                             <div class="stat">
-                                <span class="stat-number">25+</span>
+                                <span class="stat-number" data-count="25" data-suffix="+">0</span>
                                 <span class="stat-label">Projects Completed</span>
                             </div>
                             <div class="stat">
-                                <span class="stat-number">2+</span>
+                                <span class="stat-number" data-count="2" data-suffix="+">0</span>
                                 <span class="stat-label">Years Experience</span>
                             </div>
                             <div class="stat">
-                                <span class="stat-number">10+</span>
+                                <span class="stat-number" data-count="10" data-suffix="+">0</span>
                                 <span class="stat-label">Opensource Contributions</span>
                             </div>
                         </div>
@@ -119,17 +131,24 @@
                      
                     <div class="home-image">
                         <div class="image-container">
-                            <img src="images/img.jpg" alt="Profile photo of Pushpender Singh Rathore" class="profile-image">
+                            <span class="corner corner--tl" aria-hidden="true"></span>
+                            <span class="corner corner--tr" aria-hidden="true"></span>
+                            <span class="corner corner--bl" aria-hidden="true"></span>
+                            <span class="corner corner--br" aria-hidden="true"></span>
+                            <div class="image-frame">
+                                <img src="images/img.jpg" alt="Profile photo of Pushpender Singh Rathore" class="profile-image">
+                                <span class="status-badge"><span class="status-dot"></span>online · open to collab</span>
+                            </div>
                             <div class="floating-card card-1">
-                                <i class="fas fa-code"></i>
+                                <i class="fas fa-shield-halved"></i>
                                 <span>Cyber Security</span>
                             </div>
                             <div class="floating-card card-2">
-                                <i class="fas fa-mobile-alt"></i>
+                                <i class="fas fa-brain"></i>
                                 <span>Artificial Intelligence</span>
                             </div>
                             <div class="floating-card card-3">
-                                <i class="fas fa-rocket"></i>
+                                <i class="fas fa-network-wired"></i>
                                 <span>Networking</span>
                             </div>
                         </div>
@@ -152,7 +171,8 @@
                     </div>
                     
                     <div class="about-text">
-                        <h2 class="section-title">About Me</h2>
+                        <p class="section-eyebrow section-eyebrow--left">// cat about.md</p>
+                        <h2 class="section-title section-title--left">About Me</h2>
                         <div class="about-description">
                             <p>I'm a cybersecurity practitioner based in India with a strong foundation in security research and machine learning. I've been seriously focused on offensive security for the past couple of years and I'm constantly learning and adapting to new technologies. Currently pursuing a B.Tech in Computer Science (2nd year) at BRCM CET, Bahal.</p>
 
@@ -200,7 +220,8 @@
         <!-- Skills Section -->
         <section id="skills" class="section skills">
       <div class="container">
-        <h2 class="section-title">Skills & Expertise</h2>
+        <p class="section-eyebrow">// arsenal</p>
+        <h2 class="section-title">Skills &amp; Expertise</h2>
         <div class="skills-content">
           <div class="skills-grid">
             <div class="skill-category">
@@ -283,6 +304,7 @@
     <!-- Certifications Section -->
 <section id="certifications" class="section certifications">
   <div class="container">
+    <p class="section-eyebrow">// credentials</p>
     <h2 class="section-title">Certifications</h2>
 
     <div class="certifications-grid">
@@ -329,6 +351,7 @@
 
     <section id="service" class="section services">
       <div class="container">
+        <p class="section-eyebrow">// services</p>
         <h2 class="section-title">What I Do</h2>
         <div class="services-content">
           <div class="services-grid">
@@ -356,6 +379,7 @@
 
     <section id="project" class="section projects">
       <div class="container">
+        <p class="section-eyebrow">// ~/projects</p>
         <h2 class="section-title">Featured Projects</h2>
         <div class="projects-content">
           <div class="projects-grid">
@@ -480,6 +504,7 @@ This enables <strong>real-time adaptive filtering</strong> and <strong>intellige
 
     <section id="contact" class="section contact">
       <div class="container">
+        <p class="section-eyebrow">// ./contact --me</p>
         <h2 class="section-title">Get In Touch</h2>
         <div class="contact-content">
           <div class="contact-info">
