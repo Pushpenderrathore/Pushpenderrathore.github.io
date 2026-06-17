@@ -2105,12 +2105,24 @@ body {
 
 /* ---- Floating cards (mono / glassy) ---- */
 .floating-card {
+    z-index: 5;                       /* sit in front of the portrait (z-index:1) */
+    max-width: 170px;
     font-family: var(--font-mono);
     font-size: 0.82rem;
-    background: rgba(7, 10, 14, 0.7);
-    border: 1px solid var(--border-accent);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 22px rgba(159, 239, 0, 0.08);
+    color: #0b0f14;
+    background: #f4f6f8;
+    border: 1px solid rgba(159, 239, 0, 0.45);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 22px rgba(159, 239, 0, 0.18);
 }
+
+/* darker icon tints so they stay legible on the white card */
+.floating-card i { color: #4a8f00; }
+.card-2 i { color: #0093b8; }
+
+/* keep the cards hugging the portrait corners, fully on-screen */
+.card-1 { top: 8%;  right: -12%; }
+.card-2 { top: 44%; bottom: auto; left: -14%; }
+.card-3 { bottom: 10%; right: -10%; }
 
 .card-2 i { color: var(--cyan); }
 
