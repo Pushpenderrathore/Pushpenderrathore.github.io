@@ -495,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =====================================================================
-// REDESIGN ENHANCEMENTS — count-up stats + scroll reveal
+// REDESIGN ENHANCEMENTS: count-up stats + scroll reveal
 // =====================================================================
 document.addEventListener('DOMContentLoaded', () => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

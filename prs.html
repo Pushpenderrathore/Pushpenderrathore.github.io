@@ -102,7 +102,7 @@
         }
         .nav-menu a { display: block; font-size: 1.05rem; padding: .65rem .5rem; border-radius: 8px; }
         .nav-menu a:hover, .nav-menu a.active { color: var(--accent); background: rgba(159,239,0,0.1); }
-        /* height/right via viewport units, not bottom:0 — .navbar's backdrop-filter
+        /* height/right via viewport units, not bottom:0; .navbar's backdrop-filter
            makes it the containing block, so inset:0 would size to the navbar. */
         .nav-toggle:checked ~ .nav-overlay {
           display: block; position: fixed; top: 0; left: 0; right: 0; height: 100vh;
@@ -146,7 +146,7 @@
       .footer { text-align: center; color: var(--text-dim); font-size: .85rem; padding: 2.5rem 6vw; border-top: 1px solid var(--border); }
       .footer a { color: var(--accent); }
 
-      /* Mobile content layout — placed after the base rules so these win. */
+      /* Mobile content layout: placed after the base rules so these win. */
       @media (max-width: 820px) {
         .wrap { padding: 2.5rem 1.25rem 3.5rem; }
         .pr-grid { grid-template-columns: 1fr; gap: 0.9rem; }
