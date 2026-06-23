@@ -18,10 +18,10 @@ I'm spending the summer of 2026 contributing to the **Metasploit Framework** as 
 
 I'm building two new inline tracing capabilities for Metasploit:
 
-- **`KerberosTicketTracePresenter`** — inspect every Kerberos ticket (AS-REQ, TGS-REQ, S4U2Self/S4U2Proxy) directly inside `msfconsole`.
-- **`CertificateTracePresenter`** — inspect every X.509 certificate artefact that flows through PKINIT and ADCS attack modules without exporting `.pfx` or `.cer` files to disk.
+- **`KerberosTicketTracePresenter`**: inspect every Kerberos ticket (AS-REQ, TGS-REQ, S4U2Self/S4U2Proxy) directly inside `msfconsole`.
+- **`CertificateTracePresenter`**: inspect every X.509 certificate artefact that flows through PKINIT and ADCS attack modules without exporting `.pfx` or `.cer` files to disk.
 
-Both are modelled on Metasploit's existing `HttpTrace` capability and follow the same pattern as `krb5_ccache_presenter.rb`. They're fully backward-compatible — defaults are `off`, so no existing module behaviour changes.
+Both are modelled on Metasploit's existing `HttpTrace` capability and follow the same pattern as `krb5_ccache_presenter.rb`. They're fully backward-compatible: defaults are `off`, so no existing module behaviour changes.
 
 **Mentors:** [@jheysel-r7](https://github.com/jheysel-r7) (primary) and [@zeroSteiner](https://github.com/zeroSteiner) (co-mentor).
 **Effort:** 175 hours over 12 weeks, June–August 2026.
@@ -29,13 +29,13 @@ Both are modelled on Metasploit's existing `HttpTrace` capability and follow the
 
 ## Why this project exists
 
-If you've run a modern red-team engagement against an Active Directory environment, you know the workflow. You fire off a Kerberos module — `kerberos_login`, `kerberos_enumusers`, an ADCS ESC1 exploit — get a ticket, and then you have to:
+If you've run a modern red-team engagement against an Active Directory environment, you know the workflow. You fire off a Kerberos module (`kerberos_login`, `kerberos_enumusers`, an ADCS ESC1 exploit), get a ticket, and then you have to:
 
 1. Export the `.ccache` to disk.
 2. Switch to an auxiliary module or an external tool (klist, Rubeus, Impacket's `describeTicket.py`) to actually read the ticket.
 3. Lose your `msfconsole` context, your environment, and arguably your OPSEC.
 
-That workflow break is friction. It slows down legitimate testing and it leaves artefacts on disk. The same problem exists for X.509 certificates produced by PKINIT and the ESC1–ESC16 attack chain — operators are constantly exporting `.pfx` files just to inspect serial numbers, validity windows, and EKU fields.
+That workflow break is friction. It slows down legitimate testing and it leaves artefacts on disk. The same problem exists for X.509 certificates produced by PKINIT and the ESC1–ESC16 attack chain, where operators are constantly exporting `.pfx` files just to inspect serial numbers, validity windows, and EKU fields.
 
 Metasploit already solved the equivalent problem for HTTP a long time ago. `HttpTrace` in `Exploit::Remote::HttpClient` lets you inline-debug every request and response without leaving the console. My project extends that same design philosophy to the authentication layer.
 
@@ -57,7 +57,7 @@ For X.509 certificates, the presenter surfaces:
 - Validity window
 - SHA-256 fingerprint
 - Public key algorithm and parameters
-- Extended Key Usage (the EKU field — critical for ADCS ESC1–ESC16 analysis)
+- Extended Key Usage (the EKU field, critical for ADCS ESC1–ESC16 analysis)
 - Subject Alternative Names
 
 All of it printed inline, in the same `msfconsole` session, with no disk artefacts.
@@ -72,7 +72,7 @@ print_line(presenter.to_s_as_req)
 print_line(presenter.to_s_tgs_req)
 ```
 
-Instantiate, call `to_s_*` instance methods that return formatted strings, and let the consuming module call `print_line()`. The presenter never writes to stdout itself — that keeps it composable, testable, and respectful of the module's output channels.
+Instantiate, call `to_s_*` instance methods that return formatted strings, and let the consuming module call `print_line()`. The presenter never writes to stdout itself, which keeps it composable, testable, and respectful of the module's output channels.
 
 The `CertificateTracePresenter` also includes a `coerce()` adapter that wraps any X.509-like object (an `OpenSSL::X509::Certificate`, an `OpenStruct` from a mocked test fixture, or a raw DER blob) into a uniform shape. That makes the presenter trivially unit-testable.
 
@@ -92,14 +92,14 @@ S4U2Self / S4U2Proxy ticket variants require a constrained-delegation lab config
 | Phase | Weeks | Focus |
 |-------|-------|-------|
 | Community Bonding · Phase 1 | 1–2 | HttpTrace study, AD lab bring-up, Wireshark ticket capture |
-| Phase 2 — KerberosTicketTracePresenter | 3–6 | Core presenter, dispatcher into `kerberos/client.rb`, AP-REQ + TGS-REQ hooks, integrate into `kerberos_enumusers`, ship 13-example RSpec |
+| Phase 2 · KerberosTicketTracePresenter | 3–6 | Core presenter, dispatcher into `kerberos/client.rb`, AP-REQ + TGS-REQ hooks, integrate into `kerberos_enumusers`, ship 13-example RSpec |
 | Midterm Evaluation | end of Week 6 | PR 1 open and under upstream review |
-| Phase 3 — CertificateTracePresenter | 7–10 | `coerce()` adapter, `to_s_csr`, PKINIT hook in `send_request_tgt_pkinit`, integrate into `kerberos_login`, validate against ADCS ESC1, ship 14-example RSpec |
-| Phase 4 — Test & Docs | 11–12 | Full AD lab integration testing, documentation, PR polish |
+| Phase 3 · CertificateTracePresenter | 7–10 | `coerce()` adapter, `to_s_csr`, PKINIT hook in `send_request_tgt_pkinit`, integrate into `kerberos_login`, validate against ADCS ESC1, ship 14-example RSpec |
+| Phase 4 · Test & Docs | 11–12 | Full AD lab integration testing, documentation, PR polish |
 
 ## What's next after GSoC
 
-The trace presenters open the door to a broader cleanup. `Rex::Proto::Kerberos` is consumed by a lot more than just the Kerberos auxiliary modules — LDAP-over-Kerberos and SMB-with-Kerberos modules can both benefit from the same inline transparency. That work continues outside the program.
+The trace presenters open the door to a broader cleanup. `Rex::Proto::Kerberos` is consumed by a lot more than just the Kerberos auxiliary modules; LDAP-over-Kerberos and SMB-with-Kerberos modules can both benefit from the same inline transparency. That work continues outside the program.
 
 ## Follow along
 
@@ -110,4 +110,4 @@ The trace presenters open the door to a broader cleanup. `Rex::Proto::Kerberos` 
 - **LinkedIn:** [Pushpender Singh Rathore](https://www.linkedin.com/in/pushpender-singh-rathore-72466a260/)
 - **GitHub:** [@Pushpenderrathore](https://github.com/Pushpenderrathore)
 
-I'll be posting weekly progress updates here on Hashnode and on the GSoC build log throughout the coding period. Thanks for reading — and a huge thanks to my mentors @jheysel-r7 and @zeroSteiner, and to the entire Metasploit / Rapid7 community for the chance to contribute.
+I'll be posting weekly progress updates here on Hashnode and on the GSoC build log throughout the coding period. Thanks for reading, and a huge thanks to my mentors @jheysel-r7 and @zeroSteiner, and to the entire Metasploit / Rapid7 community for the chance to contribute.
