@@ -247,7 +247,7 @@ h2 {
         <div class="location">Bahal, Haryana, India &middot; IST (GMT +5:30)</div>
     </div>
     <div class="contact">
-        <div><span class="label">Email</span><a href="mailto:bluedevil5177@gmail.com">bluedevil5177@gmail.com</a></div>
+        <div><span class="label">Email</span><a href="mailto:pushpendersingh046@gmail.com">pushpendersingh046@gmail.com</a></div>
         <div><span class="label">Phone</span>+91 7300301634</div>
         <div><span class="label">GitHub</span><a href="https://github.com/Pushpenderrathore">github.com/Pushpenderrathore</a></div>
         <div><span class="label">LinkedIn</span><a href="https://www.linkedin.com/in/pushpender-singh-rathore-72466a260/">in/pushpender-singh-rathore</a></div>
@@ -256,7 +256,7 @@ h2 {
 </header>
 
 <p class="summary">
-    Second-year B.Tech Computer Science student at BRCM CET focused on <strong>offensive security research</strong>, <strong>malware and botnet analysis</strong>, and <strong>low-level / systems programming</strong> in C, C++, Assembly, and Python. <strong>GSoC 2026 contributor</strong> at the Metasploit Framework (Rapid7) building inline tracing presenters for Kerberos tickets and X.509 certificates. Hands-on experience across Active Directory abuse, ADCS ESC1-ESC16 exploitation, and reverse-engineering tooling.
+    3rd-year B.Tech Computer Science student at BRCM CET focused on <strong>offensive security research</strong>, <strong>malware and botnet analysis</strong>, and <strong>low-level / systems programming</strong> in C, C++, Assembly, and Python. <strong>GSoC 2026 contributor</strong> at the Metasploit Framework (Rapid7) building inline tracing presenters for Kerberos tickets and X.509 certificates. Hands-on experience across Active Directory abuse, ADCS ESC1-ESC16 exploitation, and reverse-engineering tooling, with a defensive emphasis on detecting stealthy, low-and-slow command-and-control (C2) traffic. Authored <strong>5 upstream pull requests (2 merged, 1 in review, ~1,200 lines of Ruby merged)</strong> validated end to end against live infrastructure.
 </p>
 
 <section>
@@ -264,7 +264,7 @@ h2 {
     <div class="entry">
         <div class="entry-head">
             <span class="entry-title">B.Tech, Computer Science &amp; Engineering</span>
-            <span class="entry-meta">Current &middot; 2nd year</span>
+            <span class="entry-meta">3rd year (Current) &middot; Expected 2028</span>
         </div>
         <div class="entry-sub">BRCM College of Engineering &amp; Technology, Bahal, Haryana</div>
         <div class="entry-body">Coursework and self-directed study in systems programming, networks, operating systems, and applied cryptography.</div>
@@ -284,15 +284,18 @@ h2 {
     <div class="entry">
         <div class="entry-head">
             <span class="entry-title">GSoC 2026 Contributor - Metasploit Framework (Rapid7)</span>
-            <span class="entry-meta">Jun &ndash; Aug 2026 (175 hrs)</span>
+            <span class="entry-meta">May 2026 - Present (175 hrs)</span>
         </div>
         <div class="entry-sub">Mentors: @jheysel-r7 (primary), @zeroSteiner (co-mentor)</div>
         <div class="entry-body">
             <ul>
-                <li>Designing and implementing <strong>KerberosTicketTracePresenter</strong> and <strong>CertificateTracePresenter</strong>: two new inline tracing presenters that bring HttpTrace-style transparency to Kerberos tickets and X.509 certificates inside msfconsole.</li>
-                <li>Both presenter classes prototyped against AS-REQ / TGS-REQ flows in a Windows Server 2022 + ADCS lab on TEST.LOCAL; 13 + 14 RSpec examples written.</li>
-                <li>Modelled on the existing <code>HttpTrace</code> architecture and the <code>krb5_ccache_presenter.rb</code> precedent for upstream-merge consistency.</li>
+                <li>Designed and merged <strong>CertificateTracePresenter</strong>, a new X.509 certificate and CSR tracing subsystem following Metasploit's Presenter architecture, with full RSpec coverage.</li>
+                <li>Extended certificate tracing to <strong>LDAP Schannel authentication</strong>, surfacing certificate material during certificate-based binds.</li>
+                <li>Restored and wired <strong>CSR tracing into the AD CS / MS-ICPR enrollment flow</strong>, decoding requested certificate templates, SANs, and EKU OIDs from live CSRs.</li>
+                <li>Prototyped <strong>centralized Kerberos ticket tracing</strong> with metadata/full verbosity modes and module integration, informing the current presenter design.</li>
+                <li>Validated every feature end to end against a live <strong>Windows Server 2022 + AD CS lab</strong>, including ESC1-style enrollment and on-behalf-of CMS paths.</li>
             </ul>
+            <div style="margin-top:4px; font-size:9.5pt;"><strong>Upstream PRs</strong> (<a href="https://github.com/rapid7/metasploit-framework">rapid7/metasploit-framework</a>): #21198 +1,032 merged &middot; #21469 +137 merged &middot; #21580 +277 in review &middot; #21190 +920 &amp; #21152 +645 prototypes &middot; <a href="https://pushpenderrathore.github.io/prs.html">full list</a></div>
         </div>
     </div>
 
@@ -302,7 +305,7 @@ h2 {
             <span class="entry-meta">C / C++ / Go / Shell</span>
         </div>
         <div class="entry-sub"><a href="https://github.com/Pushpenderrathore/Mirai-Source-Code">github.com/Pushpenderrathore/Mirai-Source-Code</a></div>
-        <div class="entry-body">Maintained mirror of the Mirai botnet source code preserved strictly for educational, research, and cybersecurity-analysis purposes. Used to study how large-scale IoT malware operates at a technical level: infection vectors, C2 protocols, scanning routines, and load distribution.</div>
+        <div class="entry-body">Maintained mirror of the Mirai botnet source code preserved strictly for educational, research, and cybersecurity-analysis purposes. Used to study how large-scale IoT malware operates at a technical level: infection vectors, C2 protocols, scanning routines, and load distribution.<br><strong>PR:</strong> <a href="https://github.com/jgamblin/Mirai-Source-Code/pull/46">#46</a> - Improved README.md with research and usage guidelines (+154, merged).</div>
     </div>
 
     <div class="entry">
@@ -310,7 +313,7 @@ h2 {
             <span class="entry-title">Open-Source Contributor - BlackArch Linux</span>
             <span class="entry-meta">Active</span>
         </div>
-        <div class="entry-body">Working with the BlackArch penetration-testing distribution: package work, tool packaging, and offensive-security tooling research in a controlled environment.</div>
+        <div class="entry-body">Working with the BlackArch penetration-testing distribution: package work, tool packaging, and offensive-security tooling research in a controlled environment.<br><strong>PR:</strong> <a href="https://github.com/BlackArch/blackarch/pull/4645">#4645</a> - Polished README structure and style as per feedback (+137, merged).</div>
     </div>
 </section>
 
@@ -354,16 +357,16 @@ h2 {
     <h2>Technical Skills</h2>
     <div class="two-col">
         <div>
-            <div class="skills-block"><span class="skills-label">Languages: </span><span class="skills-list">Ruby, Python, C / C++, Bash, x86 / x86-64 Assembly</span></div>
+            <div class="skills-block"><span class="skills-label">Languages: </span><span class="skills-list">Ruby, Python, C / C++, Bash, x86 / x86-64 Assembly, JavaScript</span></div>
             <div class="skills-block"><span class="skills-label">Reverse Engineering: </span><span class="skills-list">Ghidra, gdb, Binary Ninja, objdump, xxd, YARA</span></div>
             <div class="skills-block"><span class="skills-label">Pentesting: </span><span class="skills-list">Metasploit, Nmap, Wireshark, Burp Suite, Impacket, Rubeus</span></div>
             <div class="skills-block"><span class="skills-label">CTF Platforms: </span><span class="skills-list">HackTheBox, TryHackMe, OverTheWire, WeChall</span></div>
         </div>
         <div>
-            <div class="skills-block"><span class="skills-label">AD &amp; Auth: </span><span class="skills-list">Kerberos, ADCS ESC1-ESC16, Kerberoasting, Pass-the-Hash, Golden / Silver Ticket</span></div>
+            <div class="skills-block"><span class="skills-label">AD &amp; Auth: </span><span class="skills-list">Kerberos, ADCS ESC1-ESC16, Kerberoasting, Pass-the-Hash, Golden / Silver Ticket, PKINIT, LDAP Schannel</span></div>
             <div class="skills-block"><span class="skills-label">Cryptography: </span><span class="skills-list">OpenSSL, ASN.1, DER / PEM, X.509, AES-GCM, PBKDF2</span></div>
             <div class="skills-block"><span class="skills-label">ML / Data: </span><span class="skills-list">PyTorch, TensorFlow, Keras, scikit-learn, NumPy, Pandas, Transformers, Ollama</span></div>
-            <div class="skills-block"><span class="skills-label">Tooling: </span><span class="skills-list">Git, RSpec, pytest, systemd, Kali Linux, BlackArch</span></div>
+            <div class="skills-block"><span class="skills-label">Tooling: </span><span class="skills-list">Git, RSpec, pytest, systemd, Kali Linux, BlackArch, Parrot OS</span></div>
         </div>
     </div>
 </section>
@@ -371,10 +374,10 @@ h2 {
 <section>
     <h2>Certifications</h2>
     <ul class="cert-list">
-        <li>&middot; OSCP - Offensive Security Certified Professional</li>
-        <li>&middot; CompTIA Security+</li>
-        <li>&middot; CEH - Certified Ethical Hacker (EC-Council)</li>
-        <li>&middot; RSCIT Computer Diploma - Government of Rajasthan</li>
+        <li>&middot; OSCP - Offensive Security Certified Professional <em>(in progress)</em></li>
+        <li>&middot; CompTIA Security+ <em>(in progress)</em></li>
+        <li>&middot; CEH - Certified Ethical Hacker (EC-Council) <em>(in progress)</em></li>
+        <li>&middot; RSCIT Computer Diploma - Government of Rajasthan <em>(completed)</em></li>
     </ul>
 </section>
 
