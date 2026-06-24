@@ -569,7 +569,7 @@
                     <span class="tech-pill">Impacket · Rubeus</span>
                 </div>
 
-                <h3 class="tech-stack-heading">Current Status: Week 1 (ahead of schedule)</h3>
+                <h3 class="tech-stack-heading">Current Status: Week 2 (ahead of schedule)</h3>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8;">
                     <strong>Both presenter cores shipped in Week 1, originally scoped for Weeks 3–10.</strong>
                 </p>
@@ -581,6 +581,9 @@
                 </p>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
                     <strong>Total: ~1,300+ lines</strong> of new production code + specs across both branches before the first evaluation.
+                </p>
+                <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
+                    <strong>Week 2:</strong> <strong>CSR tracing</strong> restored to <code>CertificateTrace</code> as a focused follow-up PR (<a href="https://github.com/rapid7/metasploit-framework/pull/21580" target="_blank" rel="noopener">#21580</a>, open) &mdash; adds <code>to_s_csr_metadata</code> / <code>to_s_csr_full</code> presenter methods, a <code>certificate_csr_trace</code> hook in the mixin, and 73 green RSpec examples decoding requested template, SAN, and EKU OIDs from a real PKCS#10 CSR. Additionally, <strong>SSLPeerCertTrace Phase 1</strong> shipped: a new standalone <code>SslPeerCertTrace</code> mixin wired into <code>HttpClient</code> that dumps the server TLS leaf certificate inline using the existing <code>CertificateTracePresenter</code>, with dedup, 23 green specs, and live-tested against a WEBrick HTTPS server using <code>auxiliary/scanner/http/http_version</code>. PR <a href="https://github.com/rapid7/metasploit-framework/pull/21599" target="_blank" rel="noopener">#21599</a> opened as DRAFT; proposal PDF sent to mentor jheysel on Slack.
                 </p>
             </div>
         </section>
@@ -607,9 +610,9 @@
                         <p>Mentor review of progress against proposal milestones. With CertificateTracePresenter already shipped and under review, the midterm bar is already exceeded, so Phase 2 wiring and S4U2 validation will be the focus before the checkpoint.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Phase 3 - CertificateTracePresenter ✓</h4>
-                        <span class="timeline-period">Originally Weeks 7–10 · Shipped in Week 1</span>
-                        <p>Fully complete ahead of schedule. <code>CertificateTracePresenter</code> (343 lines) + shared <code>CertificateTrace</code> mixin (88 lines) implemented, PKINIT hook wired, integrated into 10+ modules, 403-line + 184-line RSpec suites written, and PR open with multiple review cycles already addressed.</p>
+                        <h4>Phase 3 - CertificateTracePresenter ✓ &amp; CSR follow-up ✓</h4>
+                        <span class="timeline-period">Originally Weeks 7–10 · Core shipped Week 1 · CSR follow-up Week 2</span>
+                        <p><code>CertificateTracePresenter</code> (343 lines) + shared <code>CertificateTrace</code> mixin merged upstream via <a href="https://github.com/rapid7/metasploit-framework/pull/21198" target="_blank" rel="noopener">PR #21198</a>. Week 2 follow-up: CSR mode restored via <a href="https://github.com/rapid7/metasploit-framework/pull/21580" target="_blank" rel="noopener">PR #21580</a> (open) &mdash; <code>to_s_csr_metadata</code> / <code>to_s_csr_full</code>, hook in <code>CertRequest#with_adcs_certificate_request</code>, 73 RSpec examples green. Bonus: <a href="https://github.com/rapid7/metasploit-framework/pull/21599" target="_blank" rel="noopener">PR #21599</a> (DRAFT) extends tracing to TLS server certificates via <code>HttpClient</code>.</p>
                     </div>
                     <div class="timeline-item">
                         <h4>Phase 4 - Test &amp; Docs</h4>
@@ -648,7 +651,12 @@
                         <p style="margin-top:0.6rem;"><strong>KerberosTicketTracePresenter</strong> (Phase 2 work): core class done at 110 lines, Presenter pattern with <code>to_s_metadata</code> / <code>to_s_full</code>, 174-line RSpec suite. Dispatcher wiring + S4U2 lab validation next.</p>
                         <p style="margin-top:0.6rem;"><a href="https://solitude-coder.hashnode.dev/gsoc-2026-week-1-shipping-certificatetracepresenter-for-metasploit-six-weeks-ahead-of-schedule" target="_blank" rel="noopener">Read the Week 1 blog post →</a></p>
                     </div>
-                    <div class="update-card pending"><span class="update-week">Week 02</span><h4>Wireshark ticket capture</h4><p>Verifying AS-REQ / TGS-REQ flows on the wire.</p></div>
+                    <div class="update-card">
+                        <span class="update-week">Week 02</span>
+                        <h4>CSR trace PR #21580 + SSLPeerCertTrace Phase 1 PR #21599</h4>
+                        <p><strong>CSR tracing</strong> restored as a focused follow-up to the merged <code>CertificateTracePresenter</code>: <code>to_s_csr_metadata</code> / <code>to_s_csr_full</code> + <code>coerce_csr</code>, hook in <code>CertRequest#with_adcs_certificate_request</code>, 73 RSpec examples green. Decodes requested template, SAN, and EKU OIDs from a real PKCS#10 CSR. <a href="https://github.com/rapid7/metasploit-framework/pull/21580" target="_blank" rel="noopener">PR #21580 open</a>.</p>
+                        <p style="margin-top:0.6rem;"><strong>SSLPeerCertTrace Phase 1</strong>: new standalone <code>SslPeerCertTrace</code> mixin wired into <code>HttpClient</code> after <code>send_recv</code>, reuses <code>CertificateTracePresenter</code> for formatting, dedup via <code>@_ssl_peer_cert_seen</code>. 23 specs green. Live-tested against WEBrick HTTPS using <code>auxiliary/scanner/http/http_version</code> (all three enum values verified). <a href="https://github.com/rapid7/metasploit-framework/pull/21599" target="_blank" rel="noopener">PR #21599 DRAFT</a> &mdash; proposal PDF sent to jheysel on Slack.</p>
+                    </div>
                     <div class="update-card pending"><span class="update-week">Week 03</span><h4>KerberosTicketTracePresenter</h4><p>Implementing the presenter class &amp; <code>to_s_*</code> methods.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 04</span><h4>S4U2Self / S4U2Proxy</h4><p>Constrained-delegation lab validation.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 05</span><h4>Dispatcher + RSpec</h4><p>Wiring into <code>kerberos/client.rb</code>; 13 RSpec examples.</p></div>
@@ -714,6 +722,27 @@
                         <div>
                             <span class="resource-label">My GitHub</span>
                             <span class="resource-url">github.com/Pushpenderrathore</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21198" target="_blank" rel="noopener">
+                        <i class="fas fa-code-merge"></i>
+                        <div>
+                            <span class="resource-label">PR #21198 &mdash; CertificateTracePresenter</span>
+                            <span class="resource-url">Merged &middot; rapid7/metasploit-framework</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21580" target="_blank" rel="noopener">
+                        <i class="fas fa-code-pull-request"></i>
+                        <div>
+                            <span class="resource-label">PR #21580 &mdash; CSR trace follow-up</span>
+                            <span class="resource-url">Open &middot; rapid7/metasploit-framework</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21599" target="_blank" rel="noopener">
+                        <i class="fas fa-code-pull-request"></i>
+                        <div>
+                            <span class="resource-label">PR #21599 &mdash; SSLPeerCertTrace Phase 1</span>
+                            <span class="resource-url">Draft &middot; rapid7/metasploit-framework</span>
                         </div>
                     </a>
                 </div>
