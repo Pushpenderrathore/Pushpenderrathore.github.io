@@ -429,6 +429,7 @@
                 <li><a href="#project" class="nav-link">Project</a></li>
                 <li><a href="#timeline" class="nav-link">Timeline</a></li>
                 <li><a href="#updates" class="nav-link">Updates</a></li>
+                <li><a href="#blog" class="nav-link">Blog</a></li>
                 <li><a href="#resources" class="nav-link">Resources</a></li>
             </ul>
             <div class="nav-cta">
@@ -783,6 +784,23 @@
             </div>
         </section>
 
+        <section id="blog" class="section">
+            <div class="container">
+                <h2 class="section-title">Rapid7 Metasploit Blog</h2>
+                <p class="section-intro">Every Rapid7 Metasploit wrap-up post, auto-synced daily. Posts marked <strong>Featured</strong> mention my GSoC work directly.</p>
+
+                <div id="blog-status" style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--text-muted);margin:1rem 0 1.5rem;"></div>
+
+                <div id="blog-grid" style="
+                    display:grid;
+                    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+                    gap:1.25rem;
+                ">
+                    <div style="color:var(--text-muted);font-size:0.9rem;padding:2rem 0;">Loading posts&hellip;</div>
+                </div>
+            </div>
+        </section>
+
         <section id="operator" class="section">
             <div class="container">
                 <h2 class="section-title">Operator Console <span class="op-locked-badge"><i class="fas fa-lock"></i> Restricted</span></h2>
@@ -954,6 +972,123 @@
         })();
     </script>
     <script src="script.js"></script>
+
+    <style>
+        .blog-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.3rem 1.5rem;
+            backdrop-filter: blur(20px);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            gap: 0.65rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        .blog-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-accent);
+            box-shadow: var(--shadow-card);
+        }
+        .blog-card.featured {
+            border-left: 3px solid var(--accent-primary);
+        }
+        .blog-card__top {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            flex-wrap: wrap;
+        }
+        .blog-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        .blog-badge-featured {
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent-primary);
+            background: var(--border-accent);
+            border: 1px solid var(--border-accent);
+            padding: 0.18rem 0.55rem;
+            border-radius: 4px;
+        }
+        .blog-title {
+            font-size: 0.97rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.45;
+            flex: 1;
+        }
+        .blog-card__foot {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        @media (max-width: 480px) {
+            .blog-card { padding: 1.1rem 1.2rem; }
+            .blog-title { font-size: 0.9rem; }
+        }
+    </style>
+
+    <script>
+    (function () {
+        var grid = document.getElementById('blog-grid');
+        var status = document.getElementById('blog-status');
+
+        function fmtDate(iso) {
+            if (!iso) return '';
+            var d = new Date(iso + 'T00:00:00Z');
+            return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+        }
+
+        function renderPosts(posts) {
+            if (!posts || !posts.length) {
+                grid.innerHTML = '<div style="color:var(--text-muted);font-size:0.9rem;padding:2rem 0;">No posts found.</div>';
+                return;
+            }
+            grid.innerHTML = posts.map(function (p) {
+                var featured = p.gsoc_feature
+                    ? '<span class="blog-badge-featured">Featured my work</span>'
+                    : '';
+                return [
+                    '<a class="blog-card' + (p.gsoc_feature ? ' featured' : '') + '"',
+                    '   href="' + p.url + '" target="_blank" rel="noopener">',
+                    '  <div class="blog-card__top">',
+                    '    <span class="blog-date">' + fmtDate(p.date) + '</span>',
+                    '    ' + featured,
+                    '  </div>',
+                    '  <span class="blog-title">' + p.title + '</span>',
+                    '  <span class="blog-card__foot"><i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem"></i> rapid7.com</span>',
+                    '</a>'
+                ].join('\n');
+            }).join('\n');
+        }
+
+        fetch('data/rapid7-blogs.json?_=' + Date.now())
+            .then(function (r) {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            })
+            .then(function (posts) {
+                renderPosts(posts);
+                if (status) {
+                    var latest = posts.length ? fmtDate(posts[0].date) : '';
+                    status.textContent = posts.length + ' posts · latest: ' + latest + ' · auto-synced daily';
+                }
+            })
+            .catch(function () {
+                if (grid) grid.innerHTML = '<div style="color:var(--text-muted);font-size:0.9rem;padding:2rem 0;">Could not load posts · <a href="https://www.rapid7.com/blog/tag/metasploit/" target="_blank" rel="noopener" style="color:var(--accent-primary)">view on rapid7.com</a></div>';
+            });
+    })();
+    </script>
 
     <footer class="site-footer">
         <div class="footer-counter">

@@ -1,0 +1,128 @@
+[
+  {
+    "title": "Weekly Metasploit Update: Modules for Audiobookshelf, LiteLLM, Next.js, Dalfox and more",
+    "url": "https://www.rapid7.com/blog/post/pt-weekly-metasploit-update-modules-for-audiobookshelf-litellm-next-js-dalfox-and-more/",
+    "date": "2026-06-26",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Weekly Metasploit Update: NTLM Relay Priv Esc, MCP Server Integration, Paperclip AI RCE Chain, and more",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-19-06-2026/",
+    "date": "2026-06-19",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Weekly Metasploit Update: New Kerberos/Certificate tracing options, and multiple new modules",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-13-06-2026/",
+    "date": "2026-06-13",
+    "gsoc_feature": true
+  },
+  {
+    "title": "Weekly Metasploit Update: Apache ActiveMQ RCE, Gogs Rebase RCE, and Windows Kernel Pointer Enum",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-05-06-2026/",
+    "date": "2026-06-05",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap Up 05/29/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-05-29-2026/",
+    "date": "2026-05-29",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap Up 05/22/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-05-22-2026/",
+    "date": "2026-05-22",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 05/15/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-05-15-2026/",
+    "date": "2026-05-15",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 05/08/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-05-08-2026/",
+    "date": "2026-05-08",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 05/01/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-05-01-2026/",
+    "date": "2026-05-01",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 04/25/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-04-25-2026/",
+    "date": "2026-04-25",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 04/17/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-04-17-2026/",
+    "date": "2026-04-17",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 04/10/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-04-10-2026/",
+    "date": "2026-04-10",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 04/03/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-04-03-2026/",
+    "date": "2026-04-03",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 03/27/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-03-27-2026/",
+    "date": "2026-03-27",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 03/20/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-03-20-2026/",
+    "date": "2026-03-20",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 03/13/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-03-13-2026/",
+    "date": "2026-03-13",
+    "gsoc_feature": false
+  },
+  {
+    "title": "The Face of Penetration Testing is Changing: Announcing Metasploit Pro 5.0.0",
+    "url": "https://www.rapid7.com/blog/post/pt-announcing-metasploit-pro-5-penetration-testing-evolving/",
+    "date": "2026-03-10",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 03/06/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-03-06-2026/",
+    "date": "2026-03-06",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 02/27/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-02-27-2026/",
+    "date": "2026-02-27",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 02/20/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-02-20-2026/",
+    "date": "2026-02-20",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap-Up 02/13/2026",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-02-13-2026/",
+    "date": "2026-02-13",
+    "gsoc_feature": false
+  }
+]
