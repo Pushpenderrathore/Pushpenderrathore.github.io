@@ -124,5 +124,11 @@
     "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-02-13-2026/",
     "date": "2026-02-13",
     "gsoc_feature": false
+  },
+  {
+    "title": "Weekly Metasploit Update: Modules for SMB-to-Meterpreter, Peyara Remote Mouse RCE exploit, and more",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-07-03-2026/",
+    "date": "",
+    "gsoc_feature": false
   }
 ]
