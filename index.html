@@ -391,6 +391,8 @@
 
 <style>
   .cert-gate { position: relative; }
+  /* Ensure the [hidden] attribute wins over the display rules below. */
+  .cert-verify [hidden] { display: none !important; }
   .cert-verify { margin-top: auto; }
   .cert-lock-btn {
     display: inline-flex;
@@ -494,8 +496,7 @@
           '<i class="fas fa-arrow-up-right-from-square"></i></a>';
       } else {
         out.innerHTML = '<span class="cert-verified-badge">' +
-          '<i class="fas fa-unlock"></i> Unlocked</span>' +
-          '<span class="cert-btn cert-btn-pending" aria-disabled="true">Verification link coming soon</span>';
+          '<i class="fas fa-unlock"></i> Unlocked</span>';
       }
       out.hidden = false;
     }
