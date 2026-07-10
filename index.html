@@ -473,7 +473,6 @@
     var gate = document.getElementById('cert-gate');
     if (!gate) return;
     var expected = gate.getAttribute('data-cert-hash');
-    var STORAGE_KEY = 'certUnlocked';
     var cards = Array.prototype.slice.call(gate.querySelectorAll('.cert-card'));
 
     function revealCard(card) {
@@ -505,14 +504,6 @@
       cards.forEach(revealCard);
     }
 
-    // Stay unlocked for the browser session once the password has been entered.
-    try {
-      if (sessionStorage.getItem(STORAGE_KEY) === expected) {
-        unlockAll();
-        return;
-      }
-    } catch (e) { /* sessionStorage may be unavailable */ }
-
     async function sha256Hex(str) {
       var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
       return Array.from(new Uint8Array(buf))
@@ -543,7 +534,6 @@
         try {
           var hashed = await sha256Hex(value);
           if (hashed === expected) {
-            try { sessionStorage.setItem(STORAGE_KEY, expected); } catch (e2) {}
             unlockAll();
           } else {
             error.hidden = false;
