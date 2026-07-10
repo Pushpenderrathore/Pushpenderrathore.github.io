@@ -1700,6 +1700,9 @@ header.scrolled {
     text-align: center;
     backdrop-filter: blur(10px);
     transition: var(--transition-smooth);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .cert-card:hover {

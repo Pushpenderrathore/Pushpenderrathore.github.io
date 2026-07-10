@@ -308,57 +308,80 @@
     <p class="section-eyebrow">// credentials</p>
     <h2 class="section-title">Certifications</h2>
 
-    <div class="cert-gate locked" id="cert-gate" data-cert-hash="f11f692662748feeeba6f550f70c8b8dec00f8148857c79254a7e62fe0698d8a">
-
-      <div class="cert-lock-overlay" id="cert-lock-overlay">
-        <div class="cert-lock-box">
-          <i class="fas fa-lock cert-lock-icon"></i>
-          <h3>Protected Content</h3>
-          <p>Enter the password to view my certifications.</p>
-          <form id="cert-lock-form" autocomplete="off">
-            <input type="password" id="cert-lock-input" placeholder="Password" aria-label="Certifications password" autocomplete="off" />
-            <button type="submit">Unlock</button>
-          </form>
-          <p class="cert-lock-error" id="cert-lock-error" role="alert" hidden>Incorrect password. Try again.</p>
-        </div>
-      </div>
+    <div class="cert-gate" id="cert-gate" data-cert-hash="f11f692662748feeeba6f550f70c8b8dec00f8148857c79254a7e62fe0698d8a">
 
       <div class="certifications-grid" id="certifications-grid">
 
-      <div class="cert-card">
+      <div class="cert-card" data-verify-url="">
         <div class="cert-icon">
           <i class="fas fa-user-secret"></i>
         </div>
         <h3>OSCP – Offensive Security Certified Professional</h3>
         <p>Hands-on penetration testing certification covering enumeration, exploitation, privilege escalation, and Active Directory attacks.</p>
-        <span class="cert-btn cert-btn-pending" aria-disabled="true">Verification link coming soon</span>
+        <div class="cert-verify">
+          <button type="button" class="cert-btn cert-lock-btn"><i class="fas fa-lock"></i> Locked &middot; unlock to verify</button>
+          <form class="cert-unlock-form" autocomplete="off" hidden>
+            <input type="password" class="cert-unlock-input" placeholder="Password" aria-label="Certification password" autocomplete="off" />
+            <button type="submit">Unlock</button>
+          </form>
+          <p class="cert-unlock-hint" hidden>Recruiter? <a href="#contact">Contact me</a> for the password.</p>
+          <p class="cert-unlock-error" role="alert" hidden>Incorrect password.</p>
+          <div class="cert-verified" hidden></div>
+        </div>
       </div>
 
-      <div class="cert-card">
+      <div class="cert-card" data-verify-url="">
         <div class="cert-icon">
           <i class="fas fa-user-ninja"></i>
         </div>
         <h3>CEH – Certified Ethical Hacker</h3>
         <p>EC-Council certification covering reconnaissance, scanning, system hacking, malware threats, and web application attacks.</p>
-        <span class="cert-btn cert-btn-pending" aria-disabled="true">Verification link coming soon</span>
+        <div class="cert-verify">
+          <button type="button" class="cert-btn cert-lock-btn"><i class="fas fa-lock"></i> Locked &middot; unlock to verify</button>
+          <form class="cert-unlock-form" autocomplete="off" hidden>
+            <input type="password" class="cert-unlock-input" placeholder="Password" aria-label="Certification password" autocomplete="off" />
+            <button type="submit">Unlock</button>
+          </form>
+          <p class="cert-unlock-hint" hidden>Recruiter? <a href="#contact">Contact me</a> for the password.</p>
+          <p class="cert-unlock-error" role="alert" hidden>Incorrect password.</p>
+          <div class="cert-verified" hidden></div>
+        </div>
       </div>
 
-      <div class="cert-card">
+      <div class="cert-card" data-verify-url="">
         <div class="cert-icon">
           <i class="fas fa-shield-halved"></i>
         </div>
         <h3>CompTIA Security+</h3>
         <p>Foundational security certification covering threats, attacks, cryptography, identity management, and risk mitigation.</p>
-        <span class="cert-btn cert-btn-pending" aria-disabled="true">Verification link coming soon</span>
+        <div class="cert-verify">
+          <button type="button" class="cert-btn cert-lock-btn"><i class="fas fa-lock"></i> Locked &middot; unlock to verify</button>
+          <form class="cert-unlock-form" autocomplete="off" hidden>
+            <input type="password" class="cert-unlock-input" placeholder="Password" aria-label="Certification password" autocomplete="off" />
+            <button type="submit">Unlock</button>
+          </form>
+          <p class="cert-unlock-hint" hidden>Recruiter? <a href="#contact">Contact me</a> for the password.</p>
+          <p class="cert-unlock-error" role="alert" hidden>Incorrect password.</p>
+          <div class="cert-verified" hidden></div>
+        </div>
       </div>
 
-      <div class="cert-card">
+      <div class="cert-card" data-verify-url="">
         <div class="cert-icon">
           <i class="fas fa-certificate"></i>
         </div>
         <h3>RSCIT Computer Diploma</h3>
         <p>Basic computer fundamentals, digital literacy, and IT systems knowledge.</p>
-        <span class="cert-btn cert-btn-pending" aria-disabled="true">Verification link coming soon</span>
+        <div class="cert-verify">
+          <button type="button" class="cert-btn cert-lock-btn"><i class="fas fa-lock"></i> Locked &middot; unlock to verify</button>
+          <form class="cert-unlock-form" autocomplete="off" hidden>
+            <input type="password" class="cert-unlock-input" placeholder="Password" aria-label="Certification password" autocomplete="off" />
+            <button type="submit">Unlock</button>
+          </form>
+          <p class="cert-unlock-hint" hidden>Recruiter? <a href="#contact">Contact me</a> for the password.</p>
+          <p class="cert-unlock-error" role="alert" hidden>Incorrect password.</p>
+          <div class="cert-verified" hidden></div>
+        </div>
       </div>
 
       </div>
@@ -367,84 +390,79 @@
 </section>
 
 <style>
-  .cert-gate { position: relative; min-height: 320px; }
-  .cert-gate.locked .certifications-grid {
-    filter: blur(12px);
-    pointer-events: none;
-    user-select: none;
-    opacity: .55;
-  }
-  .cert-gate:not(.locked) .cert-lock-overlay { display: none; }
-  .cert-lock-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
+  .cert-gate { position: relative; }
+  .cert-verify { margin-top: auto; }
+  .cert-lock-btn {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    z-index: 5;
-    padding: 1rem;
-  }
-  .cert-lock-box {
-    text-align: center;
-    background: rgba(14, 20, 27, .9);
-    border: 1px solid rgba(159, 239, 0, .25);
-    border-radius: 16px;
-    padding: 2.4rem 2.2rem;
-    max-width: 400px;
-    width: 100%;
-    backdrop-filter: blur(6px);
-    box-shadow: 0 16px 50px rgba(0, 0, 0, .55);
-  }
-  .cert-lock-icon {
-    font-size: 2rem;
-    color: var(--accent-primary);
-    margin-bottom: .9rem;
-  }
-  .cert-lock-box h3 {
-    color: var(--text-primary);
-    font-size: 1.35rem;
-    margin: 0 0 .5rem;
-  }
-  .cert-lock-box p {
+    gap: .5rem;
+    cursor: pointer;
+    background: transparent;
     color: var(--text-secondary);
-    font-size: .95rem;
-    margin: 0 0 1.4rem;
+    border: 1px dashed rgba(159, 239, 0, .4);
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
   }
-  #cert-lock-form {
+  .cert-lock-btn:hover {
+    color: var(--accent-primary);
+    border-color: var(--accent-primary);
+    background: rgba(159, 239, 0, .06);
+  }
+  .cert-unlock-form {
     display: flex;
-    gap: .6rem;
-    justify-content: center;
+    gap: .5rem;
+    margin-top: .8rem;
     flex-wrap: wrap;
+    justify-content: center;
   }
-  #cert-lock-input {
-    flex: 1 1 200px;
+  .cert-unlock-input {
+    flex: 1 1 140px;
     min-width: 0;
-    padding: .7rem .9rem;
+    padding: .6rem .8rem;
     border-radius: 10px;
     border: 1px solid rgba(139, 151, 166, .35);
     background: var(--bg-primary);
     color: var(--text-primary);
-    font-size: .95rem;
+    font-size: .9rem;
     outline: none;
     transition: border-color .2s ease;
   }
-  #cert-lock-input:focus { border-color: var(--accent-primary); }
-  #cert-lock-form button {
-    padding: .7rem 1.4rem;
+  .cert-unlock-input:focus { border-color: var(--accent-primary); }
+  .cert-unlock-form button {
+    padding: .6rem 1.2rem;
     border: none;
     border-radius: 10px;
     background: var(--accent-gradient);
     color: var(--bg-primary);
     font-weight: 600;
-    font-size: .95rem;
+    font-size: .9rem;
     cursor: pointer;
     transition: filter .2s ease;
   }
-  #cert-lock-form button:hover { filter: brightness(1.08); }
-  .cert-lock-error {
+  .cert-unlock-form button:hover { filter: brightness(1.08); }
+  .cert-unlock-hint {
+    font-size: .82rem;
+    color: var(--text-muted);
+    margin: .7rem 0 0 !important;
+  }
+  .cert-unlock-hint a { color: var(--accent-primary); text-decoration: none; }
+  .cert-unlock-hint a:hover { text-decoration: underline; }
+  .cert-unlock-error {
     color: #ff6b6b !important;
-    font-size: .88rem;
-    margin: 1rem 0 0 !important;
+    font-size: .82rem;
+    margin: .7rem 0 0 !important;
+  }
+  .cert-verified .cert-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .cert-verified .cert-verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    color: var(--accent-primary);
+    font-size: .9rem;
+    font-weight: 600;
   }
 </style>
 
@@ -452,20 +470,44 @@
   (function () {
     var gate = document.getElementById('cert-gate');
     if (!gate) return;
-    var form = document.getElementById('cert-lock-form');
-    var input = document.getElementById('cert-lock-input');
-    var error = document.getElementById('cert-lock-error');
     var expected = gate.getAttribute('data-cert-hash');
     var STORAGE_KEY = 'certUnlocked';
+    var cards = Array.prototype.slice.call(gate.querySelectorAll('.cert-card'));
 
-    function unlock() {
-      gate.classList.remove('locked');
+    function revealCard(card) {
+      var verify = card.querySelector('.cert-verify');
+      if (!verify) return;
+      var btn = verify.querySelector('.cert-lock-btn');
+      var form = verify.querySelector('.cert-unlock-form');
+      var hint = verify.querySelector('.cert-unlock-hint');
+      var error = verify.querySelector('.cert-unlock-error');
+      var out = verify.querySelector('.cert-verified');
+      if (btn) btn.hidden = true;
+      if (form) form.hidden = true;
+      if (hint) hint.hidden = true;
+      if (error) error.hidden = true;
+
+      var url = (card.getAttribute('data-verify-url') || '').trim();
+      if (url) {
+        out.innerHTML = '<a class="cert-btn" href="' + url + '" target="_blank" rel="noopener">' +
+          '<i class="fas fa-circle-check"></i> Verify credential ' +
+          '<i class="fas fa-arrow-up-right-from-square"></i></a>';
+      } else {
+        out.innerHTML = '<span class="cert-verified-badge">' +
+          '<i class="fas fa-unlock"></i> Unlocked</span>' +
+          '<span class="cert-btn cert-btn-pending" aria-disabled="true">Verification link coming soon</span>';
+      }
+      out.hidden = false;
+    }
+
+    function unlockAll() {
+      cards.forEach(revealCard);
     }
 
     // Stay unlocked for the browser session once the password has been entered.
     try {
       if (sessionStorage.getItem(STORAGE_KEY) === expected) {
-        unlock();
+        unlockAll();
         return;
       }
     } catch (e) { /* sessionStorage may be unavailable */ }
@@ -477,23 +519,40 @@
         .join('');
     }
 
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      error.hidden = true;
-      var value = input.value || '';
-      try {
-        var hashed = await sha256Hex(value);
-        if (hashed === expected) {
-          try { sessionStorage.setItem(STORAGE_KEY, expected); } catch (e2) {}
-          unlock();
-        } else {
+    cards.forEach(function (card) {
+      var verify = card.querySelector('.cert-verify');
+      if (!verify) return;
+      var btn = verify.querySelector('.cert-lock-btn');
+      var form = verify.querySelector('.cert-unlock-form');
+      var input = verify.querySelector('.cert-unlock-input');
+      var hint = verify.querySelector('.cert-unlock-hint');
+      var error = verify.querySelector('.cert-unlock-error');
+
+      // Clicking the lock reveals the inline password box + contact nudge.
+      btn.addEventListener('click', function () {
+        form.hidden = false;
+        hint.hidden = false;
+        input.focus();
+      });
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        error.hidden = true;
+        var value = input.value || '';
+        try {
+          var hashed = await sha256Hex(value);
+          if (hashed === expected) {
+            try { sessionStorage.setItem(STORAGE_KEY, expected); } catch (e2) {}
+            unlockAll();
+          } else {
+            error.hidden = false;
+            input.value = '';
+            input.focus();
+          }
+        } catch (err) {
           error.hidden = false;
-          input.value = '';
-          input.focus();
         }
-      } catch (err) {
-        error.hidden = false;
-      }
+      });
     });
   })();
 </script>
