@@ -570,9 +570,9 @@
                     <span class="tech-pill">Impacket · Rubeus</span>
                 </div>
 
-                <h3 class="tech-stack-heading">Current Status: Week 4 (significantly ahead of schedule)</h3>
+                <h3 class="tech-stack-heading">Current Status: Week 4–5 · midterm window (significantly ahead of schedule)</h3>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8;">
-                    <strong>Both presenter cores shipped in Week 1, originally scoped for Weeks 3–10. SSL peer-cert tracing across 4 protocols now drafted by end of Week 4.</strong>
+                    <strong>Both presenter cores shipped in Week 1 (originally scoped for Weeks 3–10). Three CertificateTrace PRs are now merged upstream (#21198, #21469, #21580), and SSL peer-cert tracing across four protocols is live-lab-tested and under upstream review. Focus is shifting to PKINIT certificate tracing (Phase 4) and documentation ahead of the midterm evaluation.</strong>
                 </p>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
                     <strong>CertificateTracePresenter</strong> (Phase 3 work, done early): fully implemented with a 343-line presenter + 88-line shared <code>CertificateTrace</code> mixin. Integrated into <strong>10+ Metasploit modules</strong>: <code>icpr_cert</code>, <code>web_enrollment_cert</code>, <code>certifried</code>, <code>esc_update_ldap_object</code>, <code>bad_successor</code>, <code>rbcd</code>, <code>shadow_credentials</code>, <code>ldap_esc_vulnerable_cert_finder</code>, relay modules, and more. RSpec: 403-line presenter suite + 184-line mixin suite. <strong>PR #21198 merged</strong>, with multiple review cycles addressed including MS Application Policies OID decoding, X.509 version display, SAN parsing, and non-ASCII sanitisation. Featured in the <a href="https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-13-06-2026/" target="_blank" rel="noopener">Rapid7 Metasploit Wrap-Up (June 13, 2026)</a>.
@@ -584,7 +584,7 @@
                     <strong>Week 3:</strong> <strong>LDAP Schannel cert tracing</strong> merged upstream via <a href="https://github.com/rapid7/metasploit-framework/pull/21469" target="_blank" rel="noopener">PR #21469</a>, extending <code>CertificateTrace</code> to LDAP authentication over Schannel. <strong>CSR trace follow-up</strong> <a href="https://github.com/rapid7/metasploit-framework/pull/21580" target="_blank" rel="noopener">PR #21580</a> merged upstream (2026-07-08): adds <code>to_s_csr_metadata</code> / <code>to_s_csr_full</code> presenter methods, a <code>certificate_csr_trace</code> hook in <code>CertRequest#with_adcs_certificate_request</code>, and 73 green RSpec examples decoding requested template, SAN, and EKU OIDs from a real PKCS#10 CSR.
                 </p>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
-                    <strong>Week 4:</strong> <strong>SSL peer-cert tracing</strong> extended across 4 protocols in 3 PRs. Phase 1 (HTTP) via <a href="https://github.com/rapid7/metasploit-framework/pull/21599" target="_blank" rel="noopener">PR #21599</a> (open): <code>certificate_peer_cert_trace</code> wired into <code>HttpClient</code> after <code>send_recv</code>, dedup via DB note, 47 RSpec examples green. Phase 2 (LDAP + RDP) via <a href="https://github.com/rapid7/metasploit-framework/pull/21607" target="_blank" rel="noopener">PR #21607</a> (open): wraps <code>ldap_open</code> and <code>swap_sock_plain_to_ssl</code> with peer-cert capture, with a <code>respond_to?(:datastore)</code> guard to prevent crashes in scanner contexts. Phase 3+4 (Postgres TLS + full cert chain) via <a href="https://github.com/rapid7/metasploit-framework/pull/21608" target="_blank" rel="noopener">PR #21608</a> (open): reads peer cert from <code>postgres_conn.conn</code> with <code>respond_to?(:peer_cert)</code> guard for plain-TCP connections; chain members printed with "Chain N/M" headers in full mode.
+                    <strong>Week 4:</strong> <strong>SSL peer-cert tracing</strong> extended across 4 protocols in 3 PRs. Phase 1 (HTTP) via <a href="https://github.com/rapid7/metasploit-framework/pull/21599" target="_blank" rel="noopener">PR #21599</a> (open): <code>certificate_peer_cert_trace</code> wired into <code>HttpClient</code> after <code>send_recv</code>, dedup via DB note, 47 RSpec examples green. Phase 2 (LDAP + RDP) via <a href="https://github.com/rapid7/metasploit-framework/pull/21607" target="_blank" rel="noopener">PR #21607</a> (open): wraps <code>ldap_open</code> and <code>swap_sock_plain_to_ssl</code> with peer-cert capture, with a <code>respond_to?(:datastore)</code> guard to prevent crashes in scanner contexts. Phase 3+4 (Postgres TLS + full cert chain) via <a href="https://github.com/rapid7/metasploit-framework/pull/21608" target="_blank" rel="noopener">PR #21608</a> (open): reads peer cert from <code>postgres_conn.conn</code> with <code>respond_to?(:peer_cert)</code> guard for plain-TCP connections; chain members printed with "Chain N/M" headers in full mode. All three peer-cert PRs are mergeable, CI-green, live-lab-tested (2026-07-09), and awaiting upstream review.
                 </p>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
                     <strong>Total: ~2,000+ lines</strong> of new production code + specs across all branches by end of Week 4.
@@ -610,8 +610,8 @@
                     </div>
                     <div class="timeline-item">
                         <h4>Midterm Evaluation</h4>
-                        <span class="timeline-period">End of Week 6 · mid-July 2026</span>
-                        <p>Mentor review of progress against proposal milestones. With CertificateTracePresenter already shipped and under review, the midterm bar is already exceeded, so Phase 2 wiring and S4U2 validation will be the focus before the checkpoint.</p>
+                        <span class="timeline-period">Mid-July 2026</span>
+                        <p>Mentor review of progress against proposal milestones. With three CertificateTrace PRs already merged upstream and SSL peer-cert tracing live-lab-tested and under review, the midterm bar is already well exceeded. Focus before the checkpoint is landing the peer-cert PRs and starting PKINIT certificate tracing (Phase 4).</p>
                     </div>
                     <div class="timeline-item">
                         <h4>Phase 3 - CertificateTracePresenter ✓ · LDAP Schannel ✓ · CSR trace ✓ · SSL peer-cert ✓</h4>
@@ -670,17 +670,17 @@
                         <span class="update-week">Week 04</span>
                         <h4>SSL peer-cert tracing · Phases 1–4 · HTTP, LDAP, RDP, Postgres</h4>
                         <p><strong>Phase 1 (HTTP)</strong>: <a href="https://github.com/rapid7/metasploit-framework/pull/21599" target="_blank" rel="noopener">PR #21599</a> (open): <code>certificate_peer_cert_trace</code> wired into <code>HttpClient</code> after <code>send_recv</code>, DB dedup, 47 RSpec examples green.</p>
-                        <p style="margin-top:0.6rem;"><strong>Phase 2 (LDAP + RDP)</strong>: <a href="https://github.com/rapid7/metasploit-framework/pull/21607" target="_blank" rel="noopener">PR #21607</a>, open): wraps <code>ldap_open</code> and <code>swap_sock_plain_to_ssl</code> with peer-cert capture; <code>respond_to?(:datastore)</code> guard prevents crashes in <code>LoginScanner</code> contexts.</p>
+                        <p style="margin-top:0.6rem;"><strong>Phase 2 (LDAP + RDP)</strong>: <a href="https://github.com/rapid7/metasploit-framework/pull/21607" target="_blank" rel="noopener">PR #21607</a> (open): wraps <code>ldap_open</code> and <code>swap_sock_plain_to_ssl</code> with peer-cert capture; <code>respond_to?(:datastore)</code> guard prevents crashes in <code>LoginScanner</code> contexts.</p>
                         <p style="margin-top:0.6rem;"><strong>Phase 3+4 (Postgres TLS + full cert chain)</strong>: <a href="https://github.com/rapid7/metasploit-framework/pull/21608" target="_blank" rel="noopener">PR #21608</a> (open): reads peer cert from <code>postgres_conn.conn</code> with <code>respond_to?(:peer_cert)</code> guard for plain-TCP; chain members printed with "Chain N/M" position headers in full mode.</p>
                     </div>
-                    <div class="update-card pending"><span class="update-week">Week 05</span><h4>Dispatcher + RSpec</h4><p>Wiring into <code>kerberos/client.rb</code>; 13 RSpec examples.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 06</span><h4>Midterm evaluation</h4><p>Midterm checkpoint; PR review cycles and mentor feedback.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 07</span><h4>PR review cycles + SMB TLS research</h4><p>Upstream review feedback across open PRs (#21599, #21607, #21608); SMB-over-TLS peer-cert tracing (blocked on Rex SMB TLS support) and further AD lab validation.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 05</span><h4>Peer-cert review cycles + midterm prep</h4><p>Address upstream review feedback across the three peer-cert PRs (#21599, #21607, #21608); prepare the midterm evaluation summary of merged CertificateTrace work.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 06</span><h4>Midterm evaluation · PKINIT kickoff</h4><p>Midterm checkpoint with mentors. Begin PKINIT certificate tracing (Phase 4): surfacing the client cert used in the PKINIT AS-REQ / shadow-credentials flow.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 07</span><h4>PKINIT tracing + SMB TLS research</h4><p>Wire PKINIT cert tracing through <code>CertificateTrace</code>; scope SMB-over-TLS peer-cert tracing (blocked on Rex SMB TLS support) and further AD lab validation.</p></div>
                     <div class="update-card pending"><span class="update-week">Week 08</span><h4>ADCS ESC lab validation</h4><p>End-to-end ADCS ESC1 lab run against the certificate presenter; verify all 10+ integrated modules produce correct trace output.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 09</span><h4>Integration hardening</h4><p>Wider module integration coverage; edge-case testing across both presenters.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 10</span><h4>PR polish &amp; upstream feedback</h4><p>Address any remaining upstream review comments across both PRs; documentation pass.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 11</span><h4>Full lab integration tests</h4><p>End-to-end runs across both presenters.</p></div>
-                    <div class="update-card pending"><span class="update-week">Week 12</span><h4>Final wrap-up</h4><p>Docs, PR polish, deliverables write-up.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 09</span><h4>Integration hardening</h4><p>Wider module integration coverage; edge-case testing across the CertificateTrace presenter and peer-cert paths.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 10</span><h4>Documentation pass</h4><p>Worked <code>msfconsole</code> usage examples, wiki/docs for CertificateTrace modes (Phase 6), and any remaining upstream review comments.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 11</span><h4>Full lab integration tests</h4><p>End-to-end runs across CertificateTrace, CSR trace, peer-cert, and PKINIT paths.</p></div>
+                    <div class="update-card pending"><span class="update-week">Week 12</span><h4>Final wrap-up</h4><p>Docs, PR polish, blog wrap-up, and deliverables write-up for final evaluation.</p></div>
                 </div>
             </div>
         </section>
@@ -763,7 +763,7 @@
                         <i class="fas fa-code-pull-request"></i>
                         <div>
                             <span class="resource-label">PR #21599: SSL peer cert (HTTP) Phase 1</span>
-                            <span class="resource-url">Draft &middot; rapid7/metasploit-framework</span>
+                            <span class="resource-url">Open &middot; rapid7/metasploit-framework</span>
                         </div>
                     </a>
                     <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21607" target="_blank" rel="noopener">
@@ -777,7 +777,7 @@
                         <i class="fas fa-code-pull-request"></i>
                         <div>
                             <span class="resource-label">PR #21608: SSL peer cert (Postgres+chain) Phase 3+4</span>
-                            <span class="resource-url">Draft &middot; rapid7/metasploit-framework</span>
+                            <span class="resource-url">Open &middot; rapid7/metasploit-framework</span>
                         </div>
                     </a>
                 </div>
