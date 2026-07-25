@@ -2387,7 +2387,7 @@ body {
    ================================================================== */
 .home-image {
     position: relative;
-    min-height: 560px;
+    min-height: 520px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -2395,11 +2395,11 @@ body {
 
 #lanyard-canvas {
     width: 100%;
-    height: 600px;
+    height: 560px;
     display: block;
     cursor: grab;
     touch-action: pan-y;      /* vertical page scroll survives over the canvas */
-    margin-top: -120px;
+    margin-top: -40px;
 }
 
 #lanyard-canvas.is-grabbing {
@@ -2422,12 +2422,12 @@ body {
 
 @media (max-width: 768px) {
     .home-image {
-        min-height: 440px;
+        min-height: 420px;
     }
 
     #lanyard-canvas {
-        height: 460px;
-        margin-top: -60px;
+        height: 440px;
+        margin-top: -20px;
     }
 }
 
