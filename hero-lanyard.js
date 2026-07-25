@@ -105,24 +105,26 @@ function drawBandTexture() {
     c.height = 256;
     const x = c.getContext('2d');
 
+    // Kept well above the near-black hero background, or the strap reads as a
+    // thin dark line and the printed wordmark is invisible.
     const g = x.createLinearGradient(0, 0, 64, 0);
-    g.addColorStop(0, '#0d1116');
-    g.addColorStop(0.5, '#222a33');
-    g.addColorStop(1, '#0d1116');
+    g.addColorStop(0, '#20272f');
+    g.addColorStop(0.5, '#49555f');
+    g.addColorStop(1, '#20272f');
     x.fillStyle = g;
     x.fillRect(0, 0, 64, 256);
 
-    x.strokeStyle = 'rgba(159,239,0,.30)';
-    x.lineWidth = 2;
+    x.strokeStyle = 'rgba(159,239,0,.65)';
+    x.lineWidth = 3;
     x.beginPath();
-    x.moveTo(5, 0); x.lineTo(5, 256);
-    x.moveTo(59, 0); x.lineTo(59, 256);
+    x.moveTo(6, 0); x.lineTo(6, 256);
+    x.moveTo(58, 0); x.lineTo(58, 256);
     x.stroke();
 
     x.save();
     x.translate(32, 128);
     x.rotate(-Math.PI / 2);
-    x.fillStyle = 'rgba(230,237,243,.55)';
+    x.fillStyle = 'rgba(240,246,252,.92)';
     x.font = "600 15px 'JetBrains Mono',monospace";
     x.textAlign = 'center';
     x.textBaseline = 'middle';
@@ -202,9 +204,12 @@ async function main() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
+    // Close enough that the badge reads as the subject of the column. Framing
+    // is driven from here: at fov 25 the visible height is 2*z*tan(12.5deg),
+    // so z 9.2 shows ~4.1 units and the 2.25-tall card fills over half of it.
     const camera = new THREE.PerspectiveCamera(25, 1, 0.1, 100);
-    camera.position.set(0, 0.8, 13);
-    camera.lookAt(0, 0.8, 0);
+    camera.position.set(0, 0.15, 9.2);
+    camera.lookAt(0, 0.15, 0);
 
     // image-based lighting, so the card and clip actually have reflections
     const pmrem = new THREE.PMREMGenerator(renderer);
@@ -295,8 +300,8 @@ async function main() {
         transparent: true,
         opacity: 0.95,
         depthTest: false,
-        lineWidth: 0.32,
-        repeat: new THREE.Vector2(-3, 1),
+        lineWidth: 0.42,
+        repeat: new THREE.Vector2(-2, 1),
         resolution: new THREE.Vector2(1, 1),
     });
     // meshline defines property setters for every uniform except opacity, so
