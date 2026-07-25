@@ -27,6 +27,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Preloader: dismissed inline so it can never outlive a failed script load -->
+    <div class="preloader" id="preloader">
+        <span class="preloader-text">Welcome</span>
+        <span class="preloader-bar"></span>
+    </div>
+    <script>
+        (function () {
+            var pre = document.getElementById('preloader');
+            function dismiss() { if (pre) pre.classList.add('is-done'); }
+            window.addEventListener('load', function () { setTimeout(dismiss, 550); });
+            setTimeout(dismiss, 3000);   // hard fallback: never trap the page
+        })();
+    </script>
+
     <!-- Animated backdrop: scrolling grid + neon glow orbs -->
     <div class="bg-fx" aria-hidden="true">
         <div class="bg-grid"></div>
@@ -131,28 +145,11 @@
                     </div>
                      
                     <div class="home-image">
-                        <div class="image-container">
-                            <span class="corner corner--tl" aria-hidden="true"></span>
-                            <span class="corner corner--tr" aria-hidden="true"></span>
-                            <span class="corner corner--bl" aria-hidden="true"></span>
-                            <span class="corner corner--br" aria-hidden="true"></span>
-                            <div class="image-frame">
-                                <img src="images/img.jpg" alt="Profile photo of Pushpender Singh Rathore" class="profile-image">
-                                <span class="status-badge"><span class="status-dot"></span>online · open to collab</span>
-                            </div>
-                            <div class="floating-card card-1">
-                                <i class="fas fa-shield-halved"></i>
-                                <span>Cyber Security</span>
-                            </div>
-                            <div class="floating-card card-2">
-                                <i class="fas fa-brain"></i>
-                                <span>Artificial Intelligence</span>
-                            </div>
-                            <div class="floating-card card-3">
-                                <i class="fas fa-network-wired"></i>
-                                <span>Networking</span>
-                            </div>
-                        </div>
+                        <canvas id="lanyard-canvas" role="img"
+                            aria-label="An ID badge hanging from a lanyard, showing a photo of Pushpender Singh Rathore. Drag it to swing it."></canvas>
+                        <img src="images/img.jpg" alt="Profile photo of Pushpender Singh Rathore"
+                            class="lanyard-fallback" hidden>
+                        <span class="lanyard-hint">drag the badge</span>
                     </div>
                 </div>
             </div>
@@ -829,6 +826,21 @@ This enables <strong>real-time adaptive filtering</strong> and <strong>intellige
   </main>
   
   <script src="script.js"></script>
+
+  <!-- three.js + Rapier for the hero lanyard, pinned so a CDN retag cannot
+       silently change the hero. If any of this fails to load, hero-lanyard.js
+       falls back to the static photo. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/",
+      "meshline": "https://cdn.jsdelivr.net/npm/meshline@3.3.1/dist/index.js",
+      "@dimforge/rapier3d-compat": "https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.19.3/rapier.mjs"
+    }
+  }
+  </script>
+  <script type="module" src="hero-lanyard.js"></script>
   
   <footer class="site-footer">
   <div class="footer-counter">

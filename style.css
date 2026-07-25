@@ -2310,3 +2310,144 @@ body {
     }
 }
 
+
+/* ==================================================================
+   PRELOADER
+   ================================================================== */
+.preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #000;
+    display: grid;
+    place-items: center;
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+}
+
+.preloader.is-done {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.preloader-text {
+    font-family: var(--font-mono);
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    animation: preloadPulse 1.6s ease-in-out infinite;
+}
+
+.preloader-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--green), var(--cyan));
+    animation: preloadBar 1.1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes preloadPulse {
+    0%, 100% { opacity: 0.35; }
+    50%      { opacity: 1; }
+}
+
+@keyframes preloadBar {
+    to { width: 100%; }
+}
+
+/* ==================================================================
+   CHROME HEADLINE
+   Applied to #rotating-profession directly, never a wrapper: script.js
+   rewrites this element's innerHTML and would strip any inner span.
+   ================================================================== */
+#rotating-profession {
+    background: linear-gradient(180deg,
+        #ffffff 0%, #dfe6ee 22%, #97a3b0 44%,
+        #5d6874 52%, #c9d3dd 60%, #ffffff 74%, #7f8a96 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18))
+            drop-shadow(0 14px 34px rgba(0, 0, 0, 0.6));
+    background-size: 100% 200%;
+    animation: chromeSheen 7s ease-in-out infinite;
+}
+
+@keyframes chromeSheen {
+    0%, 100% { background-position: 50% 0%; }
+    50%      { background-position: 50% 100%; }
+}
+
+/* ==================================================================
+   HERO LANYARD — replaces the static portrait + floating cards
+   ================================================================== */
+.home-image {
+    position: relative;
+    min-height: 520px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#lanyard-canvas {
+    width: 100%;
+    height: 560px;
+    display: block;
+    cursor: grab;
+    touch-action: pan-y;      /* vertical page scroll survives over the canvas */
+    margin-top: -40px;
+}
+
+#lanyard-canvas.is-grabbing {
+    cursor: grabbing;
+}
+
+.lanyard-hint {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    opacity: 0.65;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .home-image {
+        min-height: 420px;
+    }
+
+    #lanyard-canvas {
+        height: 440px;
+        margin-top: -20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .preloader-text { animation: none; opacity: 1; }
+    .preloader-bar  { animation-duration: 0.01s; }
+    #rotating-profession { animation: none; }
+}
+
+/* Shown only if three.js / Rapier fail to load or WebGL is unavailable */
+.lanyard-fallback {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    align-self: center;
+    border-radius: 16px;
+    filter: grayscale(1) contrast(1.08);
+    box-shadow: var(--shadow-card);
+}
+
+.lanyard-fallback[hidden] {
+    display: none;
+}
