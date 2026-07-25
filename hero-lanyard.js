@@ -98,38 +98,39 @@ function drawCardFace(photo) {
     return c;
 }
 
-/* ---- the strap texture: a repeating printed wordmark ---- */
+/* ---- the strap texture: a repeating printed wordmark ----
+   meshline maps uv.x ALONG the line and uv.y ACROSS its width, so this has to
+   be drawn lengthwise: 512 along the strap, 64 across it. Drawn the other way
+   round the wordmark ends up squashed and the edge stitching bands the strap. */
 function drawBandTexture() {
     const c = document.createElement('canvas');
-    c.width = 64;
-    c.height = 256;
+    c.width = 512;
+    c.height = 64;
     const x = c.getContext('2d');
 
     // Kept well above the near-black hero background, or the strap reads as a
     // thin dark line and the printed wordmark is invisible.
-    const g = x.createLinearGradient(0, 0, 64, 0);
-    g.addColorStop(0, '#20272f');
-    g.addColorStop(0.5, '#49555f');
-    g.addColorStop(1, '#20272f');
+    const g = x.createLinearGradient(0, 0, 0, 64);
+    g.addColorStop(0, '#1b222a');
+    g.addColorStop(0.5, '#4b5762');
+    g.addColorStop(1, '#1b222a');
     x.fillStyle = g;
-    x.fillRect(0, 0, 64, 256);
+    x.fillRect(0, 0, 512, 64);
 
-    x.strokeStyle = 'rgba(159,239,0,.65)';
+    // stitched edges, running the length of the strap
+    x.strokeStyle = 'rgba(159,239,0,.55)';
     x.lineWidth = 3;
     x.beginPath();
-    x.moveTo(6, 0); x.lineTo(6, 256);
-    x.moveTo(58, 0); x.lineTo(58, 256);
+    x.moveTo(0, 7); x.lineTo(512, 7);
+    x.moveTo(0, 57); x.lineTo(512, 57);
     x.stroke();
 
-    x.save();
-    x.translate(32, 128);
-    x.rotate(-Math.PI / 2);
     x.fillStyle = 'rgba(240,246,252,.92)';
-    x.font = "600 15px 'JetBrains Mono',monospace";
+    x.font = "700 20px 'JetBrains Mono',monospace";
     x.textAlign = 'center';
     x.textBaseline = 'middle';
-    x.fillText('PUSHPENDER  ·  GSoC 2026', 0, 0);
-    x.restore();
+    x.fillText('PUSHPENDER · GSoC 2026', 128, 34);
+    x.fillText('PUSHPENDER · GSoC 2026', 384, 34);
 
     return c;
 }
@@ -300,7 +301,10 @@ async function main() {
         transparent: true,
         opacity: 0.95,
         depthTest: false,
-        lineWidth: 0.42,
+        // With sizeAttenuation on (the default) meshline offsets the strap edge
+        // in clip space, so lineWidth is NOT in world units. Tuned by eye
+        // against the 1.6-wide card at camera z 9.2.
+        lineWidth: 1.5,
         repeat: new THREE.Vector2(-2, 1),
         resolution: new THREE.Vector2(1, 1),
     });
