@@ -1,320 +1,456 @@
-/* Hero lanyard — a Verlet-rope ID badge that hangs, swings and rotates.
-   No dependencies. The preloader is dismissed by an inline script in index.html
-   so that a failed load of this file can never trap the page behind the overlay. */
-(function () {
-    'use strict';
+/* Hero lanyard - a 3D ID badge on a strap, with real rigid-body physics.
+ *
+ * three.js for rendering, Rapier for the physics, meshline for the strap.
+ * The rig matches the well known react-three-fiber lanyard: a fixed anchor,
+ * three rope-jointed segments, then a spherical joint into the card, so the
+ * card swings and twists rather than merely rotating in plane.
+ *
+ * The card face is drawn to an offscreen 2D canvas and used as a texture, so
+ * the badge is generated from images/img.jpg rather than a downloaded model.
+ *
+ * The preloader is dismissed by an inline script in index.html, never from
+ * here, so a failed module load cannot trap the page behind the overlay.
+ */
 
-    var canvas = document.getElementById('lanyard-canvas');
+import * as THREE from 'three';
+import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import * as RAPIER from '@dimforge/rapier3d-compat';
+
+const canvas = document.getElementById('lanyard-canvas');
+const fallback = document.querySelector('.lanyard-fallback');
+
+/* Any failure at all - no WebGL, CDN blocked, WASM refused - drops back to
+   the plain photo rather than leaving an empty hole in the hero. */
+function giveUp(err) {
+    console.warn('[lanyard] falling back to static photo:', err);
+    if (canvas) canvas.style.display = 'none';
+    if (fallback) fallback.hidden = false;
+}
+
+/* ---- card dimensions, in world units and in texture pixels ---- */
+const CARD_W = 1.6, CARD_H = 2.25, CARD_D = 0.02;
+const TEX_W = 512, TEX_H = 720;
+
+/* ---- the card face, drawn once to an offscreen canvas ---- */
+function drawCardFace(photo) {
+    const c = document.createElement('canvas');
+    c.width = TEX_W;
+    c.height = TEX_H;
+    const x = c.getContext('2d');
+    const S = TEX_W / 188;          // the artwork was authored at 188 units wide
+
+    const bg = x.createLinearGradient(0, 0, TEX_W, TEX_H);
+    bg.addColorStop(0, '#f7f8fa');
+    bg.addColorStop(1, '#dfe3e8');
+    x.fillStyle = bg;
+    x.fillRect(0, 0, TEX_W, TEX_H);
+
+    // punch hole
+    x.fillStyle = '#0b0f14';
+    x.beginPath();
+    x.ellipse(TEX_W / 2, 15 * S, 13 * S, 5 * S, 0, 0, Math.PI * 2);
+    x.fill();
+
+    // photo well
+    const px = 12 * S, py = 28 * S, pw = TEX_W - 24 * S, ph = TEX_H - 96 * S;
+    x.save();
+    roundRect(x, px, py, pw, ph, 7 * S);
+    x.clip();
+    if (photo) {
+        const s = Math.max(pw / photo.width, ph / photo.height);
+        const dw = photo.width * s, dh = photo.height * s;
+        if (x.filter !== undefined) x.filter = 'grayscale(1) contrast(1.08)';
+        x.drawImage(photo, px + (pw - dw) / 2, py + (ph - dh) / 2, dw, dh);
+        if (x.filter !== undefined) x.filter = 'none';
+    } else {
+        const pg = x.createLinearGradient(px, py, px, py + ph);
+        pg.addColorStop(0, '#3a4048');
+        pg.addColorStop(1, '#14181d');
+        x.fillStyle = pg;
+        x.fillRect(px, py, pw, ph);
+    }
+    x.restore();
+    x.strokeStyle = 'rgba(0,0,0,.14)';
+    x.lineWidth = 1 * S;
+    roundRect(x, px, py, pw, ph, 7 * S);
+    x.stroke();
+
+    // identity block
+    x.textAlign = 'left';
+    x.fillStyle = '#0b0f14';
+    x.font = '700 ' + (13 * S) + 'px Inter,sans-serif';
+    x.fillText('PUSHPENDER S. RATHORE', 13 * S, TEX_H - 48 * S);
+    x.fillStyle = '#5b6675';
+    x.font = '500 ' + (9.5 * S) + "px 'JetBrains Mono',monospace";
+    x.fillText('SECURITY RESEARCHER', 13 * S, TEX_H - 33 * S);
+    x.fillStyle = '#8b97a6';
+    x.font = '500 ' + (8 * S) + "px 'JetBrains Mono',monospace";
+    x.fillText('GSoC 2026 · METASPLOIT', 13 * S, TEX_H - 20 * S);
+
+    // accent rule
+    const ag = x.createLinearGradient(13 * S, 0, TEX_W - 13 * S, 0);
+    ag.addColorStop(0, '#9fef00');
+    ag.addColorStop(1, '#00d4ff');
+    x.fillStyle = ag;
+    x.fillRect(13 * S, TEX_H - 13 * S, TEX_W - 26 * S, 2.5 * S);
+
+    return c;
+}
+
+/* ---- the strap texture: a repeating printed wordmark ---- */
+function drawBandTexture() {
+    const c = document.createElement('canvas');
+    c.width = 64;
+    c.height = 256;
+    const x = c.getContext('2d');
+
+    const g = x.createLinearGradient(0, 0, 64, 0);
+    g.addColorStop(0, '#0d1116');
+    g.addColorStop(0.5, '#222a33');
+    g.addColorStop(1, '#0d1116');
+    x.fillStyle = g;
+    x.fillRect(0, 0, 64, 256);
+
+    x.strokeStyle = 'rgba(159,239,0,.30)';
+    x.lineWidth = 2;
+    x.beginPath();
+    x.moveTo(5, 0); x.lineTo(5, 256);
+    x.moveTo(59, 0); x.lineTo(59, 256);
+    x.stroke();
+
+    x.save();
+    x.translate(32, 128);
+    x.rotate(-Math.PI / 2);
+    x.fillStyle = 'rgba(230,237,243,.55)';
+    x.font = "600 15px 'JetBrains Mono',monospace";
+    x.textAlign = 'center';
+    x.textBaseline = 'middle';
+    x.fillText('PUSHPENDER  ·  GSoC 2026', 0, 0);
+    x.restore();
+
+    return c;
+}
+
+function roundRect(x, rx, ry, w, h, r) {
+    x.beginPath();
+    x.moveTo(rx + r, ry);
+    x.arcTo(rx + w, ry, rx + w, ry + h, r);
+    x.arcTo(rx + w, ry + h, rx, ry + h, r);
+    x.arcTo(rx, ry + h, rx, ry, r);
+    x.arcTo(rx, ry, rx + w, ry, r);
+    x.closePath();
+}
+
+/* A rounded slab for the card. ExtrudeGeometry hands back UVs in shape space,
+   so they are remapped to 0..1 for the face texture. */
+function makeCardGeometry() {
+    const r = 0.08, w = CARD_W, h = CARD_H;
+    const s = new THREE.Shape();
+    const x0 = -w / 2, y0 = -h / 2;
+    s.moveTo(x0 + r, y0);
+    s.lineTo(x0 + w - r, y0);
+    s.quadraticCurveTo(x0 + w, y0, x0 + w, y0 + r);
+    s.lineTo(x0 + w, y0 + h - r);
+    s.quadraticCurveTo(x0 + w, y0 + h, x0 + w - r, y0 + h);
+    s.lineTo(x0 + r, y0 + h);
+    s.quadraticCurveTo(x0, y0 + h, x0, y0 + h - r);
+    s.lineTo(x0, y0 + r);
+    s.quadraticCurveTo(x0, y0, x0 + r, y0);
+
+    const geo = new THREE.ExtrudeGeometry(s, {
+        depth: CARD_D,
+        bevelEnabled: true,
+        bevelThickness: 0.006,
+        bevelSize: 0.006,
+        bevelSegments: 2,
+        curveSegments: 12,
+    });
+    geo.center();
+
+    const pos = geo.attributes.position, uv = geo.attributes.uv;
+    for (let i = 0; i < pos.count; i++) {
+        uv.setXY(i, (pos.getX(i) + w / 2) / w, (pos.getY(i) + h / 2) / h);
+    }
+    uv.needsUpdate = true;
+    return geo;
+}
+
+async function loadPhoto(src) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);   // card still renders, just without the photo
+        img.src = src;
+    });
+}
+
+async function main() {
     if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    var CARD_W = 188, CARD_H = 262, CLIP_H = 20;
-    var GRAV = 1500, DAMP = 0.982, ITER = 20;
+    await RAPIER.init();
 
-    var W = 0, H = 0, dpr = 1;
-    var P = [], C = [], rope = [], TL, TR, BC, anchor;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const photo = await loadPhoto('images/img.jpg');
 
-    function pt(x, y, pinned) {
-        var p = { x: x, y: y, px: x, py: y, pinned: !!pinned };
-        P.push(p);
-        return p;
+    /* ---- renderer / scene / camera ---- */
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(25, 1, 0.1, 100);
+    camera.position.set(0, 0.8, 13);
+    camera.lookAt(0, 0.8, 0);
+
+    // image-based lighting, so the card and clip actually have reflections
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 1.6));
+    const key = new THREE.DirectionalLight(0xffffff, 2.4);
+    key.position.set(-3, 4, 6);
+    scene.add(key);
+    const rim = new THREE.DirectionalLight(0x9fef00, 1.1);
+    rim.position.set(4, 1, 3);
+    scene.add(rim);
+    const cyan = new THREE.DirectionalLight(0x00d4ff, 0.9);
+    cyan.position.set(-4, -1, 2);
+    scene.add(cyan);
+
+    /* ---- physics rig ---- */
+    const world = new RAPIER.World({ x: 0, y: -40, z: 0 });
+    world.timestep = 1 / 60;
+
+    const ANCHOR_Y = 4;
+    function body(x, y, z, fixed) {
+        const desc = fixed ? RAPIER.RigidBodyDesc.fixed() : RAPIER.RigidBodyDesc.dynamic();
+        desc.setTranslation(x, y, z).setLinearDamping(4).setAngularDamping(4).setCanSleep(true);
+        return world.createRigidBody(desc);
     }
 
-    function con(a, b, stiff) {
-        C.push({ a: a, b: b, d: Math.hypot(a.x - b.x, a.y - b.y), s: stiff === undefined ? 1 : stiff });
+    const fixed = body(0, ANCHOR_Y, 0, true);
+    const j1 = body(0.5, ANCHOR_Y, 0);
+    const j2 = body(1.0, ANCHOR_Y, 0);
+    const j3 = body(1.5, ANCHOR_Y, 0);
+    const card = body(2.0, ANCHOR_Y, 0);
+
+    [j1, j2, j3].forEach((b) => world.createCollider(RAPIER.ColliderDesc.ball(0.1), b));
+    world.createCollider(
+        RAPIER.ColliderDesc.cuboid(CARD_W / 2, CARD_H / 2, 0.01), card
+    );
+
+    const O = { x: 0, y: 0, z: 0 };
+    world.createImpulseJoint(RAPIER.JointData.rope(1, O, O), fixed, j1, true);
+    world.createImpulseJoint(RAPIER.JointData.rope(1, O, O), j1, j2, true);
+    world.createImpulseJoint(RAPIER.JointData.rope(1, O, O), j2, j3, true);
+    world.createImpulseJoint(
+        RAPIER.JointData.spherical(O, { x: 0, y: CARD_H / 2 + 0.32, z: 0 }), j3, card, true
+    );
+
+    /* ---- card mesh ---- */
+    const faceTex = new THREE.CanvasTexture(drawCardFace(photo));
+    faceTex.colorSpace = THREE.SRGBColorSpace;
+    faceTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+    const faceMat = new THREE.MeshPhysicalMaterial({
+        map: faceTex,
+        roughness: 0.28,
+        metalness: 0.05,
+        clearcoat: 0.85,
+        clearcoatRoughness: 0.2,
+    });
+    const edgeMat = new THREE.MeshPhysicalMaterial({
+        color: 0xcdd4db, roughness: 0.45, metalness: 0.1, clearcoat: 0.5,
+    });
+
+    const cardMesh = new THREE.Mesh(makeCardGeometry(), [faceMat, edgeMat]);
+    scene.add(cardMesh);
+
+    // metal clip, parented to the card so it rides along
+    const metal = new THREE.MeshStandardMaterial({
+        color: 0xb9c1c9, roughness: 0.25, metalness: 1,
+    });
+    const clip = new THREE.Group();
+    const bar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.032, 12, 28), metal);
+    bar.position.y = CARD_H / 2 + 0.1;
+    const clamp = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.14, 0.06), metal);
+    clamp.position.y = CARD_H / 2 + 0.015;
+    clip.add(bar, clamp);
+    cardMesh.add(clip);
+
+    /* ---- strap ---- */
+    const bandTex = new THREE.CanvasTexture(drawBandTexture());
+    bandTex.colorSpace = THREE.SRGBColorSpace;
+    bandTex.wrapS = bandTex.wrapT = THREE.RepeatWrapping;
+
+    const bandGeo = new MeshLineGeometry();
+    const bandMat = new MeshLineMaterial({
+        map: bandTex,
+        useMap: 1,
+        color: new THREE.Color(0xffffff),
+        transparent: true,
+        opacity: 0.95,
+        depthTest: false,
+        lineWidth: 0.32,
+        repeat: new THREE.Vector2(-3, 1),
+        resolution: new THREE.Vector2(1, 1),
+    });
+    // meshline defines property setters for every uniform except opacity, so
+    // the constructor value lands on the base Material and never reaches the
+    // shader. Set the uniform directly.
+    bandMat.uniforms.opacity.value = 0.95;
+
+    const bandMesh = new THREE.Mesh(bandGeo, bandMat);
+    bandMesh.renderOrder = -1;
+    scene.add(bandMesh);
+
+    const curve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(),
+    ]);
+    curve.curveType = 'chordal';
+
+    /* ---- pointer drag ---- */
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    const vec = new THREE.Vector3();
+    const dir = new THREE.Vector3();
+    const euler = new THREE.Euler();
+    const quat = new THREE.Quaternion();
+    let dragOffset = null;
+
+    function setPointer(e, rect) {
+        pointer.set(
+            ((e.clientX - rect.left) / rect.width) * 2 - 1,
+            -((e.clientY - rect.top) / rect.height) * 2 + 1
+        );
     }
 
-    function build() {
-        P = []; C = []; rope = [];
-        var ax = W * 0.52, ropeLen = Math.min(H * 0.36, 230), N = 14;
-        anchor = pt(ax, -10, true);
-        rope.push(anchor);
-        for (var i = 1; i <= N; i++) rope.push(pt(ax, -10 + ropeLen * i / N));
-        for (var j = 0; j < rope.length - 1; j++) con(rope[j], rope[j + 1]);
-
-        var clip = rope[rope.length - 1], top = clip.y + CLIP_H;
-        TL = pt(ax - CARD_W / 2, top);
-        TR = pt(ax + CARD_W / 2, top);
-        BC = pt(ax, top + CARD_H);
-        con(clip, TL); con(clip, TR);        // clip splits to both corners
-        con(TL, TR);                         // rigid top edge
-        con(TL, BC); con(TR, BC);            // rigid triangle, so the card really rotates
+    // where the pointer ray meets the plane the card is floating on
+    function pointerWorld() {
+        vec.set(pointer.x, pointer.y, 0.5).unproject(camera);
+        dir.copy(vec).sub(camera.position).normalize();
+        return vec.add(dir.multiplyScalar(camera.position.length()));
     }
 
-    function resize() {
-        var r = canvas.getBoundingClientRect();
-        if (!r.width) return;
-        W = r.width; H = r.height;
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = Math.round(W * dpr);
-        canvas.height = Math.round(H * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        build();
-    }
+    canvas.addEventListener('pointerdown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        setPointer(e, rect);
+        raycaster.setFromCamera(pointer, camera);
+        if (!raycaster.intersectObject(cardMesh, false).length) return;  // else let the page scroll
 
-    /* ---- physics ---- */
-    function integrate(dt) {
-        for (var i = 0; i < P.length; i++) {
-            var p = P[i];
-            if (p.pinned || p === grabbed) continue;
-            var vx = (p.x - p.px) * DAMP, vy = (p.y - p.py) * DAMP;
-            p.px = p.x; p.py = p.y;
-            p.x += vx; p.y += vy + GRAV * dt * dt;
-        }
-    }
-
-    function solve() {
-        for (var k = 0; k < ITER; k++) {
-            for (var i = 0; i < C.length; i++) {
-                var c = C[i], a = c.a, b = c.b;
-                var dx = b.x - a.x, dy = b.y - a.y;
-                var d = Math.hypot(dx, dy) || 1e-6;
-                var f = ((d - c.d) / d) * 0.5 * c.s;
-                var ox = dx * f, oy = dy * f;
-                var aFixed = a.pinned || a === grabbed, bFixed = b.pinned || b === grabbed;
-                if (!aFixed) { a.x += ox * (bFixed ? 2 : 1); a.y += oy * (bFixed ? 2 : 1); }
-                if (!bFixed) { b.x -= ox * (aFixed ? 2 : 1); b.y -= oy * (aFixed ? 2 : 1); }
-            }
-        }
-    }
-
-    /* ---- card geometry ---- */
-    function cardAxes() {
-        var ex = TR.x - TL.x, ey = TR.y - TL.y;
-        var len = Math.hypot(ex, ey) || 1;
-        ex /= len; ey /= len;
-        var nx = -ey, ny = ex;                                  // perpendicular
-        if ((BC.x - TL.x) * nx + (BC.y - TL.y) * ny < 0) { nx = -nx; ny = -ny; }
-        return { ex: ex, ey: ey, nx: nx, ny: ny, ang: Math.atan2(ey, ex) };
-    }
-
-    /* ---- pointer / drag ---- */
-    var grabbed = null, target = { x: 0, y: 0 };
-
-    function local(e) {
-        var r = canvas.getBoundingClientRect();
-        return { x: e.clientX - r.left, y: e.clientY - r.top };
-    }
-
-    function insideCard(m) {
-        var a = cardAxes();
-        var dx = m.x - TL.x, dy = m.y - TL.y;
-        var u = dx * a.ex + dy * a.ey;          // along the top edge
-        var v = dx * a.nx + dy * a.ny;          // down the card
-        return u >= -12 && u <= CARD_W + 12 && v >= -CLIP_H && v <= CARD_H + 12;
-    }
-
-    canvas.addEventListener('pointerdown', function (e) {
-        var m = local(e);
-        if (!insideCard(m)) return;             // anywhere else, let the page scroll
-        var best = null, bd = Infinity;
-        [TL, TR, BC].forEach(function (p) {
-            var d = Math.hypot(p.x - m.x, p.y - m.y);
-            if (d < bd) { bd = d; best = p; }
-        });
-        grabbed = best;
-        target = m;
+        const t = card.translation();
+        dragOffset = pointerWorld().clone().sub(new THREE.Vector3(t.x, t.y, t.z));
+        card.setBodyType(RAPIER.RigidBodyType.KinematicPositionBased, true);
         canvas.classList.add('is-grabbing');
         canvas.setPointerCapture(e.pointerId);
         e.preventDefault();
     });
 
-    canvas.addEventListener('pointermove', function (e) {
-        if (!grabbed) return;
-        target = local(e);
-        e.preventDefault();
+    canvas.addEventListener('pointermove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        setPointer(e, rect);
+        if (dragOffset) e.preventDefault();
     });
 
     function release(e) {
-        if (!grabbed) return;
-        grabbed = null;
+        if (!dragOffset) return;
+        dragOffset = null;
+        card.setBodyType(RAPIER.RigidBodyType.Dynamic, true);
         canvas.classList.remove('is-grabbing');
         if (e && e.pointerId !== undefined && canvas.hasPointerCapture(e.pointerId)) {
             canvas.releasePointerCapture(e.pointerId);
         }
     }
-
     canvas.addEventListener('pointerup', release);
     canvas.addEventListener('pointercancel', release);
 
-    /* ---- photo ---- */
-    var photo = new Image();
-    var photoReady = false;
-    photo.onload = function () { photoReady = true; };
-    photo.src = 'images/img.jpg';
-
-    /* ---- render ---- */
-    function roundRect(x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + w, y, x + w, y + h, r);
-        ctx.arcTo(x + w, y + h, x, y + h, r);
-        ctx.arcTo(x, y + h, x, y, r);
-        ctx.arcTo(x, y, x + w, y, r);
-        ctx.closePath();
+    /* ---- resize ---- */
+    function resize() {
+        const r = canvas.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        renderer.setSize(r.width, r.height, false);
+        camera.aspect = r.width / r.height;
+        camera.updateProjectionMatrix();
+        bandMat.uniforms.resolution.value.set(r.width, r.height);
     }
+    new ResizeObserver(resize).observe(canvas);
+    resize();
 
-    function drawStrap() {
-        var pts = rope;
-        ctx.lineJoin = ctx.lineCap = 'round';
+    /* ---- per-frame sync ---- */
+    // j1/j2 are lerped toward their true positions so the strap reads as cloth
+    // rather than a stiff chain of segments.
+    const lerped = new Map([[j1, new THREE.Vector3()], [j2, new THREE.Vector3()]]);
+    lerped.forEach((v, b) => {
+        const t = b.translation();
+        v.set(t.x, t.y, t.z);
+    });
 
-        ctx.strokeStyle = '#15191f'; ctx.lineWidth = 15;
-        ctx.beginPath();
-        ctx.moveTo(pts[0].x, pts[0].y);
-        for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-        ctx.stroke();
+    const MIN_SPEED = 10, MAX_SPEED = 50;
 
-        ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 15;
-        ctx.stroke();
-        ctx.strokeStyle = 'rgba(159,239,0,.16)'; ctx.lineWidth = 2;
-        ctx.stroke();
+    function syncVisuals(delta) {
+        const ct = card.translation(), cr = card.rotation();
+        cardMesh.position.set(ct.x, ct.y, ct.z);
+        cardMesh.quaternion.set(cr.x, cr.y, cr.z, cr.w);
 
-        // printed wordmark, sampled along the tangent at three points
-        ctx.save();
-        ctx.fillStyle = 'rgba(230,237,243,.30)';
-        ctx.font = '600 8px ' + "'JetBrains Mono',monospace";
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        [3, 7, 11].forEach(function (i) {
-            var a = pts[i], b = pts[i + 1];
-            if (!b) return;
-            var ang = Math.atan2(b.y - a.y, b.x - a.x);
-            ctx.save();
-            ctx.translate((a.x + b.x) / 2, (a.y + b.y) / 2);
-            ctx.rotate(ang - Math.PI / 2);
-            ctx.fillText('PUSHPENDER', 0, 0);
-            ctx.restore();
+        lerped.forEach((v, b) => {
+            const t = b.translation();
+            vec.set(t.x, t.y, t.z);
+            const d = Math.max(0.1, Math.min(1, v.distanceTo(vec)));
+            v.lerp(vec, Math.min(1, delta * (MIN_SPEED + d * (MAX_SPEED - MIN_SPEED))));
         });
-        ctx.restore();
+
+        const t3 = j3.translation(), tf = fixed.translation();
+        curve.points[0].set(t3.x, t3.y, t3.z);
+        curve.points[1].copy(lerped.get(j2));
+        curve.points[2].copy(lerped.get(j1));
+        curve.points[3].set(tf.x, tf.y, tf.z);
+        bandGeo.setPoints(curve.getPoints(32));
+
+        // bleed off spin around Y so the card settles facing forward
+        const av = card.angvel();
+        quat.set(cr.x, cr.y, cr.z, cr.w);
+        euler.setFromQuaternion(quat, 'YXZ');
+        card.setAngvel({ x: av.x, y: av.y - euler.y * 0.25, z: av.z }, true);
     }
 
-    function drawClip() {
-        var clip = rope[rope.length - 1];
-        var a = cardAxes();
-        ctx.save();
-        ctx.translate(clip.x, clip.y);
-        ctx.rotate(a.ang);
-        var g = ctx.createLinearGradient(-9, 0, 9, 0);
-        g.addColorStop(0, '#6d7681');
-        g.addColorStop(.45, '#d5dce3');
-        g.addColorStop(.55, '#aab3bd');
-        g.addColorStop(1, '#5c646e');
-        ctx.fillStyle = g;
-        roundRect(-9, -3, 18, CLIP_H + 8, 4); ctx.fill();
-        ctx.fillStyle = 'rgba(0,0,0,.55)';
-        roundRect(-4, 4, 8, 9, 3); ctx.fill();
-        ctx.restore();
-    }
-
-    function drawCard() {
-        var a = cardAxes();
-        ctx.save();
-        ctx.translate(TL.x, TL.y);
-        ctx.rotate(a.ang);
-
-        ctx.shadowColor = 'rgba(0,0,0,.6)';
-        ctx.shadowBlur = 34;
-        ctx.shadowOffsetY = 16;
-        var bg = ctx.createLinearGradient(0, 0, CARD_W, CARD_H);
-        bg.addColorStop(0, '#f7f8fa');
-        bg.addColorStop(1, '#dfe3e8');
-        ctx.fillStyle = bg;
-        roundRect(0, 0, CARD_W, CARD_H, 12); ctx.fill();
-        ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
-
-        // punch hole
-        ctx.fillStyle = '#0b0f14';
-        ctx.beginPath();
-        ctx.ellipse(CARD_W / 2, 15, 13, 5, 0, 0, Math.PI * 2);
-        ctx.fill();
-
-        // photo well
-        var px = 12, py = 28, pw = CARD_W - 24, ph = CARD_H - 96;
-        ctx.save();
-        roundRect(px, py, pw, ph, 7);
-        ctx.clip();
-        if (photoReady) {
-            var s = Math.max(pw / photo.width, ph / photo.height);
-            var dw = photo.width * s, dh = photo.height * s;
-            if (ctx.filter !== undefined) ctx.filter = 'grayscale(1) contrast(1.08)';
-            ctx.drawImage(photo, px + (pw - dw) / 2, py + (ph - dh) / 2, dw, dh);
-            if (ctx.filter !== undefined) ctx.filter = 'none';
-        } else {
-            var pg = ctx.createLinearGradient(px, py, px, py + ph);
-            pg.addColorStop(0, '#3a4048');
-            pg.addColorStop(1, '#14181d');
-            ctx.fillStyle = pg;
-            ctx.fillRect(px, py, pw, ph);
-            ctx.fillStyle = 'rgba(255,255,255,.16)';
-            ctx.beginPath();
-            ctx.arc(px + pw / 2, py + ph * .38, pw * .19, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(px + pw / 2, py + ph * 1.02, pw * .34, ph * .34, 0, Math.PI, 0);
-            ctx.fill();
+    function step(delta) {
+        if (dragOffset) {
+            const p = pointerWorld();
+            [card, j1, j2, j3].forEach((b) => b.wakeUp());
+            card.setNextKinematicTranslation({
+                x: p.x - dragOffset.x,
+                y: p.y - dragOffset.y,
+                z: p.z - dragOffset.z,
+            });
         }
-        ctx.restore();
-        ctx.strokeStyle = 'rgba(0,0,0,.14)';
-        ctx.lineWidth = 1;
-        roundRect(px, py, pw, ph, 7);
-        ctx.stroke();
-
-        // identity block
-        ctx.textAlign = 'left';
-        ctx.fillStyle = '#0b0f14';
-        ctx.font = '700 13px Inter,sans-serif';
-        ctx.fillText('PUSHPENDER S. RATHORE', 13, CARD_H - 48);
-        ctx.fillStyle = '#5b6675';
-        ctx.font = '500 9.5px ' + "'JetBrains Mono',monospace";
-        ctx.fillText('SECURITY RESEARCHER', 13, CARD_H - 33);
-        ctx.fillStyle = '#8b97a6';
-        ctx.font = '500 8px ' + "'JetBrains Mono',monospace";
-        ctx.fillText('GSoC 2026 · METASPLOIT', 13, CARD_H - 20);
-
-        // accent rule
-        var ag = ctx.createLinearGradient(13, 0, CARD_W - 13, 0);
-        ag.addColorStop(0, '#9fef00');
-        ag.addColorStop(1, '#00d4ff');
-        ctx.fillStyle = ag;
-        ctx.fillRect(13, CARD_H - 13, CARD_W - 26, 2.5);
-
-        ctx.restore();
-    }
-
-    function render() {
-        ctx.clearRect(0, 0, W, H);
-        drawStrap();
-        drawCard();
-        drawClip();
+        world.step();
+        syncVisuals(delta);
     }
 
     /* ---- loop ---- */
-    var acc = 0, last = 0, STEP = 1 / 60;
-
-    function frame(now) {
-        if (!last) last = now;
-        var dt = Math.min((now - last) / 1000, 0.05);
-        last = now;
-        if (grabbed) {
-            grabbed.px = grabbed.x; grabbed.py = grabbed.y;
-            grabbed.x = target.x; grabbed.y = target.y;
-        }
-        acc += dt;
-        var guard = 0;
-        while (acc >= STEP && guard++ < 5) { integrate(STEP); solve(); acc -= STEP; }
-        render();
-        requestAnimationFrame(frame);
-    }
-
-    var ro = new ResizeObserver(resize);
-    ro.observe(canvas);
-    resize();
-
     if (reduce) {
-        for (var i = 0; i < 260; i++) { integrate(STEP); solve(); }   // settle, then hold
-        render();
-    } else {
-        requestAnimationFrame(frame);
+        for (let i = 0; i < 300; i++) step(1 / 60);   // settle, then hold still
+        renderer.render(scene, camera);
+        return;
     }
-})();
+
+    let last = 0, acc = 0;
+    const STEP = 1 / 60;
+    function frame(now) {
+        requestAnimationFrame(frame);
+        if (!last) last = now;
+        const dt = Math.min((now - last) / 1000, 0.05);
+        last = now;
+        acc += dt;
+        let guard = 0;
+        while (acc >= STEP && guard++ < 5) { step(STEP); acc -= STEP; }
+        renderer.render(scene, camera);
+    }
+    requestAnimationFrame(frame);
+}
+
+main().catch(giveUp);
