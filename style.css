@@ -2436,3 +2436,18 @@ body {
     .preloader-bar  { animation-duration: 0.01s; }
     #rotating-profession { animation: none; }
 }
+
+/* Shown only if three.js / Rapier fail to load or WebGL is unavailable */
+.lanyard-fallback {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    align-self: center;
+    border-radius: 16px;
+    filter: grayscale(1) contrast(1.08);
+    box-shadow: var(--shadow-card);
+}
+
+.lanyard-fallback[hidden] {
+    display: none;
+}

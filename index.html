@@ -147,6 +147,8 @@
                     <div class="home-image">
                         <canvas id="lanyard-canvas" role="img"
                             aria-label="An ID badge hanging from a lanyard, showing a photo of Pushpender Singh Rathore. Drag it to swing it."></canvas>
+                        <img src="images/img.jpg" alt="Profile photo of Pushpender Singh Rathore"
+                            class="lanyard-fallback" hidden>
                         <span class="lanyard-hint">drag the badge</span>
                     </div>
                 </div>
@@ -824,7 +826,21 @@ This enables <strong>real-time adaptive filtering</strong> and <strong>intellige
   </main>
   
   <script src="script.js"></script>
-  <script src="hero-lanyard.js" defer></script>
+
+  <!-- three.js + Rapier for the hero lanyard, pinned so a CDN retag cannot
+       silently change the hero. If any of this fails to load, hero-lanyard.js
+       falls back to the static photo. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/",
+      "meshline": "https://cdn.jsdelivr.net/npm/meshline@3.3.1/dist/index.js",
+      "@dimforge/rapier3d-compat": "https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.19.3/rapier.mjs"
+    }
+  }
+  </script>
+  <script type="module" src="hero-lanyard.js"></script>
   
   <footer class="site-footer">
   <div class="footer-counter">
