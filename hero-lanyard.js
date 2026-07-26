@@ -1,9 +1,17 @@
-/* Hero lanyard - a 3D ID badge on a strap, with real rigid-body physics.
+/* Hero lanyard - a 3D ID badge on a strap, with hand-rolled Verlet physics.
  *
- * three.js for rendering, Rapier for the physics, meshline for the strap.
- * The rig matches the well known react-three-fiber lanyard: a fixed anchor,
- * three rope-jointed segments, then a spherical joint into the card, so the
- * card swings and twists rather than merely rotating in plane.
+ * three.js renders, meshline draws the strap, and the physics is solved here.
+ * There is no physics engine: Rapier's compat build inlines its WASM as base64
+ * and cost 758KB on the wire, which was most of this hero's weight and hit
+ * Safari hardest. The rig below reproduces its behaviour in about 80 lines.
+ *
+ * The rig, matching the well known react-three-fiber lanyard: a pinned anchor,
+ * a rope of point masses, then the card carried by four points - three corners
+ * (top-left, top-right, bottom-centre) forming a rigid triangle, plus a fourth
+ * held off the card plane. The triangle alone fixes orientation only up to a
+ * reflection, so without that fourth point the card can invert through itself
+ * and pop inside out. With it the card genuinely twists in 3D rather than
+ * merely swinging.
  *
  * The card face is drawn to an offscreen 2D canvas and used as a texture, so
  * the badge is generated from images/img.jpg rather than a downloaded model.
@@ -11,13 +19,12 @@
  * The preloader is dismissed by an inline script in index.html, never from
  * here, so a failed module load cannot trap the page behind the overlay.
  *
- * The three.js / Rapier imports are DYNAMIC and deliberately so. A static
- * `import` in a module script blocks DOMContentLoaded until every dependency
- * has downloaded and evaluated, and script.js does all of its work inside a
- * DOMContentLoaded handler. Importing ~4MB of statically meant the typewriter,
- * nav, mobile menu and counters all sat dead until the 3D stack finished
- * arriving: measured at 23.7s in WebKit and over 60s against the live site.
- * Loading them dynamically after `load` keeps the page interactive throughout.
+ * The three.js imports are DYNAMIC and deliberately so. A static `import` in a
+ * module script blocks DOMContentLoaded until every dependency has downloaded
+ * and evaluated, and script.js does all of its work inside a DOMContentLoaded
+ * handler - so static imports left the typewriter, nav, mobile menu and
+ * counters dead until the 3D stack arrived. Loading them on `load` instead
+ * keeps the page interactive throughout.
  */
 
 const canvas = document.getElementById('lanyard-canvas');
@@ -192,20 +199,85 @@ async function loadPhoto(src) {
     });
 }
 
+/* ================================================================
+   Verlet solver
+   ================================================================ */
+const GRAV = 40;          // world units per second squared, matching the old engine
+const DAMP = 0.985;       // velocity retained per step
+const ITER = 26;          // constraint relaxation passes per step
+
+function makeSolver() {
+    const points = [];
+    const links = [];
+
+    function pt(x, y, z, pinned) {
+        const p = { x, y, z, px: x, py: y, pz: z, pinned: !!pinned };
+        points.push(p);
+        return p;
+    }
+
+    // rest length is measured from wherever the points currently are
+    function link(a, b) {
+        const d = Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+        links.push({ a, b, d });
+    }
+
+    let held = null;
+
+    function integrate(dt) {
+        const g = GRAV * dt * dt;
+        for (const p of points) {
+            if (p.pinned || p === held) continue;
+            const vx = (p.x - p.px) * DAMP;
+            const vy = (p.y - p.py) * DAMP;
+            const vz = (p.z - p.pz) * DAMP;
+            p.px = p.x; p.py = p.y; p.pz = p.z;
+            p.x += vx; p.y += vy - g; p.z += vz;
+        }
+    }
+
+    function solve() {
+        for (let k = 0; k < ITER; k++) {
+            for (const c of links) {
+                const a = c.a, b = c.b;
+                const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
+                const d = Math.hypot(dx, dy, dz) || 1e-6;
+                const f = ((d - c.d) / d) * 0.5;
+                const ox = dx * f, oy = dy * f, oz = dz * f;
+                const aFixed = a.pinned || a === held;
+                const bFixed = b.pinned || b === held;
+                if (aFixed && bFixed) continue;
+                // when one end is immovable the other takes the whole correction
+                if (!aFixed) {
+                    const s = bFixed ? 2 : 1;
+                    a.x += ox * s; a.y += oy * s; a.z += oz * s;
+                }
+                if (!bFixed) {
+                    const s = aFixed ? 2 : 1;
+                    b.x -= ox * s; b.y -= oy * s; b.z -= oz * s;
+                }
+            }
+        }
+    }
+
+    return {
+        pt, link, integrate, solve,
+        hold: (p) => { held = p; },
+        get held() { return held; },
+    };
+}
+
 async function main() {
     if (!canvas) return;
 
     // Fetched in parallel, and only now - see the note at the top of the file.
-    const [THREE, meshline, roomEnv, RAPIER] = await Promise.all([
+    const [THREE, meshline, roomEnv] = await Promise.all([
         import('three'),
         import('meshline'),
         import('three/addons/environments/RoomEnvironment.js'),
-        import('@dimforge/rapier3d-compat'),
     ]);
     const { MeshLineGeometry, MeshLineMaterial } = meshline;
     const { RoomEnvironment } = roomEnv;
-
-    await RAPIER.init();
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const photo = await loadPhoto('images/img.jpg');
@@ -218,14 +290,13 @@ async function main() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const scene = new THREE.Scene();
-    // Close enough that the badge reads as the subject of the column. Framing
-    // is driven from here: at fov 25 the visible height is 2*z*tan(12.5deg),
-    // so z 9.2 shows ~4.1 units and the 2.25-tall card fills over half of it.
+    // Framing is driven from here: at fov 25 the visible height is
+    // 2*z*tan(12.5deg), so z 9.2 shows ~4.1 units and the 2.25-tall card fills
+    // over half of it.
     const camera = new THREE.PerspectiveCamera(25, 1, 0.1, 100);
     camera.position.set(0, 0.15, 9.2);
     camera.lookAt(0, 0.15, 0);
 
-    // image-based lighting, so the card and clip actually have reflections
     const pmrem = new THREE.PMREMGenerator(renderer);
     scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
@@ -240,35 +311,30 @@ async function main() {
     cyan.position.set(-4, -1, 2);
     scene.add(cyan);
 
-    /* ---- physics rig ---- */
-    const world = new RAPIER.World({ x: 0, y: -40, z: 0 });
-    world.timestep = 1 / 60;
+    /* ---- the rig ----
+       Laid out at rest so every link's rest length is simply its initial
+       length. Anchor at y=4, a 3-unit rope, then the card hanging below. */
+    const S = makeSolver();
+    const ANCHOR_Y = 4, ROPE_LEN = 3, ROPE_SEGS = 12;
+    const CLIP_GAP = 0.32;                     // clip to the card's top edge
 
-    const ANCHOR_Y = 4;
-    function body(x, y, z, fixed) {
-        const desc = fixed ? RAPIER.RigidBodyDesc.fixed() : RAPIER.RigidBodyDesc.dynamic();
-        desc.setTranslation(x, y, z).setLinearDamping(4).setAngularDamping(4).setCanSleep(true);
-        return world.createRigidBody(desc);
+    const rope = [];
+    for (let i = 0; i <= ROPE_SEGS; i++) {
+        rope.push(S.pt(0, ANCHOR_Y - (ROPE_LEN * i) / ROPE_SEGS, 0, i === 0));
     }
+    for (let i = 0; i < rope.length - 1; i++) S.link(rope[i], rope[i + 1]);
 
-    const fixed = body(0, ANCHOR_Y, 0, true);
-    const j1 = body(0.5, ANCHOR_Y, 0);
-    const j2 = body(1.0, ANCHOR_Y, 0);
-    const j3 = body(1.5, ANCHOR_Y, 0);
-    const card = body(2.0, ANCHOR_Y, 0);
+    const clip = rope[rope.length - 1];
+    const cy = clip.y - CLIP_GAP - CARD_H / 2;  // card centre at rest
+    const TL = S.pt(-CARD_W / 2, cy + CARD_H / 2, 0);
+    const TR = S.pt(CARD_W / 2, cy + CARD_H / 2, 0);
+    const BC = S.pt(0, cy - CARD_H / 2, 0);
+    // held off the card plane purely to lock chirality, never drawn
+    const NZ = S.pt(0, cy, 0.5);
 
-    [j1, j2, j3].forEach((b) => world.createCollider(RAPIER.ColliderDesc.ball(0.1), b));
-    world.createCollider(
-        RAPIER.ColliderDesc.cuboid(CARD_W / 2, CARD_H / 2, 0.01), card
-    );
-
-    const O = { x: 0, y: 0, z: 0 };
-    world.createImpulseJoint(RAPIER.JointData.rope(1, O, O), fixed, j1, true);
-    world.createImpulseJoint(RAPIER.JointData.rope(1, O, O), j1, j2, true);
-    world.createImpulseJoint(RAPIER.JointData.rope(1, O, O), j2, j3, true);
-    world.createImpulseJoint(
-        RAPIER.JointData.spherical(O, { x: 0, y: CARD_H / 2 + 0.32, z: 0 }), j3, card, true
-    );
+    S.link(clip, TL); S.link(clip, TR);         // strap splits to both corners
+    S.link(TL, TR); S.link(TL, BC); S.link(TR, BC);   // rigid triangle
+    S.link(NZ, TL); S.link(NZ, TR); S.link(NZ, BC);   // stops it inverting
 
     /* ---- card mesh ---- */
     const faceTex = new THREE.CanvasTexture(drawCardFace(photo));
@@ -276,30 +342,25 @@ async function main() {
     faceTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
     const faceMat = new THREE.MeshPhysicalMaterial({
-        map: faceTex,
-        roughness: 0.28,
-        metalness: 0.05,
-        clearcoat: 0.85,
-        clearcoatRoughness: 0.2,
+        map: faceTex, roughness: 0.28, metalness: 0.05,
+        clearcoat: 0.85, clearcoatRoughness: 0.2,
     });
     const edgeMat = new THREE.MeshPhysicalMaterial({
         color: 0xcdd4db, roughness: 0.45, metalness: 0.1, clearcoat: 0.5,
     });
-
     const cardMesh = new THREE.Mesh(makeCardGeometry(THREE), [faceMat, edgeMat]);
     scene.add(cardMesh);
 
-    // metal clip, parented to the card so it rides along
     const metal = new THREE.MeshStandardMaterial({
         color: 0xb9c1c9, roughness: 0.25, metalness: 1,
     });
-    const clip = new THREE.Group();
+    const clipGroup = new THREE.Group();
     const bar = new THREE.Mesh(new THREE.TorusGeometry(0.13, 0.032, 12, 28), metal);
     bar.position.y = CARD_H / 2 + 0.1;
     const clamp = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.14, 0.06), metal);
     clamp.position.y = CARD_H / 2 + 0.015;
-    clip.add(bar, clamp);
-    cardMesh.add(clip);
+    clipGroup.add(bar, clamp);
+    cardMesh.add(clipGroup);
 
     /* ---- strap ---- */
     const bandTex = new THREE.CanvasTexture(drawBandTexture());
@@ -308,12 +369,8 @@ async function main() {
 
     const bandGeo = new MeshLineGeometry();
     const bandMat = new MeshLineMaterial({
-        map: bandTex,
-        useMap: 1,
-        color: new THREE.Color(0xffffff),
-        transparent: true,
-        opacity: 0.95,
-        depthTest: false,
+        map: bandTex, useMap: 1, color: new THREE.Color(0xffffff),
+        transparent: true, depthTest: false,
         // With sizeAttenuation on (the default) meshline offsets the strap edge
         // in clip space, so lineWidth is NOT in world units. Tuned by eye
         // against the 1.6-wide card at camera z 9.2.
@@ -330,9 +387,7 @@ async function main() {
     bandMesh.renderOrder = -1;
     scene.add(bandMesh);
 
-    const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(),
-    ]);
+    const curve = new THREE.CatmullRomCurve3(rope.map(() => new THREE.Vector3()));
     curve.curveType = 'chordal';
 
     /* ---- pointer drag ---- */
@@ -340,48 +395,52 @@ async function main() {
     const pointer = new THREE.Vector2();
     const vec = new THREE.Vector3();
     const dir = new THREE.Vector3();
-    const euler = new THREE.Euler();
-    const quat = new THREE.Quaternion();
-    let dragOffset = null;
+    const target = new THREE.Vector3();
+    let dragging = false;
 
-    function setPointer(e, rect) {
+    function setPointer(e) {
+        const r = canvas.getBoundingClientRect();
         pointer.set(
-            ((e.clientX - rect.left) / rect.width) * 2 - 1,
-            -((e.clientY - rect.top) / rect.height) * 2 + 1
+            ((e.clientX - r.left) / r.width) * 2 - 1,
+            -((e.clientY - r.top) / r.height) * 2 + 1
         );
     }
 
-    // where the pointer ray meets the plane the card is floating on
-    function pointerWorld() {
+    // where the pointer ray meets the plane the card floats on
+    function pointerWorld(out) {
         vec.set(pointer.x, pointer.y, 0.5).unproject(camera);
         dir.copy(vec).sub(camera.position).normalize();
-        return vec.add(dir.multiplyScalar(camera.position.length()));
+        return out.copy(vec.add(dir.multiplyScalar(camera.position.length())));
     }
 
     canvas.addEventListener('pointerdown', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        setPointer(e, rect);
+        setPointer(e);
         raycaster.setFromCamera(pointer, camera);
         if (!raycaster.intersectObject(cardMesh, false).length) return;  // else let the page scroll
 
-        const t = card.translation();
-        dragOffset = pointerWorld().clone().sub(new THREE.Vector3(t.x, t.y, t.z));
-        card.setBodyType(RAPIER.RigidBodyType.KinematicPositionBased, true);
+        pointerWorld(target);
+        // grab whichever corner is nearest the pointer
+        let best = TL, bd = Infinity;
+        for (const p of [TL, TR, BC]) {
+            const d = Math.hypot(p.x - target.x, p.y - target.y, p.z - target.z);
+            if (d < bd) { bd = d; best = p; }
+        }
+        S.hold(best);
+        dragging = true;
         canvas.classList.add('is-grabbing');
         canvas.setPointerCapture(e.pointerId);
         e.preventDefault();
     });
 
     canvas.addEventListener('pointermove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        setPointer(e, rect);
-        if (dragOffset) e.preventDefault();
+        setPointer(e);
+        if (dragging) e.preventDefault();
     });
 
     function release(e) {
-        if (!dragOffset) return;
-        dragOffset = null;
-        card.setBodyType(RAPIER.RigidBodyType.Dynamic, true);
+        if (!dragging) return;
+        dragging = false;
+        S.hold(null);
         canvas.classList.remove('is-grabbing');
         if (e && e.pointerId !== undefined && canvas.hasPointerCapture(e.pointerId)) {
             canvas.releasePointerCapture(e.pointerId);
@@ -402,66 +461,55 @@ async function main() {
     new ResizeObserver(resize).observe(canvas);
     resize();
 
-    /* ---- per-frame sync ---- */
-    // j1/j2 are lerped toward their true positions so the strap reads as cloth
-    // rather than a stiff chain of segments.
-    const lerped = new Map([[j1, new THREE.Vector3()], [j2, new THREE.Vector3()]]);
-    lerped.forEach((v, b) => {
-        const t = b.translation();
-        v.set(t.x, t.y, t.z);
-    });
+    /* ---- rig -> mesh ---- */
+    const ex = new THREE.Vector3(), ey = new THREE.Vector3(), ez = new THREE.Vector3();
+    const mid = new THREE.Vector3(), basis = new THREE.Matrix4();
 
-    const MIN_SPEED = 10, MAX_SPEED = 50;
+    function syncVisuals() {
+        // card frame from the three corners: +X along the top edge, +Y up the
+        // card, +Z their cross product
+        ex.set(TR.x - TL.x, TR.y - TL.y, TR.z - TL.z).normalize();
+        mid.set((TL.x + TR.x) / 2, (TL.y + TR.y) / 2, (TL.z + TR.z) / 2);
+        ey.set(mid.x - BC.x, mid.y - BC.y, mid.z - BC.z);
+        ey.addScaledVector(ex, -ey.dot(ex)).normalize();   // orthogonalise
+        ez.crossVectors(ex, ey);
 
-    function syncVisuals(delta) {
-        const ct = card.translation(), cr = card.rotation();
-        cardMesh.position.set(ct.x, ct.y, ct.z);
-        cardMesh.quaternion.set(cr.x, cr.y, cr.z, cr.w);
+        basis.makeBasis(ex, ey, ez);
+        cardMesh.quaternion.setFromRotationMatrix(basis);
+        cardMesh.position.set(
+            (mid.x + BC.x) / 2, (mid.y + BC.y) / 2, (mid.z + BC.z) / 2
+        );
 
-        lerped.forEach((v, b) => {
-            const t = b.translation();
-            vec.set(t.x, t.y, t.z);
-            const d = Math.max(0.1, Math.min(1, v.distanceTo(vec)));
-            v.lerp(vec, Math.min(1, delta * (MIN_SPEED + d * (MAX_SPEED - MIN_SPEED))));
-        });
-
-        const t3 = j3.translation(), tf = fixed.translation();
-        curve.points[0].set(t3.x, t3.y, t3.z);
-        curve.points[1].copy(lerped.get(j2));
-        curve.points[2].copy(lerped.get(j1));
-        curve.points[3].set(tf.x, tf.y, tf.z);
+        for (let i = 0; i < rope.length; i++) {
+            curve.points[i].set(rope[i].x, rope[i].y, rope[i].z);
+        }
         bandGeo.setPoints(curve.getPoints(32));
-
-        // bleed off spin around Y so the card settles facing forward
-        const av = card.angvel();
-        quat.set(cr.x, cr.y, cr.z, cr.w);
-        euler.setFromQuaternion(quat, 'YXZ');
-        card.setAngvel({ x: av.x, y: av.y - euler.y * 0.25, z: av.z }, true);
     }
 
-    function step(delta) {
-        if (dragOffset) {
-            const p = pointerWorld();
-            [card, j1, j2, j3].forEach((b) => b.wakeUp());
-            card.setNextKinematicTranslation({
-                x: p.x - dragOffset.x,
-                y: p.y - dragOffset.y,
-                z: p.z - dragOffset.z,
-            });
+    function step(dt) {
+        if (dragging) {
+            const h = S.held;
+            if (h) {
+                pointerWorld(target);
+                // leave the previous position alone so releasing throws the card
+                h.px = h.x; h.py = h.y; h.pz = h.z;
+                h.x = target.x; h.y = target.y; h.z = target.z;
+            }
         }
-        world.step();
-        syncVisuals(delta);
+        S.integrate(dt);
+        S.solve();
+        syncVisuals();
     }
 
     /* ---- loop ---- */
+    const STEP = 1 / 60;
     if (reduce) {
-        for (let i = 0; i < 300; i++) step(1 / 60);   // settle, then hold still
+        for (let i = 0; i < 300; i++) step(STEP);   // settle, then hold still
         renderer.render(scene, camera);
         return;
     }
 
     let last = 0, acc = 0;
-    const STEP = 1 / 60;
     function frame(now) {
         requestAnimationFrame(frame);
         if (!last) last = now;

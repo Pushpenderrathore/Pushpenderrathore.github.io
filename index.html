@@ -827,16 +827,16 @@ This enables <strong>real-time adaptive filtering</strong> and <strong>intellige
   
   <script src="script.js"></script>
 
-  <!-- three.js + Rapier for the hero lanyard, pinned so a CDN retag cannot
-       silently change the hero. If any of this fails to load, hero-lanyard.js
-       falls back to the static photo. -->
+  <!-- three.js for the hero lanyard, pinned so a CDN retag cannot silently
+       change the hero. The physics is solved in hero-lanyard.js, so there is
+       no engine here. If any of this fails to load, hero-lanyard.js falls back
+       to the static photo. -->
   <script type="importmap">
   {
     "imports": {
       "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
       "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/",
-      "meshline": "https://cdn.jsdelivr.net/npm/meshline@3.3.1/dist/index.js",
-      "@dimforge/rapier3d-compat": "https://cdn.jsdelivr.net/npm/@dimforge/rapier3d-compat@0.19.3/rapier.mjs"
+      "meshline": "https://cdn.jsdelivr.net/npm/meshline@3.3.1/dist/index.js"
     }
   }
   </script>
