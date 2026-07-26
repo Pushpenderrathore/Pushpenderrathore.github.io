@@ -840,7 +840,9 @@ This enables <strong>real-time adaptive filtering</strong> and <strong>intellige
     }
   }
   </script>
-  <script type="module" src="hero-lanyard.js"></script>
+  <!-- async: a module script is deferred by default and would otherwise hold
+       up DOMContentLoaded, which is where script.js does all of its work. -->
+  <script type="module" src="hero-lanyard.js" async></script>
   
   <footer class="site-footer">
   <div class="footer-counter">
