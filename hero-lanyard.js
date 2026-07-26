@@ -10,12 +10,15 @@
  *
  * The preloader is dismissed by an inline script in index.html, never from
  * here, so a failed module load cannot trap the page behind the overlay.
+ *
+ * The three.js / Rapier imports are DYNAMIC and deliberately so. A static
+ * `import` in a module script blocks DOMContentLoaded until every dependency
+ * has downloaded and evaluated, and script.js does all of its work inside a
+ * DOMContentLoaded handler. Importing ~4MB of statically meant the typewriter,
+ * nav, mobile menu and counters all sat dead until the 3D stack finished
+ * arriving: measured at 23.7s in WebKit and over 60s against the live site.
+ * Loading them dynamically after `load` keeps the page interactive throughout.
  */
-
-import * as THREE from 'three';
-import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import * as RAPIER from '@dimforge/rapier3d-compat';
 
 const canvas = document.getElementById('lanyard-canvas');
 const fallback = document.querySelector('.lanyard-fallback');
@@ -147,7 +150,7 @@ function roundRect(x, rx, ry, w, h, r) {
 
 /* A rounded slab for the card. ExtrudeGeometry hands back UVs in shape space,
    so they are remapped to 0..1 for the face texture. */
-function makeCardGeometry() {
+function makeCardGeometry(THREE) {
     const r = 0.08, w = CARD_W, h = CARD_H;
     const s = new THREE.Shape();
     const x0 = -w / 2, y0 = -h / 2;
@@ -191,6 +194,16 @@ async function loadPhoto(src) {
 
 async function main() {
     if (!canvas) return;
+
+    // Fetched in parallel, and only now - see the note at the top of the file.
+    const [THREE, meshline, roomEnv, RAPIER] = await Promise.all([
+        import('three'),
+        import('meshline'),
+        import('three/addons/environments/RoomEnvironment.js'),
+        import('@dimforge/rapier3d-compat'),
+    ]);
+    const { MeshLineGeometry, MeshLineMaterial } = meshline;
+    const { RoomEnvironment } = roomEnv;
 
     await RAPIER.init();
 
@@ -273,7 +286,7 @@ async function main() {
         color: 0xcdd4db, roughness: 0.45, metalness: 0.1, clearcoat: 0.5,
     });
 
-    const cardMesh = new THREE.Mesh(makeCardGeometry(), [faceMat, edgeMat]);
+    const cardMesh = new THREE.Mesh(makeCardGeometry(THREE), [faceMat, edgeMat]);
     scene.add(cardMesh);
 
     // metal clip, parented to the card so it rides along
@@ -462,4 +475,10 @@ async function main() {
     requestAnimationFrame(frame);
 }
 
-main().catch(giveUp);
+/* Held until `load` so the 3D stack never competes with the page's own CSS,
+   fonts and script.js. If load already fired, start straight away. */
+if (document.readyState === 'complete') {
+    main().catch(giveUp);
+} else {
+    window.addEventListener('load', () => { main().catch(giveUp); }, { once: true });
+}
