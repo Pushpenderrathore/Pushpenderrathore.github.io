@@ -204,11 +204,10 @@
             <a class="pr-link" href="https://github.com/rapid7/metasploit-framework/pull/21607" target="_blank" rel="noopener">View on GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
           </div>
         </article>
-        <!-- #21608 pinned to "in review" (open on GitHub, but under active review); see STATUS_OVERRIDES in the script below -->
-        <article class="pr-card" data-state="review">
+        <article class="pr-card" data-state="merged">
           <div class="pr-card__top">
             <span class="pr-repo"><i class="fa-solid fa-code-branch"></i> rapid7/metasploit-framework</span>
-            <span class="pr-badge pr-badge--review">in review</span>
+            <span class="pr-badge pr-badge--merged">merged</span>
           </div>
           <h3 class="pr-title">Add Postgres TLS and full cert chain peer cert tracing via CertificateTrace (Phase 3+4)</h3>
           <div class="pr-card__bottom">
@@ -536,7 +535,7 @@
       // Pin the display status for specific PRs regardless of the GitHub API state.
       // Keyed by "repo#number". Used for open PRs that are actually under active review,
       // so the live GitHub sync does not flip them back to a plain "open" badge.
-      const STATUS_OVERRIDES = { 'rapid7/metasploit-framework#21608': 'review' };
+      const STATUS_OVERRIDES = {};
       // Badge text shown for a given state (defaults to the state itself).
       const BADGE_LABELS = { review: 'in review' };
       const FALLBACK = [
@@ -552,7 +551,7 @@
     "repo": "rapid7/metasploit-framework",
     "number": 21608,
     "title": "Add Postgres TLS and full cert chain peer cert tracing via CertificateTrace (Phase 3+4)",
-    "state": "review",
+    "state": "merged",
     "date": "2026-06-25",
     "url": "https://github.com/rapid7/metasploit-framework/pull/21608"
   },
