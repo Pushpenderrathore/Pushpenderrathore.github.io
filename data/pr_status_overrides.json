@@ -1,9 +1,4 @@
 {
   "_comment": "Pinned display statuses for PR badges, applied on top of the live GitHub state by prs.html (STATUS_OVERRIDES) and honored by any badge-sync automation. Keys are 'repo#number'. Use for open PRs that are actually under active review so the sync does not revert them to a plain 'open' badge.",
-  "overrides": {
-    "rapid7/metasploit-framework#21608": {
-      "state": "review",
-      "label": "in review"
-    }
-  }
+  "overrides": {}
 }
