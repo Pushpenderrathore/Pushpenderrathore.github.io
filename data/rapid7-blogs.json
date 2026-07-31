@@ -1,5 +1,11 @@
 [
   {
+    "title": "Metasploit Framework 6.5 Released",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-framework-6-5-released/",
+    "date": "2026-07-30",
+    "gsoc_feature": false
+  },
+  {
     "title": "Metasploit Wrap Up: An HTTP to SMB relay plus Payload Improvements",
     "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-an-http-to-smb-relay-plus-payload-improvements/",
     "date": "2026-07-17",
