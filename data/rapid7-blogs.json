@@ -1,5 +1,11 @@
 [
   {
+    "title": "Metasploit Pro 5.1 Released",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-pro-5-1-released/",
+    "date": "2026-07-31",
+    "gsoc_feature": false
+  },
+  {
     "title": "Metasploit Framework 6.5 Released",
     "url": "https://www.rapid7.com/blog/post/pt-metasploit-framework-6-5-released/",
     "date": "2026-07-30",
