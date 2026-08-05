@@ -54,8 +54,14 @@ BASE_DIRECTIVES: list[tuple[str, str]] = [
 
 SCRIPT_ORIGINS = "'self' https://cdn.jsdelivr.net"
 
+# Referrer-Policy is the other header a document can apply from its own markup.
+# X-Frame-Options, X-Content-Type-Options, Permissions-Policy and HSTS are
+# ignored in a meta tag, so those stay out of reach on GitHub Pages.
+REFERRER_TAG = '<meta name="referrer" content="strict-origin-when-cross-origin">'
+
 META_RE = re.compile(
-    r'\n?[ \t]*<meta http-equiv="Content-Security-Policy"[^>]*>',
+    r'\n?[ \t]*<meta http-equiv="Content-Security-Policy"[^>]*>'
+    r'|\n?[ \t]*<meta name="referrer"[^>]*>',
     re.IGNORECASE,
 )
 # Inline blocks only: anything carrying a src= is an external file.
@@ -100,7 +106,9 @@ def update(path: pathlib.Path) -> bool:
 
     indent = anchor.group(1)
     updated = stripped.replace(
-        anchor.group(0), f"{anchor.group(0)}\n{indent}{tag}", 1
+        anchor.group(0),
+        f"{anchor.group(0)}\n{indent}{tag}\n{indent}{REFERRER_TAG}",
+        1,
     )
 
     if updated == html:
