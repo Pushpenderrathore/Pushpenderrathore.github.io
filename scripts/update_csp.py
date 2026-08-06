@@ -26,7 +26,10 @@ import pathlib
 import re
 import sys
 
-PAGES = ("index.html", "gsoc.html", "prs.html")
+# Every page the site serves. assets/CV.html was missed when the policy was
+# first added, so it shipped with no CSP at all while the other three were
+# covered: scanning that one page reported a HIGH where the rest were clean.
+PAGES = ("index.html", "gsoc.html", "prs.html", "assets/CV.html")
 
 # Origins this site actually loads from, verified against the markup:
 #   cdn.jsdelivr.net       three.js + meshline, via the importmap (hero lanyard)
