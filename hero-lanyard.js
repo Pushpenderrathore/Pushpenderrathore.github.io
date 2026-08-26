@@ -204,7 +204,7 @@ async function loadPhoto(src) {
    ================================================================ */
 const GRAV = 40;          // world units per second squared, matching the old engine
 const DAMP = 0.985;       // velocity retained per step
-const ITER = 26;          // constraint relaxation passes per step
+const ITER = 32;          // constraint relaxation passes per step
 
 function makeSolver() {
     const points = [];
@@ -260,8 +260,29 @@ function makeSolver() {
         }
     }
 
+    // Shortest rest-length path from the pinned anchor to `target`, over the
+    // link graph. This is how far the grabbed point can travel before the strap
+    // would have to stretch, so the drag can be clamped to it (see step()).
+    // The graph is tiny, so a plain relaxation to a fixed point is plenty.
+    function reach(target) {
+        const anchor = points.find((p) => p.pinned);
+        if (!anchor) return Infinity;
+        const dist = new Map(points.map((p) => [p, Infinity]));
+        dist.set(anchor, 0);
+        for (let k = 0; k < points.length; k++) {
+            let changed = false;
+            for (const c of links) {
+                const da = dist.get(c.a), db = dist.get(c.b);
+                if (da + c.d < db - 1e-9) { dist.set(c.b, da + c.d); changed = true; }
+                if (db + c.d < da - 1e-9) { dist.set(c.a, db + c.d); changed = true; }
+            }
+            if (!changed) break;
+        }
+        return dist.get(target);
+    }
+
     return {
-        pt, link, integrate, solve,
+        pt, link, integrate, solve, reach,
         hold: (p) => { held = p; },
         get held() { return held; },
     };
@@ -396,7 +417,9 @@ async function main() {
     const vec = new THREE.Vector3();
     const dir = new THREE.Vector3();
     const target = new THREE.Vector3();
+    const ringWorld = new THREE.Vector3();
     let dragging = false;
+    let heldReach = Infinity;   // how far the grabbed point may leave the anchor
 
     function setPointer(e) {
         const r = canvas.getBoundingClientRect();
@@ -426,6 +449,10 @@ async function main() {
             if (d < bd) { bd = d; best = p; }
         }
         S.hold(best);
+        // Cap the drag just short of full extension, so the strap can never be
+        // pulled past its own length and rubber-band (0.98 keeps it off the
+        // singular, dead-straight pose).
+        heldReach = S.reach(best) * 0.98;
         dragging = true;
         canvas.classList.add('is-grabbing');
         canvas.setPointerCapture(e.pointerId);
@@ -483,7 +510,33 @@ async function main() {
         for (let i = 0; i < rope.length; i++) {
             curve.points[i].set(rope[i].x, rope[i].y, rope[i].z);
         }
+        // End the strap on the clip ring itself, not on the last rope particle,
+        // so the band always meets the badge instead of separating from it when
+        // the card swings. The card transform is set just above; refresh its
+        // world matrix before reading the ring off it.
+        cardMesh.updateMatrixWorld(true);
+        bar.getWorldPosition(ringWorld);
+        curve.points[curve.points.length - 1].copy(ringWorld);
         bandGeo.setPoints(curve.getPoints(32));
+    }
+
+    // Walk the strap from the pinned anchor and pull in any segment that has
+    // been stretched past its rest length. Real webbing does not stretch, so
+    // this keeps the strap a fixed length under a hard drag instead of letting
+    // it rubber-band. The anchor is fixed and the clip is never the held point,
+    // so a single top-down pass is stable.
+    const SEG_REST = ROPE_LEN / ROPE_SEGS;
+    function constrainStrap() {
+        for (let i = 1; i < rope.length; i++) {
+            const a = rope[i - 1], b = rope[i];
+            if (b.pinned || b === S.held) continue;
+            const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
+            const d = Math.hypot(dx, dy, dz);
+            if (d > SEG_REST) {
+                const s = (d - SEG_REST) / d;
+                b.x -= dx * s; b.y -= dy * s; b.z -= dz * s;
+            }
+        }
     }
 
     function step(dt) {
@@ -491,6 +544,15 @@ async function main() {
             const h = S.held;
             if (h) {
                 pointerWorld(target);
+                // Keep the grabbed point within the strap's reach of the anchor,
+                // so the rope is always satisfiable and cannot balloon.
+                const a = rope[0];
+                const dx = target.x - a.x, dy = target.y - a.y, dz = target.z - a.z;
+                const d = Math.hypot(dx, dy, dz);
+                if (d > heldReach) {
+                    const s = heldReach / d;
+                    target.set(a.x + dx * s, a.y + dy * s, a.z + dz * s);
+                }
                 // leave the previous position alone so releasing throws the card
                 h.px = h.x; h.py = h.y; h.pz = h.z;
                 h.x = target.x; h.y = target.y; h.z = target.z;
@@ -498,6 +560,7 @@ async function main() {
         }
         S.integrate(dt);
         S.solve();
+        constrainStrap();
         syncVisuals();
     }
 
