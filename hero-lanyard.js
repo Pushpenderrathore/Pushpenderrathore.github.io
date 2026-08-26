@@ -510,12 +510,16 @@ async function main() {
         for (let i = 0; i < rope.length; i++) {
             curve.points[i].set(rope[i].x, rope[i].y, rope[i].z);
         }
-        // End the strap on the clip ring itself, not on the last rope particle,
-        // so the band always meets the badge instead of separating from it when
-        // the card swings. The card transform is set just above; refresh its
-        // world matrix before reading the ring off it.
+        // Thread the strap down through the ring to the clamp, rather than
+        // ending it at the ring centre, so the band always meets the badge
+        // instead of separating from it when the card swings. Ending it at the
+        // clamp (not the ring) also tucks the cut end under the metal: the band
+        // draws behind the clip (renderOrder -1, depthTest off), so the ring and
+        // clamp cover the join at every angle instead of exposing it mid-drag.
+        // The card transform is set just above; refresh its world matrix before
+        // reading the clamp off it.
         cardMesh.updateMatrixWorld(true);
-        bar.getWorldPosition(ringWorld);
+        clamp.getWorldPosition(ringWorld);
         curve.points[curve.points.length - 1].copy(ringWorld);
         bandGeo.setPoints(curve.getPoints(32));
     }
