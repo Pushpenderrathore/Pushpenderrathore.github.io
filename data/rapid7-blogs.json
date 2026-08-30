@@ -1,5 +1,11 @@
 [
   {
+    "title": "Metasploit Wrap Up: Payloads and Exploits, and Scanners, Oh my!",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-payloads-exploits-scanners/",
+    "date": "2026-08-28",
+    "gsoc_feature": false
+  },
+  {
     "title": "Metasploit Wrap Up: Lot of summer shells and fit http profiles",
     "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-lot-of-summer-shells-and-fit-http-profiles/",
     "date": "2026-08-14",
