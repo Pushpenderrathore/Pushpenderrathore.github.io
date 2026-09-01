@@ -572,9 +572,9 @@
                     <span class="tech-pill">Impacket · Rubeus</span>
                 </div>
 
-                <h3 class="tech-stack-heading">Current Status: Week 12 · Final stretch - CertificateTrace track complete, Kerberos relay in upstream review</h3>
+                <h3 class="tech-stack-heading">GSoC 2026 Complete · Final evaluation passed - CertificateTrace track merged upstream, Kerberos relay stack in review</h3>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8;">
-                    <strong>Both presenter cores merged in Week 1 (originally scoped for Weeks 3–10). All six CertificateTrace PRs are now merged upstream (#21198, #21469, #21580, #21599, #21607, #21608): SSL peer-cert tracing has fully landed across HTTP (Phase 1), LDAP + RDP (Phase 2), and Postgres TLS + full cert chain (Phase 3) - the CertificateTrace track is complete. With the midterm bar well exceeded, focus has moved to a new mentor-endorsed track: the first native Kerberos relay framework in Metasploit (CVE-2026-20929), now open upstream as three PRs (#21709, #21724, #21725) with a supporting DNS-stack fix (#21784) already merged.</strong>
+                    <strong>Google Summer of Code 2026 is officially complete - I passed the final evaluation and received my completion certificate from Google (25 May – 24 August 2026). Both presenter cores merged in Week 1 (originally scoped for Weeks 3–10). All six CertificateTrace PRs are now merged upstream (#21198, #21469, #21580, #21599, #21607, #21608): SSL peer-cert tracing has fully landed across HTTP (Phase 1), LDAP + RDP (Phase 2), and Postgres TLS + full cert chain (Phase 3) - the CertificateTrace track is complete. With the midterm bar well exceeded, focus has moved to a new mentor-endorsed track: the first native Kerberos relay framework in Metasploit (CVE-2026-20929), now open upstream as three PRs (#21709, #21724, #21725) with a supporting DNS-stack fix (#21784) already merged.</strong>
                 </p>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
                     <strong>CertificateTracePresenter</strong> (Phase 3 work, done early): fully implemented with a 343-line presenter + 88-line shared <code>CertificateTrace</code> mixin. Integrated into <strong>10+ Metasploit modules</strong>: <code>icpr_cert</code>, <code>web_enrollment_cert</code>, <code>certifried</code>, <code>esc_update_ldap_object</code>, <code>bad_successor</code>, <code>rbcd</code>, <code>shadow_credentials</code>, <code>ldap_esc_vulnerable_cert_finder</code>, relay modules, and more. RSpec: 403-line presenter suite + 184-line mixin suite. <strong>PR #21198 merged</strong>, with multiple review cycles addressed including MS Application Policies OID decoding, X.509 version display, SAN parsing, and non-ASCII sanitisation. Featured in the <a href="https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-13-06-2026/" target="_blank" rel="noopener">Rapid7 Metasploit Wrap-Up (June 13, 2026)</a>.
@@ -634,9 +634,9 @@
                         <p>Full AD lab integration testing across both presenters, documentation and worked <code>msfconsole</code> usage examples, PR polish across PR&nbsp;1 and PR&nbsp;2, plus a feedback-driven changes buffer for mentor review cycles.</p>
                     </div>
                     <div class="timeline-item">
-                        <h4>Final Submission</h4>
-                        <span class="timeline-period">Late August / early September 2026</span>
-                        <p>Final code submission, deliverables write-up, blog wrap-up, and final mentor evaluation.</p>
+                        <h4>Final Submission &amp; Evaluation ✓</h4>
+                        <span class="timeline-period">24 August 2026 · Passed</span>
+                        <p>Final code submission, deliverables write-up, and blog wrap-up delivered; final mentor evaluation passed and the Google Summer of Code 2026 completion certificate awarded. The CertificateTrace track shipped across six merged upstream PRs; the native Kerberos relay stack remains in upstream review.</p>
                     </div>
                     <div class="timeline-item">
                         <h4>Results Announcement</h4>
@@ -649,8 +649,8 @@
 
         <section id="updates" class="section">
             <div class="container">
-                <h2 class="section-title">Weekly Updates <span class="tbd-tag">Live blog</span></h2>
-                <p class="section-intro">Weekly notes from the coding period - what I shipped, what blocked me, and what I learned. Updates will be published here every Sunday during GSoC.</p>
+                <h2 class="section-title">Weekly Updates <span class="tbd-tag">Complete</span></h2>
+                <p class="section-intro">Weekly notes from the coding period - what I shipped, what blocked me, and what I learned. The log ran every Sunday through the program; the final entry marks completion.</p>
 
                 <div class="updates-grid">
                     <div class="update-card">
@@ -689,7 +689,7 @@
                     <div class="update-card"><span class="update-week">Week 09</span><h4>Relay review cycles · SMB2/SPNEGO hardening</h4><p>Addressed mentor review findings across the relay stack: fixed SMB2 SessionSetup bookkeeping and hardened the SPNEGO NegTokenResp path so a malformed token no longer kills the relay thread.</p></div>
                     <div class="update-card"><span class="update-week">Week 10</span><h4>Relay robustness fixes</h4><p>Fixed two errors that only surface once a relay succeeds and guarded the peer-cert trace when the relayed client exposes no connection. Continued two-host CA/KDC lab validation of the full coerce-&gt;relay-&gt;cert chain.</p></div>
                     <div class="update-card"><span class="update-week">Week 11</span><h4>DNS-stack crash fix merged · #21784</h4><p>DNS forward/cache crash fix <a href="https://github.com/rapid7/metasploit-framework/pull/21784" target="_blank" rel="noopener">PR #21784</a> merged upstream (2026-08-20), fixing two crashes in the default DNS forward/cache path that the coercion modules rely on.</p></div>
-                    <div class="update-card"><span class="update-week">Week 12 <span class="tbd-tag">Now</span></span><h4>Final stretch · relay PRs in review, docs + wrap-up</h4><p>Three Kerberos relay PRs (<a href="https://github.com/rapid7/metasploit-framework/pull/21709" target="_blank" rel="noopener">#21709</a>, <a href="https://github.com/rapid7/metasploit-framework/pull/21724" target="_blank" rel="noopener">#21724</a>, <a href="https://github.com/rapid7/metasploit-framework/pull/21725" target="_blank" rel="noopener">#21725</a>) in upstream review. Wrapping up the program: PR polish across review cycles, worked <code>msfconsole</code> usage examples, docs, and the final deliverables write-up.</p></div>
+                    <div class="update-card"><span class="update-week">Week 12 <span class="tbd-tag">Done</span></span><h4>GSoC 2026 complete · final evaluation passed ✓</h4><p>Passed the final evaluation and received the Google Summer of Code 2026 completion certificate. The CertificateTrace track shipped upstream across six merged PRs (#21198, #21469, #21580, #21599, #21607, #21608). The three Kerberos relay PRs (<a href="https://github.com/rapid7/metasploit-framework/pull/21709" target="_blank" rel="noopener">#21709</a>, <a href="https://github.com/rapid7/metasploit-framework/pull/21724" target="_blank" rel="noopener">#21724</a>, <a href="https://github.com/rapid7/metasploit-framework/pull/21725" target="_blank" rel="noopener">#21725</a>) remain in upstream review, and contribution continues beyond the program.</p></div>
                 </div>
             </div>
         </section>
