@@ -589,7 +589,7 @@
                     <strong>Weeks 3–8:</strong> <strong>SSL peer-cert tracing</strong> extended across 4 protocols in 3 PRs (opened Week 3, live-lab-tested Weeks 4 &amp; 6, all merged by Week 8). Phase 1 (HTTP) via <a href="https://github.com/rapid7/metasploit-framework/pull/21599" target="_blank" rel="noopener">PR #21599</a> (<strong>merged 2026-07-15</strong>): <code>certificate_peer_cert_trace</code> wired into <code>HttpClient</code> after <code>send_recv</code>, dedup via DB note, 47 RSpec examples green. Phase 2 (LDAP + RDP) via <a href="https://github.com/rapid7/metasploit-framework/pull/21607" target="_blank" rel="noopener">PR #21607</a> (<strong>merged 2026-07-17</strong>): wraps <code>ldap_open</code> and <code>swap_sock_plain_to_ssl</code> with peer-cert capture, with a <code>respond_to?(:datastore)</code> guard to prevent crashes in scanner contexts. Phase 3+4 (Postgres TLS + full cert chain) via <a href="https://github.com/rapid7/metasploit-framework/pull/21608" target="_blank" rel="noopener">PR #21608</a> (<strong>merged 2026-07-28</strong>): reads peer cert from <code>postgres_conn.conn</code> with <code>respond_to?(:peer_cert)</code> guard for plain-TCP connections; chain members printed with "Chain N/M" headers in full mode. All three Copilot review findings addressed and re-validated live against HTTP, LDAP, RDP and a CA-signed Postgres chain before merge.
                 </p>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
-                    <strong>Weeks 5–12 - Native Kerberos relay (CVE-2026-20929):</strong> a new mentor-endorsed track building the first Kerberos relay framework in Metasploit, mirroring the existing NTLM relay design. Now open upstream as three PRs: the relay stack + <strong>ESC8 AD CS relay target</strong> (<a href="https://github.com/rapid7/metasploit-framework/pull/21709" target="_blank" rel="noopener">#21709</a>) - a reusable relay mixin (GSS-SPNEGO AP-REQ capture/forward, protocol-agnostic relay handler, SMB capture server, HTTP relay-target client); and native IPv6 DNS-takeover coercion split into a rogue DHCPv6 server (<a href="https://github.com/rapid7/metasploit-framework/pull/21724" target="_blank" rel="noopener">#21724</a>) and a rogue Router Advertisement / RDNSS module (<a href="https://github.com/rapid7/metasploit-framework/pull/21725" target="_blank" rel="noopener">#21725</a>) - the mitm6 equivalents, no external tooling. A supporting DNS forward/cache crash fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21784" target="_blank" rel="noopener">#21784</a>) is already <strong>merged (2026-08-20)</strong>. Lab-validated: relay-to-ESC8 certificate issuance confirmed end to end and the DHCPv6 coercion proven on the wire; mentor review findings addressed with SMB2 SessionSetup and SPNEGO relay-thread hardening landed on the branch.
+                    <strong>Weeks 5–12 - Native Kerberos relay (CVE-2026-20929):</strong> a new mentor-endorsed track building the first Kerberos relay framework in Metasploit, mirroring the existing NTLM relay design. Now open upstream as three PRs: the relay stack + <strong>ESC8 AD CS relay target</strong> (<a href="https://github.com/rapid7/metasploit-framework/pull/21709" target="_blank" rel="noopener">#21709</a>) - a reusable relay mixin (GSS-SPNEGO AP-REQ capture/forward, protocol-agnostic relay handler, SMB capture server, HTTP relay-target client); and native IPv6 DNS-takeover coercion split into a rogue DHCPv6 server (<a href="https://github.com/rapid7/metasploit-framework/pull/21724" target="_blank" rel="noopener">#21724</a>) and a rogue Router Advertisement / RDNSS module (<a href="https://github.com/rapid7/metasploit-framework/pull/21725" target="_blank" rel="noopener">#21725</a>) - the mitm6 equivalents, no external tooling. A supporting DNS forward/cache crash fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21784" target="_blank" rel="noopener">#21784</a>) is already <strong>merged (2026-08-20)</strong>. The stack is unblocked upstream by a companion <strong>ruby_smb</strong> change (<a href="https://github.com/rapid7/ruby_smb/pull/303" target="_blank" rel="noopener">#303</a>) that lets an SMB server offer Kerberos alongside NTLM and surface the captured AP-REQ for forwarding - mentor-approved, in second review. Two supporting fixes back the coercion path: a metadata-cache race fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21719" target="_blank" rel="noopener">#21719</a>) and further DNS forward/cache hardening for relay-driven poisoning (<a href="https://github.com/rapid7/metasploit-framework/pull/21853" target="_blank" rel="noopener">#21853</a>). Lab-validated: relay-to-ESC8 certificate issuance confirmed end to end and the DHCPv6 coercion proven on the wire; mentor review findings addressed with SMB2 SessionSetup and SPNEGO relay-thread hardening landed on the branch.
                 </p>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
                     <strong>Total: ~4,500+ lines</strong> of new production code + specs across all branches through Week 12.
@@ -626,7 +626,7 @@
                     <div class="timeline-item">
                         <h4>Phase 3.5 - Native Kerberos relay (CVE-2026-20929) <span class="tbd-tag">In review</span></h4>
                         <span class="timeline-period">Weeks 5–12 · Mentor-endorsed track</span>
-                        <p>The first native Kerberos relay framework in Metasploit, mirroring the NTLM relay design. Open upstream as three PRs: relay stack + ESC8 AD CS target (<a href="https://github.com/rapid7/metasploit-framework/pull/21709" target="_blank" rel="noopener">#21709</a>), rogue DHCPv6 coercion (<a href="https://github.com/rapid7/metasploit-framework/pull/21724" target="_blank" rel="noopener">#21724</a>), and rogue RA/RDNSS coercion (<a href="https://github.com/rapid7/metasploit-framework/pull/21725" target="_blank" rel="noopener">#21725</a>). Supporting DNS forward/cache crash fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21784" target="_blank" rel="noopener">#21784</a>) merged 2026-08-20. Relay-to-ESC8 issuance validated end to end in the lab.</p>
+                        <p>The first native Kerberos relay framework in Metasploit, mirroring the NTLM relay design. Open upstream as three PRs: relay stack + ESC8 AD CS target (<a href="https://github.com/rapid7/metasploit-framework/pull/21709" target="_blank" rel="noopener">#21709</a>), rogue DHCPv6 coercion (<a href="https://github.com/rapid7/metasploit-framework/pull/21724" target="_blank" rel="noopener">#21724</a>), and rogue RA/RDNSS coercion (<a href="https://github.com/rapid7/metasploit-framework/pull/21725" target="_blank" rel="noopener">#21725</a>). Unblocked upstream by a companion <code>ruby_smb</code> GSS-provider PR (<a href="https://github.com/rapid7/ruby_smb/pull/303" target="_blank" rel="noopener">#303</a>, approved, in second review). Supporting DNS forward/cache crash fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21784" target="_blank" rel="noopener">#21784</a>) merged 2026-08-20. Relay-to-ESC8 issuance validated end to end in the lab.</p>
                     </div>
                     <div class="timeline-item">
                         <h4>Phase 4 - Test &amp; Docs ✓</h4>
@@ -789,10 +789,24 @@
                             <span class="resource-url">Merged &middot; rapid7/metasploit-framework</span>
                         </div>
                     </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21784" target="_blank" rel="noopener">
+                        <i class="fas fa-code-merge"></i>
+                        <div>
+                            <span class="resource-label">PR #21784: DNS forward/cache crash fix</span>
+                            <span class="resource-url">Merged &middot; rapid7/metasploit-framework</span>
+                        </div>
+                    </a>
                     <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21709" target="_blank" rel="noopener">
                         <i class="fas fa-code-branch"></i>
                         <div>
                             <span class="resource-label">PR #21709: Kerberos relay stack + ESC8 target</span>
+                            <span class="resource-url">In review &middot; rapid7/metasploit-framework</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21719" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
+                        <div>
+                            <span class="resource-label">PR #21719: Metadata cache race fix</span>
                             <span class="resource-url">In review &middot; rapid7/metasploit-framework</span>
                         </div>
                     </a>
@@ -810,11 +824,32 @@
                             <span class="resource-url">In review &middot; rapid7/metasploit-framework</span>
                         </div>
                     </a>
-                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21784" target="_blank" rel="noopener">
-                        <i class="fas fa-code-merge"></i>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21853" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
                         <div>
-                            <span class="resource-label">PR #21784: DNS forward/cache crash fix</span>
-                            <span class="resource-url">Merged &middot; rapid7/metasploit-framework</span>
+                            <span class="resource-label">PR #21853: Relay DNS forward/cache fix</span>
+                            <span class="resource-url">In review &middot; rapid7/metasploit-framework</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/ruby_smb/pull/303" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
+                        <div>
+                            <span class="resource-label">PR #303: Kerberos GSS provider (offer Kerberos + NTLM)</span>
+                            <span class="resource-url">In review &middot; rapid7/ruby_smb</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21152" target="_blank" rel="noopener">
+                        <i class="fas fa-ban"></i>
+                        <div>
+                            <span class="resource-label">PR #21152: KerberosTicketTrace (initial draft)</span>
+                            <span class="resource-url">Closed &middot; superseded by #21466</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21190" target="_blank" rel="noopener">
+                        <i class="fas fa-ban"></i>
+                        <div>
+                            <span class="resource-label">PR #21190: Kerberos-trace (initial draft)</span>
+                            <span class="resource-url">Closed &middot; superseded by #21466</span>
                         </div>
                     </a>
                 </div>
