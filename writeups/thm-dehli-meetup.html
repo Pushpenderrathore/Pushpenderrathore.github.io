@@ -416,11 +416,11 @@
                             <span class="toc-meta">networking · 30 pts · <span class="status status-done">covered</span></span>
                         </span>
                     </a>
-                    <a class="toc-item pending" href="#task-5">
+                    <a class="toc-item" href="#task-5">
                         <span class="toc-num">05</span>
                         <span class="toc-body">
                             <span class="toc-name">Stolen Footprints</span>
-                            <span class="toc-meta">networking · <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">networking · 60 pts · <span class="status status-done">covered</span></span>
                         </span>
                     </a>
                     <a class="toc-item" href="#task-6">
@@ -701,13 +701,79 @@ Content-type: text/html; charset=utf-8
                 <!-- ============= TASK 5 ============= -->
                 <details class="task" id="task-5">
                     <summary>
-                        <span class="task-num">Task 05</span>
+                        <span class="task-num">Task 05 · 60 pts</span>
                         <span class="cat cat-net">Networking</span>
                         <h3>Stolen Footprints</h3>
                     </summary>
                     <div class="task-body">
-                        <!-- TODO fill from own notes. -->
-                        <div class="pending-note">Writeup pending. Adding the traffic analysis path and the artefact that produced the answer.</div>
+                    <span class="box-ip">Target: packet capture served at <code>http://MACHINE_IP:8000/stolen_footprint.pcapng</code>. The task asks: "After authenticating to the file server, the attacker stole a file. Can you investigate and see what was stolen?"</span>
+
+                    <h4>Grab the capture</h4>
+                    <pre><code>curl -O http://MACHINE_IP:8000/stolen_footprint.pcapng</code></pre>
+                    <p>~830 KB, pcapng format. The file is a touch truncated at the tail (<code>capinfos</code> complains "total block lengths don't match") but <code>tshark</code> reads it fine, which is all I need.</p>
+
+                    <h4>What kind of traffic is in there</h4>
+                    <pre><code>tshark -r stolen_footprint.pcapng -q -z io,phs
+
+frame                 165 frames
+  eth                 165 frames
+    ip                165 frames
+      tcp             165 frames
+        ftp            26 frames   ← FTP control, port 21
+        ftp-data       54 frames   ← FTP data, port 20
+          data-text-lines  3 frames</code></pre>
+                    <p>FTP. One control channel on 21, several data channels on 20. The 3 data-text-lines frames are the directory listings; the 54 ftp-data frames carry the actual file bytes.</p>
+
+                    <h4>What the attacker typed</h4>
+                    <pre><code>tshark -r stolen_footprint.pcapng -Y ftp \
+    -T fields -e ftp.request.command -e ftp.request.arg</code></pre>
+                    <pre><code>PORT    10,10,200,96,214,181
+LIST
+CWD     ftp
+PORT    10,10,200,96,158,117
+LIST
+CWD     backup_files
+PORT    10,10,200,96,187,191
+LIST
+TYPE    I
+PORT    10,10,200,96,148,141
+RETR    memories.png</code></pre>
+                    <p>Clean story. Attacker (<code>10.10.200.96</code>) ran active-mode FTP against the server (<code>10.10.248.83</code>), walked into <code>/ftp/backup_files/</code>, flipped to binary, and <code>RETR</code>'d <strong><code>memories.png</code></strong> (813019 bytes per the <code>150</code> response).</p>
+
+                    <h4>Carve the file</h4>
+                    <p>Each FTP data transfer is its own TCP stream. The <code>RETR</code> transfer is the stream carrying ~813 KB of raw bytes. In this capture it's stream index 4. Grab the one-sided payload (server to client) with <code>follow,tcp,raw</code> and reassemble:</p>
+                    <pre><code>import subprocess, binascii, re
+raw = subprocess.run(
+    ['tshark','-r','stolen_footprint.pcapng',
+     '-q','-z','follow,tcp,raw,4'],
+    capture_output=True, text=True
+).stdout.splitlines()
+
+node0 = bytearray()   # 10.10.248.83:20 (server, unindented lines)
+node1 = bytearray()   # client, tab-indented lines
+for line in raw:
+    hx = line.strip()
+    if re.fullmatch(r'[0-9a-fA-F]+', hx):
+        buf = node1 if line.startswith('\t') else node0
+        buf.extend(binascii.unhexlify(hx))
+
+open('memories.png','wb').write(bytes(node0))</code></pre>
+                    <pre><code>$ file memories.png
+memories.png: PNG image data, 952 x 960, 8-bit/color RGBA, non-interlaced
+$ wc -c memories.png
+   813019 memories.png</code></pre>
+                    <p>Byte-for-byte match with the FTP <code>150</code> response. Carve is clean.</p>
+
+                    <h4>Open the picture</h4>
+                    <p>Nothing exotic in the PNG. No EXIF, no bytes past IEND, no steghide, no zsteg. Just open it. There's a photo of an iMac with a yellow sticky-note stuck to the screen, and the task answer is written on the sticky note in black marker.</p>
+
+                    <h4>What I'll remember</h4>
+                    <ul>
+                        <li>For plaintext protocols, <code>tshark -q -z io,phs</code> is the fastest way to find out what's actually in a capture. One line and you know whether to reach for FTP, HTTP, SMB, DNS or something else.</li>
+                        <li><code>tshark -q -z follow,tcp,raw,&lt;stream&gt;</code> is the carve knife. Reassemble the bytes from one side and write them straight to disk.</li>
+                        <li>Don't over-engineer stego. If the task says "see what was stolen", the stolen file might just be a photo, and the flag is on the photo.</li>
+                    </ul>
+
                     </div>
                 </details>
 
