@@ -4,8 +4,6 @@
 
 The live room (`tryhackme.com/room/dehlimeetup`) is 11 tasks across Web, Networking, Boot2Root, LLM and Coding, worth 106 points on a 60-minute clock. 208 players. Each task spins up its own AttackBox; Tasks 4, 10 and 11 need the Europe (Ireland) region. This writeup covers the four tasks I solved end to end; the rest are stubbed for a follow-up pass.
 
-Flag strings are **redacted per TryHackMe policy**. Techniques, payloads and root-cause reasoning are not.
-
 ---
 
 ## Task 1 — Introduction (Intro)
