@@ -409,7 +409,11 @@ async function main() {
     scene.add(bandMesh);
 
     const curve = new THREE.CatmullRomCurve3(rope.map(() => new THREE.Vector3()));
-    curve.curveType = 'chordal';
+    // Centripetal, not chordal: chordal has no overshoot protection and loops
+    // the strap into a boomerang shape when the badge swings and the rope
+    // control points oscillate. Centripetal is specifically designed to avoid
+    // self-intersections under tight bends while staying visually smooth.
+    curve.curveType = 'centripetal';
 
     /* ---- pointer drag ---- */
     const raycaster = new THREE.Raycaster();
