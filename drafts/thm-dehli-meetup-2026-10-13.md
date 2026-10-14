@@ -28,7 +28,6 @@ Also works: `%2e%2e%2f`. Does **not** work: literal `../` (collapsed by the Expr
 
 **Takeaway.** Encoding bypasses survive at trust boundaries. The guard in front sanitises its own syntax; the guard behind decodes and trusts.
 
-**Flag format:** `THM{v3ndur3_CVE_f1l3_l34k}`.
 
 ---
 
@@ -49,7 +48,6 @@ Nested variant also lands: `middleware:middleware:middleware:middleware:middlewa
 
 **Takeaway.** Framework-internal headers are not a security boundary unless the framework strips them inbound. First thing to check when middleware does auth: can it be told it already ran.
 
-**Flag format:** `THM{n3xt_l3v3l_byp4ss}`.
 
 ---
 
@@ -136,7 +134,6 @@ cat /tmp/rf
 - `INTO OUTFILE` lands even when the HTTP response says *"User not found"* — the write happens at execute time, not row-return time.
 - GTFOBins' default `npm` entry is misleading on npm 8+. `init-module` via `--userconfig` is the reliable escape.
 
-**Flag formats:** web `THM{SQL_1nj3ct10n_1s_fun}`, user `THM{1nj3ct10n_2_RC3_1s_m0r3_fun}`, root `THM{sud0_gtf0b1ns_4_d4_w1n}`.
 
 ---
 
@@ -227,7 +224,6 @@ All bundles into a single msfvenom `CMD=` payload for one-shot upload.
 - A SUID binary that `dlopen`s a sibling path in a 777 directory doesn't need the library to be overwritten — the *missing* library is the hijack.
 - Apache's child env has empty PATH, not an AppArmor denial. `-B` + explicit `PATH` fixes it with no special perms.
 
-**Flag formats:** user `THM{almost_d0n3-keep_it_g01ng}`, root `THM{y0u_d1d_th1s_congrats}`.
 
 ---
 
