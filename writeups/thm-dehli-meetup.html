@@ -521,8 +521,6 @@ Host: TARGET_IP</code></pre>
                     <h4>What I'll remember</h4>
                     <p>Encoding bypasses live at the trust boundary between two components. One side sanitises its own syntax, the next decodes it. The gap in between is where the work happens.</p>
 
-                    <p><strong>Flag format:</strong> <code>THM{REDACTED}</code>.</p>
-
                     </div>
                 </details>
 
@@ -618,8 +616,6 @@ x-middleware-subrequest: middleware</code></pre>
                         <li>Framework-internal headers aren't a security boundary unless the framework strips them from inbound requests. When auth lives in middleware, the first thing I check now is whether I can tell it it already ran.</li>
                         <li>A path filter that only blocks <code>..</code> is a tell. Absolute paths are the obvious next move.</li>
                     </ul>
-
-                    <p><strong>Flag format:</strong> <code>THM{REDACTED}</code>.</p>
 
                     </div>
                 </details>
@@ -719,8 +715,6 @@ cat /tmp/rf</code></pre>
                         <li><strong>GTFOBins' default npm entry is misleading on npm 8+.</strong> <code>init-module</code> via <code>--userconfig</code> is the escape that actually works.</li>
                     </ul>
 
-                    <p><strong>Flag formats:</strong> web <code>THM{REDACTED}</code>, user <code>THM{REDACTED}</code>, root <code>THM{REDACTED}</code>.</p>
-
                     </div>
                 </details>
 
@@ -808,8 +802,6 @@ cat /tmp/root_pwn
                         <li>A SUID binary that <code>dlopen</code>s a sibling path from a world-writable directory doesn't need the library to be overwritten. The <em>missing</em> library is the hijack.</li>
                         <li>Apache's child environment runs with an empty PATH. That's not AppArmor, that's just environment. <code>-B</code> + explicit <code>PATH</code> is the fix.</li>
                     </ul>
-
-                    <p><strong>Flag formats:</strong> user <code>THM{REDACTED}</code>, root <code>THM{REDACTED}</code>.</p>
 
                     </div>
                 </details>
