@@ -29,8 +29,21 @@
     <script src="writeup.js" defer></script>
 
     <style>
-        /* Hero */
-        .wu-hero { padding-top: 9rem; padding-bottom: 3.5rem; }
+        /* Flow the writeup page as regular sections, not the portfolio's
+           100vh flex-centered sections. The hero keeps its own padding. */
+        main .section:not(.wu-hero) {
+            min-height: 0;
+            display: block;
+            padding: 2rem 0 3rem;
+        }
+
+        /* Hero: don't center-fill 100vh, let the content set the height. */
+        .wu-hero {
+            min-height: 0;
+            display: block;
+            padding-top: 9rem;
+            padding-bottom: 3rem;
+        }
         .wu-eyebrow {
             display: inline-flex; align-items: center; gap: 0.5rem;
             font-size: 0.78rem; font-weight: 700;
