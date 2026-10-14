@@ -529,20 +529,27 @@ async function main() {
     }
 
     // Walk the strap from the pinned anchor and pull in any segment that has
-    // been stretched past its rest length. Real webbing does not stretch, so
-    // this keeps the strap a fixed length under a hard drag instead of letting
-    // it rubber-band. The anchor is fixed and the clip is never the held point,
-    // so a single top-down pass is stable.
+    // been stretched past its rest length, OR push out any segment that has
+    // compressed below a floor. Real webbing does not stretch and does not
+    // squash into itself; both ends of that constraint matter. Pulling in only
+    // (the earlier version) left the strap free to compress under oscillation,
+    // which fed the Catmull-Rom overshoot into a visible boomerang hairpin.
+    // The anchor is fixed and the clip is never the held point, so a single
+    // top-down pass is stable.
     const SEG_REST = ROPE_LEN / ROPE_SEGS;
+    const SEG_MIN  = SEG_REST * 0.85;   // small compression allowed, not full squash
     function constrainStrap() {
         for (let i = 1; i < rope.length; i++) {
             const a = rope[i - 1], b = rope[i];
             if (b.pinned || b === S.held) continue;
             const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
-            const d = Math.hypot(dx, dy, dz);
+            const d = Math.hypot(dx, dy, dz) || 1e-6;
             if (d > SEG_REST) {
                 const s = (d - SEG_REST) / d;
                 b.x -= dx * s; b.y -= dy * s; b.z -= dz * s;
+            } else if (d < SEG_MIN) {
+                const s = (SEG_MIN - d) / d;
+                b.x += dx * s; b.y += dy * s; b.z += dz * s;
             }
         }
     }
