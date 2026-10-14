@@ -70,20 +70,6 @@
             font-size: 1rem; font-weight: 600; color: var(--text-primary);
         }
 
-        /* Scope note */
-        .scope-note {
-            background: var(--glass-bg);
-            border: 1px solid var(--border-accent);
-            border-left: 3px solid var(--accent-primary);
-            border-radius: var(--border-radius);
-            padding: 1rem 1.2rem;
-            margin-bottom: 2.5rem;
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-            max-width: 820px;
-        }
-        .scope-note strong { color: var(--text-primary); }
-
         /* Table of contents */
         .toc-grid {
             display: grid;
@@ -385,10 +371,6 @@
 
         <section class="section" id="scope">
             <div class="container">
-                <div class="scope-note">
-                    <strong>A note on scope and flags.</strong> I kept to TryHackMe's writeup rules: no literal flag strings, no cracked hashes, no credentials in this page. Everything else (techniques, payloads, why each bug fires) is here. If you want to validate against the real values, run the room yourself. Flag <em>formats</em> are shown so you can match the shape you'll land on.
-                </div>
-
                 <h2 class="section-title">Tasks</h2>
                 <p class="section-intro">Each task is collapsed by default. Click any card to expand it, or hit a TOC link to jump straight in.</p>
 
@@ -811,7 +793,6 @@ cat /tmp/root_pwn
 
                 <div class="footer-note">
                     <p>Room: <a href="https://tryhackme.com/room/dehlimeetup" target="_blank" rel="noopener noreferrer">tryhackme.com/room/dehlimeetup</a>. Hosted at the TryHackMe x EHAX workshop in BR Ambedkar Auditorium, DTU, on 2026-10-13.</p>
-                    <p>Flag strings are kept out of this page because TryHackMe's writeup rules say so. If you want the real values to validate your own solve, run the room yourself. The techniques above reproduce them.</p>
                 </div>
 
             </div>
