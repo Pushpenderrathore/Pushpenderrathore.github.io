@@ -388,11 +388,11 @@
                 <p class="section-intro">Each task is collapsed by default. Click any card to expand it, or hit a TOC link to jump straight in.</p>
 
                 <div class="toc-grid" id="tasks">
-                    <a class="toc-item pending" href="#task-1">
+                    <a class="toc-item" href="#task-1">
                         <span class="toc-num">01</span>
                         <span class="toc-body">
                             <span class="toc-name">Introduction</span>
-                            <span class="toc-meta">intro · <span class="status status-todo">pending</span></span>
+                            <span class="toc-meta">intro · <span class="status status-done">covered</span></span>
                         </span>
                     </a>
                     <a class="toc-item" href="#task-2">
@@ -485,8 +485,17 @@
                         <h3>Introduction</h3>
                     </summary>
                     <div class="task-body">
-                        <!-- TODO fill from own notes -->
-                        <div class="pending-note">Writeup pending. Nothing to attack in the intro, just room setup and AttackBox launch.</div>
+
+                    <h4>What's actually here</h4>
+                    <p>No attack surface. The intro task is a procedural check-in: it tells you the room is live, points you at the <strong>Start AttackBox</strong> button at the top of the room, and marks itself complete when you move on. No flag input, no points on the board. It's TryHackMe's standard "welcome" step.</p>
+
+                    <h4>What I did</h4>
+                    <ul>
+                        <li>Read the intro, confirmed the room was the Dehli Meetup CTF (not the stale "Wells Fargo CTF Competition" string the room template still ships with).</li>
+                        <li>Skipped the AttackBox and worked from my own machine over the TryHackMe OpenVPN connection, so each task's AttackBox terminated as soon as I was done with it. Faster rotation between tasks and no shared-browser latency.</li>
+                        <li>Moved on to Task 2.</li>
+                    </ul>
+
                     </div>
                 </details>
 
