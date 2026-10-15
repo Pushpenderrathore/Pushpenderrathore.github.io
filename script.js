@@ -434,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Open the user's mail client pre-filled. Replace with a real backend
             // (Formspree, EmailJS, etc.) when you have one configured.
-            const recipient = 'bluedevil5177@gmail.com';
+            const recipient = 'enp7s0d@gmail.com';
             const subject = encodeURIComponent(`[Portfolio] ${data.subject}`);
             const body = encodeURIComponent(
                 `${data.message}\n\n- ${data.name} (${data.email})`

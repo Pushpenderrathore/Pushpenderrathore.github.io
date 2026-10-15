@@ -68,7 +68,7 @@ You’ll see your personal portfolio running locally
 
 ## 📬 Contact
 
-- Email: bluedevil5177@gmail.com
+- Email: enp7s0d@gmail.com
 - Location: Bahal, Haryana
 - LinkedIn: [LinkedIn](#)  
 - GitHub: [GitHub](https://github.com/Pushpenderrathore/)  
