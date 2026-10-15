@@ -1,15 +1,21 @@
 [
   {
+    "title": "Metasploit Wrap Up: A Collection of What Can Only Be Called Eclectic Modules",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-a-collection-of-what-can-only-be-called-eclectic-modules/",
+    "date": "2026-10-09",
+    "gsoc_feature": true
+  },
+  {
     "title": "Metasploit Wrap Up: Belgian Waffles, Chocolates, and\u2026Modules-Frites?",
     "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-belgian-waffles-chocolates-and-modules-frites/",
     "date": "2026-09-25",
-    "gsoc_feature": false
+    "gsoc_feature": true
   },
   {
     "title": "Metasploit Wrap Up: This One Goes to Sixteen!",
     "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-goes-to-sixteen/",
     "date": "2026-09-11",
-    "gsoc_feature": false
+    "gsoc_feature": true
   },
   {
     "title": "Metasploit Wrap Up: Payloads and Exploits, and Scanners, Oh my!",

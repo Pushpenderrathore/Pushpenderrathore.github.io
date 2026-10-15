@@ -593,6 +593,12 @@
                     <strong>Weeks 5–12 - Native Kerberos relay (CVE-2026-20929):</strong> a mentor-endorsed track building the first Kerberos relay framework in Metasploit, mirroring the existing NTLM relay design. The relay stack + <strong>ESC8 AD CS relay target</strong> (<a href="https://github.com/rapid7/metasploit-framework/pull/21709" target="_blank" rel="noopener">#21709</a>) <strong>merged 2026-09-09</strong> - a reusable relay mixin (GSS-SPNEGO AP-REQ capture/forward, protocol-agnostic relay handler, SMB capture server, HTTP relay-target client). Native IPv6 DNS-takeover coercion landed via the rogue Router Advertisement / RDNSS module (<a href="https://github.com/rapid7/metasploit-framework/pull/21725" target="_blank" rel="noopener">#21725</a>, <strong>merged 2026-09-21</strong>); the parallel DHCPv6 draft (#21724) was closed in favour of consolidating on the RA/RDNSS path. Three supporting fixes back the coercion and forward path: metadata-cache race fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21719" target="_blank" rel="noopener">#21719</a>), DNS forward/cache crash fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21784" target="_blank" rel="noopener">#21784</a>, merged 2026-08-20), and DNS forward/cache hardening for relay-driven poisoning (<a href="https://github.com/rapid7/metasploit-framework/pull/21853" target="_blank" rel="noopener">#21853</a>) - all merged. The stack was unblocked upstream by the companion <strong>ruby_smb</strong> change (<a href="https://github.com/rapid7/ruby_smb/pull/303" target="_blank" rel="noopener">#303</a>, <strong>merged 2026-09-30</strong>) that lets an SMB server offer Kerberos alongside NTLM and surface the captured AP-REQ for forwarding. Post-merge followups: WebEnrollment certificate-download crash fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21906" target="_blank" rel="noopener">#21906</a>, merged 2026-10-08); single-target SMB NTLM relay success-reporting fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21908" target="_blank" rel="noopener">#21908</a>), NUL-byte identity-encoding fix (<a href="https://github.com/rapid7/metasploit-framework/pull/21920" target="_blank" rel="noopener">#21920</a>), and RDNSS cleanup withdrawal (<a href="https://github.com/rapid7/metasploit-framework/pull/21934" target="_blank" rel="noopener">#21934</a>) all open in review. Lab-validated: relay-to-ESC8 certificate issuance confirmed end to end and the RA/RDNSS coercion proven on the wire; mentor review findings addressed with SMB2 SessionSetup and SPNEGO relay-thread hardening landed on the branch.
                 </p>
                 <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
+                    <strong>Rapid7 Metasploit wrap-up coverage: 8 posts to date</strong> credit this work - the June 13 Kerberos/Certificate tracing debut, four summer wrap-ups spanning the CSR, peer-cert, and DNS-stack landings (July 11, July 17, August 14, August 28), and three post-program posts for the relay stack (September 11 ESC8 relay + DNS fixes, September 25 RA/RDNSS coercion, October 9 WebEnrollment cert-download fix).
+                </p>
+                <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
+                    <strong>Beyond the GSoC track:</strong> a repo-wide <code>ruby_smb</code> audit after #303 merged produced two merged fixes (<a href="https://github.com/rapid7/ruby_smb/pull/306" target="_blank" rel="noopener">#306</a> SPNEGO NegTokenResp validation, <a href="https://github.com/rapid7/ruby_smb/pull/307" target="_blank" rel="noopener">#307</a> SMB2 malformed-body handling), plus two SPNEGO hardening PRs (<a href="https://github.com/rapid7/ruby_smb/pull/309" target="_blank" rel="noopener">#309</a> server-side mechanism preference and <a href="https://github.com/rapid7/ruby_smb/pull/310" target="_blank" rel="noopener">#310</a> client mechListMIC verification), closing the routing-gap flagged in #303 review. A core-framework linear-time rewrite of the malleable C2 profile string lexer is also in review (<a href="https://github.com/rapid7/metasploit-framework/pull/21931" target="_blank" rel="noopener">#21931</a>), and a VeloCloud Orchestrator CVE-2026-93952 detection-only module set is in draft (<a href="https://github.com/rapid7/metasploit-framework/pull/21944" target="_blank" rel="noopener">#21944</a>).
+                </p>
+                <p style="color: var(--text-secondary); max-width: 760px; line-height: 1.8; margin-top: 0.75rem;">
                     <strong>Total: ~4,500+ lines</strong> of new production code + specs across all branches through Week 12.
                 </p>
             </div>
@@ -861,6 +867,48 @@
                             <span class="resource-url">In review &middot; rapid7/metasploit-framework</span>
                         </div>
                     </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21931" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
+                        <div>
+                            <span class="resource-label">PR #21931: Linear-time malleable C2 profile lexer</span>
+                            <span class="resource-url">In review &middot; rapid7/metasploit-framework</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21944" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
+                        <div>
+                            <span class="resource-label">PR #21944: VeloCloud CVE-2026-93952 detection modules</span>
+                            <span class="resource-url">Draft &middot; rapid7/metasploit-framework</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/ruby_smb/pull/306" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
+                        <div>
+                            <span class="resource-label">ruby_smb #306: Validate SPNEGO NegTokenResp before NTLM parse</span>
+                            <span class="resource-url">In review &middot; rapid7/ruby_smb</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/ruby_smb/pull/307" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
+                        <div>
+                            <span class="resource-label">ruby_smb #307: STATUS_DATA_ERROR on malformed SMB2 body</span>
+                            <span class="resource-url">In review &middot; rapid7/ruby_smb</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/ruby_smb/pull/309" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
+                        <div>
+                            <span class="resource-label">ruby_smb #309: Enforce server mechanism preference in SPNEGO</span>
+                            <span class="resource-url">In review &middot; rapid7/ruby_smb</span>
+                        </div>
+                    </a>
+                    <a class="resource-card" href="https://github.com/rapid7/ruby_smb/pull/310" target="_blank" rel="noopener">
+                        <i class="fas fa-code-branch"></i>
+                        <div>
+                            <span class="resource-label">ruby_smb #310: Verify client mechListMIC on final SPNEGO leg</span>
+                            <span class="resource-url">In review &middot; rapid7/ruby_smb</span>
+                        </div>
+                    </a>
                     <a class="resource-card" href="https://github.com/rapid7/metasploit-framework/pull/21724" target="_blank" rel="noopener">
                         <i class="fas fa-ban"></i>
                         <div>
@@ -889,7 +937,7 @@
         <section id="blog" class="section">
             <div class="container">
                 <h2 class="section-title">Rapid7 Metasploit Blog</h2>
-                <p class="section-intro">Every Rapid7 Metasploit wrap-up post, auto-synced daily. Posts marked <strong>Featured</strong> mention my GSoC work directly.</p>
+                <p class="section-intro">Every Rapid7 Metasploit wrap-up post, auto-synced daily. Posts marked <strong>Featured</strong> mention my GSoC work directly - <strong>8 Rapid7 wrap-ups to date</strong> credit my CertificateTrace, Kerberos relay, and DNS-stack contributions.</p>
 
                 <div id="blog-status" style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--text-muted);margin:1rem 0 1.5rem;"></div>
 
