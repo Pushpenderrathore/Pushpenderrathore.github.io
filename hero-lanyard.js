@@ -511,20 +511,22 @@ async function main() {
             (mid.x + BC.x) / 2, (mid.y + BC.y) / 2, (mid.z + BC.z) / 2
         );
 
+        // Snap the clip (last rope point) to the clamp mesh world position
+        // BEFORE building the curve. Previously the physics clip position and
+        // the clamp mesh position disagreed when the card tilted, and the
+        // last visual segment (rope[11] -> ringWorld) could run opposite the
+        // rope's natural trajectory - that was the "boomerang" hairpin where
+        // the strap passed its endpoint and U-turned back to the metal.
+        // Snapping rope[12] here makes the strap end always equal the clamp,
+        // and the final curve segment is a smooth continuation of the rope.
+        cardMesh.updateMatrixWorld(true);
+        clamp.getWorldPosition(ringWorld);
+        clip.x = ringWorld.x; clip.y = ringWorld.y; clip.z = ringWorld.z;
+        clip.px = clip.x;    clip.py = clip.y;    clip.pz = clip.z;
+
         for (let i = 0; i < rope.length; i++) {
             curve.points[i].set(rope[i].x, rope[i].y, rope[i].z);
         }
-        // Thread the strap down through the ring to the clamp, rather than
-        // ending it at the ring centre, so the band always meets the badge
-        // instead of separating from it when the card swings. Ending it at the
-        // clamp (not the ring) also tucks the cut end under the metal: the band
-        // draws behind the clip (renderOrder -1, depthTest off), so the ring and
-        // clamp cover the join at every angle instead of exposing it mid-drag.
-        // The card transform is set just above; refresh its world matrix before
-        // reading the clamp off it.
-        cardMesh.updateMatrixWorld(true);
-        clamp.getWorldPosition(ringWorld);
-        curve.points[curve.points.length - 1].copy(ringWorld);
         bandGeo.setPoints(curve.getPoints(32));
     }
 
