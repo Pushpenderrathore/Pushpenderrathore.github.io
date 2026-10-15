@@ -337,7 +337,11 @@ async function main() {
        length. Anchor at y=4, a 3-unit rope, then the card hanging below. */
     const S = makeSolver();
     const ANCHOR_Y = 4, ROPE_LEN = 3, ROPE_SEGS = 12;
-    const CLIP_GAP = 0.32;                     // clip to the card's top edge
+    // Was 0.32; now 0.1 so the physics clip sits ~at the ring's world
+    // position (bar is at local y = CARD_H/2 + 0.1 above card centre). With
+    // the clip and the ring coincident at rest the strap visually ends inside
+    // the ring, with no gap to bridge via the drawn curve.
+    const CLIP_GAP = 0.1;
 
     const rope = [];
     for (let i = 0; i <= ROPE_SEGS; i++) {
@@ -408,21 +412,7 @@ async function main() {
     bandMesh.renderOrder = -1;
     scene.add(bandMesh);
 
-    // One extra point past the rope: a visual-only bridge from the physics
-    // clip (rope[12]) to the clamp world position. The strap now ends at the
-    // physics clip, exactly where the solver put it, and a short extra segment
-    // threads into the clamp. Earlier revisions overrode the LAST rope point
-    // with the clamp world position - that forced the final visible segment
-    // to stretch from the rest length of ROPE_LEN/ROPE_SEGS to 0.5+ units at
-    // rest, and when the card swung forward the clamp world position could
-    // run perpendicular to the rope's natural trajectory and fold the
-    // Catmull-Rom spline into a hairpin. Keeping the strap's end on the
-    // physics clip means the last PHYSICS-driven segment stays short and
-    // smooth, and the bridge to the clamp is hidden by the ring and clamp
-    // meshes drawing on top (bandMesh.renderOrder = -1, depthTest off).
-    const curve = new THREE.CatmullRomCurve3(
-        [...rope, null].map(() => new THREE.Vector3())
-    );
+    const curve = new THREE.CatmullRomCurve3(rope.map(() => new THREE.Vector3()));
     // Centripetal, not chordal: chordal has no overshoot protection and loops
     // the strap into a boomerang shape when the badge swings and the rope
     // control points oscillate. Centripetal is specifically designed to avoid
@@ -435,7 +425,6 @@ async function main() {
     const vec = new THREE.Vector3();
     const dir = new THREE.Vector3();
     const target = new THREE.Vector3();
-    const ringWorld = new THREE.Vector3();
     let dragging = false;
     let heldReach = Infinity;   // how far the grabbed point may leave the anchor
 
@@ -525,28 +514,29 @@ async function main() {
             (mid.x + BC.x) / 2, (mid.y + BC.y) / 2, (mid.z + BC.z) / 2
         );
 
+        // Copy physics positions into the curve control points, then correct
+        // any segment that reversed direction. Under aggressive drags the clip
+        // (rope[12]) can be whipped past rope[11] by the TL/TR/clip triangle,
+        // leaving a physics-level kink the spline would then boomerang
+        // through. A standalone node simulation of this rig hits 174 degrees
+        // of reversal between rope[11]->[12] on a circular drag - that is the
+        // boomerang. Reflecting any reversed segment to the forward side
+        // keeps the spline smooth without touching physics (the triangle and
+        // damping would otherwise fight the correction on the next frame).
         for (let i = 0; i < rope.length; i++) {
             curve.points[i].set(rope[i].x, rope[i].y, rope[i].z);
         }
-        // Extend the Catmull-Rom one point past the physics clip, along the
-        // rope's OWN tangent (rope[11] -> rope[12]), by CLIP_GAP. Earlier
-        // revisions placed this bridge at the clamp's world position, which
-        // tracks the card's rotation and can run perpendicular to the rope
-        // under swing - the spline through rope[11] -> rope[12] -> ringWorld
-        // then folded into a Z-shape and visibly hairpinned at the top of the
-        // badge. Extrapolating along the rope ties the continuation to the
-        // rope itself, so the final visible segment is always a smooth
-        // continuation and cannot kink. The resulting point also sits ~at
-        // the clamp position at rest (by design: CLIP_GAP matches the rig's
-        // resting layout), so the strap still visually ends on the clamp.
-        const r1 = rope[rope.length - 2], r2 = rope[rope.length - 1];
-        const dx = r2.x - r1.x, dy = r2.y - r1.y, dz = r2.z - r1.z;
-        const scale = CLIP_GAP / (Math.hypot(dx, dy, dz) || 1e-6);
-        curve.points[rope.length].set(
-            r2.x + dx * scale,
-            r2.y + dy * scale,
-            r2.z + dz * scale
-        );
+        for (let i = 2; i < curve.points.length; i++) {
+            const p0 = curve.points[i - 2], p1 = curve.points[i - 1], p2 = curve.points[i];
+            const vpx = p1.x - p0.x, vpy = p1.y - p0.y, vpz = p1.z - p0.z;
+            const vcx = p2.x - p1.x, vcy = p2.y - p1.y, vcz = p2.z - p1.z;
+            if (vpx * vcx + vpy * vcy + vpz * vcz >= 0) continue;
+            const pLen = Math.hypot(vpx, vpy, vpz);
+            const cLen = Math.hypot(vcx, vcy, vcz);
+            if (pLen < 1e-9 || cLen < 1e-9) continue;
+            const s = cLen / pLen;
+            p2.set(p1.x + vpx * s, p1.y + vpy * s, p1.z + vpz * s);
+        }
         bandGeo.setPoints(curve.getPoints(32));
     }
 
