@@ -408,7 +408,21 @@ async function main() {
     bandMesh.renderOrder = -1;
     scene.add(bandMesh);
 
-    const curve = new THREE.CatmullRomCurve3(rope.map(() => new THREE.Vector3()));
+    // One extra point past the rope: a visual-only bridge from the physics
+    // clip (rope[12]) to the clamp world position. The strap now ends at the
+    // physics clip, exactly where the solver put it, and a short extra segment
+    // threads into the clamp. Earlier revisions overrode the LAST rope point
+    // with the clamp world position - that forced the final visible segment
+    // to stretch from the rest length of ROPE_LEN/ROPE_SEGS to 0.5+ units at
+    // rest, and when the card swung forward the clamp world position could
+    // run perpendicular to the rope's natural trajectory and fold the
+    // Catmull-Rom spline into a hairpin. Keeping the strap's end on the
+    // physics clip means the last PHYSICS-driven segment stays short and
+    // smooth, and the bridge to the clamp is hidden by the ring and clamp
+    // meshes drawing on top (bandMesh.renderOrder = -1, depthTest off).
+    const curve = new THREE.CatmullRomCurve3(
+        [...rope, null].map(() => new THREE.Vector3())
+    );
     // Centripetal, not chordal: chordal has no overshoot protection and loops
     // the strap into a boomerang shape when the badge swings and the rope
     // control points oscillate. Centripetal is specifically designed to avoid
@@ -511,22 +525,15 @@ async function main() {
             (mid.x + BC.x) / 2, (mid.y + BC.y) / 2, (mid.z + BC.z) / 2
         );
 
-        // Snap the clip (last rope point) to the clamp mesh world position
-        // BEFORE building the curve. Previously the physics clip position and
-        // the clamp mesh position disagreed when the card tilted, and the
-        // last visual segment (rope[11] -> ringWorld) could run opposite the
-        // rope's natural trajectory - that was the "boomerang" hairpin where
-        // the strap passed its endpoint and U-turned back to the metal.
-        // Snapping rope[12] here makes the strap end always equal the clamp,
-        // and the final curve segment is a smooth continuation of the rope.
-        cardMesh.updateMatrixWorld(true);
-        clamp.getWorldPosition(ringWorld);
-        clip.x = ringWorld.x; clip.y = ringWorld.y; clip.z = ringWorld.z;
-        clip.px = clip.x;    clip.py = clip.y;    clip.pz = clip.z;
-
         for (let i = 0; i < rope.length; i++) {
             curve.points[i].set(rope[i].x, rope[i].y, rope[i].z);
         }
+        // Bridge from the physics clip to the clamp. The clamp lives inside
+        // the card's local frame, which was just set above, so refresh its
+        // world matrix before reading its world position.
+        cardMesh.updateMatrixWorld(true);
+        clamp.getWorldPosition(ringWorld);
+        curve.points[rope.length].copy(ringWorld);
         bandGeo.setPoints(curve.getPoints(32));
     }
 
