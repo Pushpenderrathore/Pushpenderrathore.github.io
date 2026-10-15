@@ -395,7 +395,14 @@ async function main() {
     const bandGeo = new MeshLineGeometry();
     const bandMat = new MeshLineMaterial({
         map: bandTex, useMap: 1, color: new THREE.Color(0xffffff),
-        transparent: true, depthTest: false,
+        // depthTest off keeps the strap visible when it sits very close to
+        // the card at rest. depthWrite ALSO off: with renderOrder = -1 the
+        // strap draws first, and if it wrote depth it would then mask the
+        // card wherever the strap's screen-space pixels landed - under a
+        // steep drag that put the strap end in front of the tilted card
+        // surface, the card appeared to be stabbed by a dark triangular
+        // wedge. Writing no depth lets the card draw on top normally.
+        transparent: true, depthTest: false, depthWrite: false,
         // With sizeAttenuation on (the default) meshline offsets the strap edge
         // in clip space, so lineWidth is NOT in world units. Tuned by eye
         // against the 1.6-wide card at camera z 9.2.
