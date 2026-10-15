@@ -528,12 +528,25 @@ async function main() {
         for (let i = 0; i < rope.length; i++) {
             curve.points[i].set(rope[i].x, rope[i].y, rope[i].z);
         }
-        // Bridge from the physics clip to the clamp. The clamp lives inside
-        // the card's local frame, which was just set above, so refresh its
-        // world matrix before reading its world position.
-        cardMesh.updateMatrixWorld(true);
-        clamp.getWorldPosition(ringWorld);
-        curve.points[rope.length].copy(ringWorld);
+        // Extend the Catmull-Rom one point past the physics clip, along the
+        // rope's OWN tangent (rope[11] -> rope[12]), by CLIP_GAP. Earlier
+        // revisions placed this bridge at the clamp's world position, which
+        // tracks the card's rotation and can run perpendicular to the rope
+        // under swing - the spline through rope[11] -> rope[12] -> ringWorld
+        // then folded into a Z-shape and visibly hairpinned at the top of the
+        // badge. Extrapolating along the rope ties the continuation to the
+        // rope itself, so the final visible segment is always a smooth
+        // continuation and cannot kink. The resulting point also sits ~at
+        // the clamp position at rest (by design: CLIP_GAP matches the rig's
+        // resting layout), so the strap still visually ends on the clamp.
+        const r1 = rope[rope.length - 2], r2 = rope[rope.length - 1];
+        const dx = r2.x - r1.x, dy = r2.y - r1.y, dz = r2.z - r1.z;
+        const scale = CLIP_GAP / (Math.hypot(dx, dy, dz) || 1e-6);
+        curve.points[rope.length].set(
+            r2.x + dx * scale,
+            r2.y + dy * scale,
+            r2.z + dz * scale
+        );
         bandGeo.setPoints(curve.getPoints(32));
     }
 
