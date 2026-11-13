@@ -301,7 +301,7 @@ async function main() {
     const { RoomEnvironment } = roomEnv;
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const photo = await loadPhoto('images/img.jpg');
+    const photo = await loadPhoto('images/img.jpg?v=20261113a');
 
     /* ---- renderer / scene / camera ---- */
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
