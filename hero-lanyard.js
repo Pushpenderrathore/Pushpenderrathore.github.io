@@ -354,12 +354,13 @@ async function main() {
     const TL = S.pt(-CARD_W / 2, cy + CARD_H / 2, 0);
     const TR = S.pt(CARD_W / 2, cy + CARD_H / 2, 0);
     const BC = S.pt(0, cy - CARD_H / 2, 0);
-    // held off the card plane purely to lock chirality, never drawn
-    const NZ = S.pt(0, cy, 0.5);
 
     S.link(clip, TL); S.link(clip, TR);         // strap splits to both corners
     S.link(TL, TR); S.link(TL, BC); S.link(TR, BC);   // rigid triangle
-    S.link(NZ, TL); S.link(NZ, TR); S.link(NZ, BC);   // stops it inverting
+    // the clip->TL->TR triangle is only 0.1 tall, so in a flat plane it could
+    // mirror-flip and put the clip below the card's top edge; tying the clip
+    // to the bottom corner makes the whole card a rigid, non-flippable body
+    S.link(clip, BC);
 
     /* ---- card mesh ---- */
     const faceTex = new THREE.CanvasTexture(drawCardFace(photo));
@@ -505,6 +506,8 @@ async function main() {
     /* ---- rig -> mesh ---- */
     const ex = new THREE.Vector3(), ey = new THREE.Vector3(), ez = new THREE.Vector3();
     const mid = new THREE.Vector3(), basis = new THREE.Matrix4(), ringWorld = new THREE.Vector3();
+    const qYaw = new THREE.Quaternion(), yAxis = new THREE.Vector3(0, 1, 0);
+    let yaw = 0;
 
     function syncVisuals() {
         // card frame from the three corners: +X along the top edge, +Y up the
@@ -517,6 +520,12 @@ async function main() {
 
         basis.makeBasis(ex, ey, ez);
         cardMesh.quaternion.setFromRotationMatrix(basis);
+        // visual-only tilt that follows sideways motion, eased and clamped
+        const vx = (TL.x + TR.x - TL.px - TR.px) / 2;
+        const yawTarget = Math.max(-0.4, Math.min(0.4, vx * 6));
+        yaw += (yawTarget - yaw) * 0.12;
+        qYaw.setFromAxisAngle(yAxis, yaw);
+        cardMesh.quaternion.premultiply(qYaw);
         cardMesh.position.set(
             (mid.x + BC.x) / 2, (mid.y + BC.y) / 2, (mid.z + BC.z) / 2
         );
@@ -580,41 +589,15 @@ async function main() {
         }
     }
 
-    // The strap splits to both top corners, so nothing resists a twist about
-    // the vertical axis: after a hard throw the card kept spinning, turned
-    // edge-on, or settled facing away with its back showing. Corrections:
-    //  - spin damping (free card only): bleed off velocity relative to the
-    //    card's own motion
-    //  - yaw spring (also while dragging): rotate the whole card about the
-    //    clip's vertical axis back toward facing the viewer. A rigid
-    //    rotation, so it never fights the triangle or strap constraints.
-    //  - depth spring: ease the free corners back toward the card plane, so
-    //    a whipped corner cannot swing the card around behind itself.
-    // Swept in a Node port of this solver over random drags of each corner:
-    // time spent edge-on or flipped fell from ~60% to under 10%, and every
-    // throw settles facing the viewer.
-    const CARD_PTS = [TL, TR, BC, NZ];
-    const SPIN_KEEP = 0.9, YAW_K = 0.03, DEPTH_K = 0.1;
-    function calmCard() {
-        const held = S.held;
-        if (!held) {
-            let mx = 0, my = 0, mz = 0;
-            for (const p of CARD_PTS) { mx += p.x - p.px; my += p.y - p.py; mz += p.z - p.pz; }
-            mx /= 4; my /= 4; mz /= 4;
-            for (const p of CARD_PTS) {
-                p.px += ((p.x - p.px) - mx) * (1 - SPIN_KEEP);
-                p.py += ((p.y - p.py) - my) * (1 - SPIN_KEEP);
-                p.pz += ((p.z - p.pz) - mz) * (1 - SPIN_KEEP);
-            }
-        }
-        const a = -YAW_K * Math.atan2(-(TR.z - TL.z), TR.x - TL.x);
-        const c = Math.cos(a), sn = Math.sin(a);
-        for (const p of CARD_PTS) {
-            const x = p.x - clip.x, z = p.z - clip.z;
-            p.x = clip.x + x * c + z * sn;
-            p.z = clip.z - x * sn + z * c;
-        }
-        for (const p of [TL, TR, BC]) if (p !== held) p.z -= p.z * DEPTH_K;
+    // The whole rig lives in one plane (z = 0). The earlier fully-3D version
+    // let the card twist about the vertical axis with nothing to resist it, so
+    // a throw left it spinning, edge-on, or facing away. In a plane that
+    // cannot happen: the card only swings, like a pendulum. The sideways tilt
+    // that sells the depth is added in syncVisuals, purely visually, and is
+    // clamped so the card never turns far from the viewer.
+    const CARD_PTS = [TL, TR, BC, ...rope];
+    function planeLock() {
+        for (const p of CARD_PTS) { p.z = 0; p.pz = 0; }
     }
 
     // The strap lets the card swing further sideways than the canvas shows,
@@ -646,6 +629,7 @@ async function main() {
             const h = S.held;
             if (h) {
                 pointerWorld(target);
+                target.z = 0;
                 // Keep the grabbed point within the strap's reach of the anchor,
                 // so the rope is always satisfiable and cannot balloon.
                 const a = rope[0];
@@ -663,11 +647,11 @@ async function main() {
                 target.y = Math.max(camera.position.y - fh + WALL_PAD, target.y);
                 // leave the previous position alone so releasing throws the card
                 h.px = h.x; h.py = h.y; h.pz = h.z;
-                h.x = target.x; h.y = target.y; h.z = target.z;
+                h.x = target.x; h.y = target.y; h.z = 0;
             }
         }
         S.integrate(dt);
-        calmCard();
+        planeLock();
         keepInFrame();
         S.solve();
         constrainStrap();
