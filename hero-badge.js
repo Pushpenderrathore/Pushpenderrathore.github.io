@@ -11,6 +11,10 @@
     var btn = document.getElementById('id-motion-btn');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var MAX = 14;            // degrees of tilt at full lean
+    // Sensor sensitivity: higher = the badge reaches full tilt with a smaller
+    // lean of the device. 30 was the original feel (full tilt at a 30 degree
+    // lean); 60 reaches full tilt at 15 degrees.
+    var SENSOR_SENS = 60;
     var sensing = false;     // true once real sensor readings arrive
     var baseBeta = null;     // how the device was held at the start = neutral
 
@@ -72,8 +76,8 @@
         if (pointerActive) return;   // a finger or mouse is steering right now
         if (baseBeta === null) baseBeta = e.beta;
         // gamma: left/right lean (-90..90); beta: front/back lean (-180..180)
-        var nx = clamp(e.gamma / 30);
-        var ny = clamp((e.beta - baseBeta) / 30);
+        var nx = clamp((e.gamma * SENSOR_SENS) / 900);
+        var ny = clamp(((e.beta - baseBeta) * SENSOR_SENS) / 900);
         setTilt(nx, ny);
         if (btn) btn.hidden = true;
     }
