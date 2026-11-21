@@ -2491,6 +2491,20 @@ body {
 }
 .id-badge.is-tilting .id-glare { opacity: 1; }
 
+.id-motion-btn {
+    display: block;
+    margin: 18px auto 0;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(159, 239, 0, 0.5);
+    background: rgba(159, 239, 0, 0.08);
+    color: var(--text-secondary);
+    font: 500 0.72rem var(--font-mono);
+    letter-spacing: 0.06em;
+    cursor: pointer;
+}
+.id-motion-btn[hidden] { display: none; }
+
 @media (max-width: 768px) {
     .id-badge { width: 200px; }
     .id-card { width: 200px; }
