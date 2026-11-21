@@ -504,7 +504,7 @@ async function main() {
 
     /* ---- rig -> mesh ---- */
     const ex = new THREE.Vector3(), ey = new THREE.Vector3(), ez = new THREE.Vector3();
-    const mid = new THREE.Vector3(), basis = new THREE.Matrix4();
+    const mid = new THREE.Vector3(), basis = new THREE.Matrix4(), ringWorld = new THREE.Vector3();
 
     function syncVisuals() {
         // card frame from the three corners: +X along the top edge, +Y up the
@@ -544,6 +544,13 @@ async function main() {
             const s = cLen / pLen;
             p2.set(p1.x + vpx * s, p1.y + vpy * s, p1.z + vpz * s);
         }
+        // Pin the strap's free end to the ring on the card itself. The physics
+        // clip is a separate point from the ring, so when the card tilts or
+        // swings the strap end drifted off the ring and pinched into a fold.
+        cardMesh.updateMatrixWorld();
+        ringWorld.set(0, CARD_H / 2 + 0.1, 0);
+        cardMesh.localToWorld(ringWorld);
+        curve.points[curve.points.length - 1].copy(ringWorld);
         bandGeo.setPoints(curve.getPoints(32));
     }
 
