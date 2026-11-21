@@ -2393,74 +2393,114 @@ body {
     align-items: flex-start;
 }
 
-#lanyard-canvas {
-    width: 100%;
-    height: 560px;
-    display: block;
-    cursor: grab;
-    touch-action: pan-y;      /* vertical page scroll survives over the canvas */
-    margin-top: -40px;
+/* Hero ID badge: plain HTML/CSS, tilts toward the pointer (hero-badge.js).
+   No WebGL or physics, so it behaves the same in every browser. */
+.home-image { perspective: 1100px; }
+
+.id-badge {
+    --rx: 0deg; --ry: 0deg;
+    width: 230px;
+    margin: -10px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform-origin: 50% 0;
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    transition: transform 0.18s ease-out;
+    animation: id-sway 6s ease-in-out infinite;
+    will-change: transform;
+}
+.id-badge.is-tilting { animation: none; }
+
+@keyframes id-sway {
+    0%, 100% { transform: rotateZ(-1.6deg) rotateY(-4deg); }
+    50%      { transform: rotateZ(1.6deg)  rotateY(4deg); }
 }
 
-/* Two-column layout only: let the canvas bleed 90px into the column gap and
-   the page margin on each side, so a hard swing is not sliced off at the edge
-   of the (narrow) column. The 6rem gap keeps it clear of the hero text, and
-   .home clips any overflow. Stacked layouts keep the plain width. */
-@media (min-width: 969px) {
-    #lanyard-canvas {
-        width: calc(100% + 180px);
-        max-width: none;
-        margin-left: -90px;
-        margin-right: -90px;
-    }
+.id-strap {
+    width: 34px;
+    height: 210px;
+    border-radius: 3px 3px 0 0;
+    background: linear-gradient(90deg, #9fef00 0 2px, #12171d 2px calc(100% - 2px), #9fef00 calc(100% - 2px));
+    overflow: hidden;
+    position: relative;
 }
-
-#lanyard-canvas.is-grabbing {
-    cursor: grabbing;
-}
-
-.lanyard-hint {
+.id-strap span {
     position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    opacity: 0.65;
-    pointer-events: none;
+    top: 50%; left: 50%;
     white-space: nowrap;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    font: 600 0.62rem var(--font-mono);
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.55);
 }
+
+.id-card {
+    position: relative;
+    width: 230px;
+    margin-top: -6px;
+    padding: 14px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f7f8fa, #dfe3e8);
+    box-shadow: var(--shadow-card), 0 18px 40px rgba(0, 0, 0, 0.45);
+    color: #0b0f14;
+    overflow: hidden;
+}
+.id-clip {
+    position: absolute;
+    top: -14px; left: 50%;
+    width: 44px; height: 22px;
+    transform: translateX(-50%);
+    border-radius: 6px 6px 4px 4px;
+    background: linear-gradient(#cfd6dd, #98a2ac);
+}
+.id-hole {
+    display: block;
+    width: 40px; height: 11px;
+    margin: 4px auto 12px;
+    border-radius: 50%;
+    background: #0b0f14;
+}
+.id-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 9px;
+    filter: grayscale(1) contrast(1.08);
+    border: 1px solid rgba(0, 0, 0, 0.14);
+}
+.id-name { margin-top: 12px; font: 700 0.95rem Inter, sans-serif; letter-spacing: 0.01em; }
+.id-role { margin-top: 4px; font: 500 0.68rem var(--font-mono); color: #5b6675; letter-spacing: 0.08em; }
+.id-meta { margin-top: 3px; font: 500 0.6rem var(--font-mono); color: #8b97a6; letter-spacing: 0.08em; }
+.id-rule {
+    display: block;
+    height: 3px;
+    margin-top: 12px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #9fef00, #00d4ff);
+}
+.id-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at var(--gx, 30%) var(--gy, 20%), rgba(255, 255, 255, 0.35), transparent 55%);
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+.id-badge.is-tilting .id-glare { opacity: 1; }
 
 @media (max-width: 768px) {
-    .home-image {
-        min-height: 420px;
-    }
-
-    #lanyard-canvas {
-        height: 440px;
-        margin-top: -20px;
-    }
+    .id-badge { width: 200px; }
+    .id-card { width: 200px; }
+    .id-strap { height: 150px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .id-badge { animation: none; transition: none; }
     .preloader-text { animation: none; opacity: 1; }
     .preloader-bar  { animation-duration: 0.01s; }
     #rotating-profession { animation: none; }
 }
 
-/* Shown only if three.js / Rapier fail to load or WebGL is unavailable */
-.lanyard-fallback {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
-    align-self: center;
-    border-radius: 16px;
-    filter: grayscale(1) contrast(1.08);
-    box-shadow: var(--shadow-card);
-}
-
-.lanyard-fallback[hidden] {
-    display: none;
-}

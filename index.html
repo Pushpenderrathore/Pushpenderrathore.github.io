@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=20261121e">
+    <link rel="stylesheet" href="style.css?v=20261121i">
 </head>
 <body>
     <!-- Preloader: dismissed inline so it can never outlive a failed script load -->
@@ -148,11 +148,19 @@
                     </div>
                      
                     <div class="home-image">
-                        <canvas id="lanyard-canvas" role="img"
-                            aria-label="An ID badge hanging from a lanyard, showing a photo of Pushpender Singh Rathore. Drag it to swing it."></canvas>
-                        <img src="images/img.jpg?v=20261121a" alt="Pushpender Singh Rathore"
-                            class="lanyard-fallback" hidden>
-                        <span class="lanyard-hint">drag the badge</span>
+                        <div class="id-badge" id="id-badge">
+                            <div class="id-strap" aria-hidden="true"><span>GSoC 2026 &bull; PUSHPENDER &bull; GSoC 2026 &bull; PUSHPENDER</span></div>
+                            <div class="id-card">
+                                <span class="id-clip" aria-hidden="true"></span>
+                                <span class="id-hole" aria-hidden="true"></span>
+                                <img class="id-photo" src="images/img.jpg?v=20261121a" alt="Pushpender Singh Rathore" width="188" height="188">
+                                <div class="id-name">PUSHPENDER S. RATHORE</div>
+                                <div class="id-role">SECURITY RESEARCHER</div>
+                                <div class="id-meta">GSoC 2026 &middot; METASPLOIT</div>
+                                <span class="id-rule" aria-hidden="true"></span>
+                                <span class="id-glare" aria-hidden="true"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -884,24 +892,7 @@ This enables <strong>real-time adaptive filtering</strong> and <strong>intellige
   
   <script src="script.js"></script>
 
-  <!-- three.js for the hero lanyard, pinned so a CDN retag cannot silently
-       change the hero. The physics is solved in hero-lanyard.js, so there is
-       no engine here. If any of this fails to load, hero-lanyard.js falls back
-       to the static photo. -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/",
-      "meshline": "https://cdn.jsdelivr.net/npm/meshline@3.3.1/dist/index.js"
-    }
-  }
-  </script>
-  <!-- async: a module script is deferred by default and would otherwise hold
-       up DOMContentLoaded, which is where script.js does all of its work. -->
-  <!-- Versioned so a deploy is never masked by GitHub Pages' 10-minute JS
-       cache; bump this whenever hero-lanyard.js changes. -->
-  <script type="module" src="hero-lanyard.js?v=20261121h" async></script>
+  <script src="hero-badge.js?v=20261121i" defer></script>
   
   <footer class="site-footer">
   <div class="footer-counter">
