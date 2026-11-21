@@ -617,6 +617,30 @@ async function main() {
         for (const p of [TL, TR, BC]) if (p !== held) p.z -= p.z * DEPTH_K;
     }
 
+    // The strap lets the card swing further sideways than the canvas shows,
+    // so a hard throw ran off the edge and was sliced by the canvas border.
+    // Treat the visible frame at the card's depth as a soft wall: clamp the
+    // three corners inside it and reflect a fraction of the velocity.
+    const WALL_BOUNCE = 0.3, WALL_PAD = 0.08;
+    function keepInFrame() {
+        const halfH = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
+        const halfW = halfH * camera.aspect;
+        const xl = halfW - WALL_PAD, yl = camera.position.y - halfH + WALL_PAD;
+        for (const p of [TL, TR, BC]) {
+            if (p === S.held) continue;
+            if (p.x > xl || p.x < -xl) {
+                const v = p.x - p.px;
+                p.x = Math.sign(p.x) * xl;
+                p.px = p.x + v * WALL_BOUNCE;
+            }
+            if (p.y < yl) {
+                const v = p.y - p.py;
+                p.y = yl;
+                p.py = p.y + v * WALL_BOUNCE;
+            }
+        }
+    }
+
     function step(dt) {
         if (dragging) {
             const h = S.held;
@@ -631,6 +655,12 @@ async function main() {
                     const s = heldReach / d;
                     target.set(a.x + dx * s, a.y + dy * s, a.z + dz * s);
                 }
+                // and inside the visible frame, so the dragged corner cannot
+                // leave the canvas either
+                const fh = Math.tan((camera.fov * Math.PI) / 360) * camera.position.z;
+                const fx = fh * camera.aspect - WALL_PAD;
+                target.x = Math.max(-fx, Math.min(fx, target.x));
+                target.y = Math.max(camera.position.y - fh + WALL_PAD, target.y);
                 // leave the previous position alone so releasing throws the card
                 h.px = h.x; h.py = h.y; h.pz = h.z;
                 h.x = target.x; h.y = target.y; h.z = target.z;
@@ -638,6 +668,7 @@ async function main() {
         }
         S.integrate(dt);
         calmCard();
+        keepInFrame();
         S.solve();
         constrainStrap();
         syncVisuals();
