@@ -1,5 +1,23 @@
 [
   {
+    "title": "Metasploit Wrap Up: Breaking Zimbra's Identity Boundaries",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-breaking-zimbra-s-identity-boundaries/",
+    "date": "2026-11-20",
+    "gsoc_feature": true
+  },
+  {
+    "title": "Metasploit Wrapup: Unauth RCE modules in Network Perimeter Devices and much more",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrapup-unauth-rce-modules-in-network-perimeter-devices-and-much-more/",
+    "date": "2026-11-06",
+    "gsoc_feature": false
+  },
+  {
+    "title": "Metasploit Wrap Up: Langflow, MongoDB, and More",
+    "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-langflow-mongodb-and-more/",
+    "date": "2026-10-23",
+    "gsoc_feature": false
+  },
+  {
     "title": "Metasploit Wrap Up: A Collection of What Can Only Be Called Eclectic Modules",
     "url": "https://www.rapid7.com/blog/post/pt-metasploit-wrap-up-a-collection-of-what-can-only-be-called-eclectic-modules/",
     "date": "2026-10-09",
