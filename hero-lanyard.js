@@ -204,6 +204,7 @@ async function loadPhoto(src) {
    ================================================================ */
 const GRAV = 40;          // world units per second squared, matching the old engine
 const DAMP = 0.985;       // velocity retained per step
+const VMAX = 0.25;        // max world units a point may travel in one step
 const ITER = 32;          // constraint relaxation passes per step
 
 function makeSolver() {
@@ -228,9 +229,15 @@ function makeSolver() {
         const g = GRAV * dt * dt;
         for (const p of points) {
             if (p.pinned || p === held) continue;
-            const vx = (p.x - p.px) * DAMP;
-            const vy = (p.y - p.py) * DAMP;
-            const vz = (p.z - p.pz) * DAMP;
+            let vx = (p.x - p.px) * DAMP;
+            let vy = (p.y - p.py) * DAMP;
+            let vz = (p.z - p.pz) * DAMP;
+            // A flick teleports the grabbed corner to the pointer in a single
+            // frame; released, that became a huge velocity the constraints
+            // could not recover from and the card shot past its own anchor.
+            // Cap the per-step speed so the rig always stays solvable.
+            const sp = Math.hypot(vx, vy, vz);
+            if (sp > VMAX) { const k = VMAX / sp; vx *= k; vy *= k; vz *= k; }
             p.px = p.x; p.py = p.y; p.pz = p.z;
             p.x += vx; p.y += vy - g; p.z += vz;
         }
@@ -646,6 +653,11 @@ async function main() {
                 target.x = Math.max(-fx, Math.min(fx, target.x));
                 target.y = Math.max(camera.position.y - fh + WALL_PAD, target.y);
                 // leave the previous position alone so releasing throws the card
+                // follow the pointer at a bounded speed instead of teleporting
+                // to it, so a fast flick drags the card along the way
+                const mx = target.x - h.x, my = target.y - h.y;
+                const md = Math.hypot(mx, my), MAXMOVE = 0.35;
+                if (md > MAXMOVE) { target.x = h.x + (mx / md) * MAXMOVE; target.y = h.y + (my / md) * MAXMOVE; }
                 h.px = h.x; h.py = h.y; h.pz = h.z;
                 h.x = target.x; h.y = target.y; h.z = 0;
             }
