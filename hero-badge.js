@@ -1,7 +1,8 @@
 /* Hero ID badge: tilts toward the pointer, or with the device when it has
    motion sensors (phones, tablets). Pure CSS transforms, no WebGL.
-   Laptops and MacBooks do not expose a motion sensor to web pages, so there
-   the pointer tilt is the only input. */
+   Both work together: a finger or mouse steers while it is on the badge, and
+   the sensor takes over otherwise. Laptops and MacBooks do not expose a
+   motion sensor to web pages, so there the pointer is the only input. */
 (function () {
     var badge = document.getElementById('id-badge');
     if (!badge) return;
@@ -29,24 +30,47 @@
         badge.style.removeProperty('--ry');
     }
 
-    /* ---- pointer (mouse / trackpad / pen) ---- */
+    /* ---- pointer: mouse hover, or a finger on the badge ---- */
+    // While the pointer is driving (hovering or touching) the sensor steps
+    // aside; when it lets go, the sensor takes over again, or the badge
+    // returns to its idle sway if there is no sensor.
+    var pointerActive = false;
     var zone = document.querySelector('.home-image');
+
+    function aim(e) {
+        var r = card.getBoundingClientRect();
+        setTilt(clamp(((e.clientX - r.left) / r.width) * 2 - 1),
+                clamp(((e.clientY - r.top) / r.height) * 2 - 1));
+    }
+    function letGo() {
+        pointerActive = false;
+        if (!sensing) rest();   // with a sensor, its next reading retakes control
+    }
+
     if (zone && !reduce) {
-        zone.addEventListener('pointermove', function (e) {
-            if (sensing || e.pointerType === 'touch') return;
-            var r = card.getBoundingClientRect();
-            setTilt(clamp(((e.clientX - r.left) / r.width) * 2 - 1),
-                    clamp(((e.clientY - r.top) / r.height) * 2 - 1));
+        zone.addEventListener('pointerdown', function (e) {
+            if (e.pointerType !== 'touch') return;
+            pointerActive = true;
+            aim(e);
         }, { passive: true });
-        zone.addEventListener('pointerleave', function () { if (!sensing) rest(); });
+        zone.addEventListener('pointermove', function (e) {
+            // a touch only tilts while the finger is down; a mouse just hovers
+            if (e.pointerType === 'touch' && !pointerActive) return;
+            pointerActive = true;
+            aim(e);
+        }, { passive: true });
+        zone.addEventListener('pointerup', function (e) { if (e.pointerType === 'touch') letGo(); });
+        zone.addEventListener('pointercancel', letGo);   // fires when the page scrolls instead
+        zone.addEventListener('pointerleave', letGo);
     }
 
     /* ---- device motion ---- */
     function onOrientation(e) {
         // desktop browsers fire one event with all-null readings: ignore it
         if (e.gamma === null || e.beta === null || reduce) return;
-        if (baseBeta === null) baseBeta = e.beta;
         sensing = true;
+        if (pointerActive) return;   // a finger or mouse is steering right now
+        if (baseBeta === null) baseBeta = e.beta;
         // gamma: left/right lean (-90..90); beta: front/back lean (-180..180)
         var nx = clamp(e.gamma / 30);
         var ny = clamp((e.beta - baseBeta) / 30);

@@ -2395,7 +2395,7 @@ body {
 
 /* Hero ID badge: plain HTML/CSS, tilts toward the pointer (hero-badge.js).
    No WebGL or physics, so it behaves the same in every browser. */
-.home-image { perspective: 1100px; }
+.home-image { perspective: 1100px; touch-action: pan-y; }   /* vertical swipes still scroll the page */
 
 .id-badge {
     --rx: 0deg; --ry: 0deg;
