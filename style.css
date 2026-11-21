@@ -2402,6 +2402,19 @@ body {
     margin-top: -40px;
 }
 
+/* Two-column layout only: let the canvas bleed 90px into the column gap and
+   the page margin on each side, so a hard swing is not sliced off at the edge
+   of the (narrow) column. The 6rem gap keeps it clear of the hero text, and
+   .home clips any overflow. Stacked layouts keep the plain width. */
+@media (min-width: 969px) {
+    #lanyard-canvas {
+        width: calc(100% + 180px);
+        max-width: none;
+        margin-left: -90px;
+        margin-right: -90px;
+    }
+}
+
 #lanyard-canvas.is-grabbing {
     cursor: grabbing;
 }
