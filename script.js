@@ -25,7 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function typeWriter() {
         if (!heroSubtitle) return;
-        
+
+        // Single title: show it as static text, no typing or erasing
+        if (professions.length === 1) {
+            heroSubtitle.innerHTML = professions[0] + '<span class="cursor">|</span>';
+            return;
+        }
+
         const currentProfession = professions[professionIndex];
         
         if (isDeleting) {
