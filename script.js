@@ -14,12 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Professions for typewriter effect
     const professions = [
-        'Cybersecurity Analyst',
-        'Malware Researcher',
-        'Reverse Engineer',
-        'CTF Player',
-        'Offensive Security Enthusiast',
-        'Low-level Programmer'
+        'Security Researcher'
     ];
 
     // Typewriter Effect
